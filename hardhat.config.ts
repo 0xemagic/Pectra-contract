@@ -9,7 +9,11 @@ import "solidity-coverage";
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   networks: {
-    hardhat: {},
+    hardhat: {
+      // forking: {
+      //   url: "https://mainnet.infura.io/v3/8b93e2f68f7f488888e6255ed3235d5c",
+      // },
+    },
     localhost: {
       chainId: 31337,
       url: "http://127.0.0.1:8545",
