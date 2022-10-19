@@ -14,7 +14,7 @@ const config: HardhatUserConfig = {
       forking: {
         // eslint-disable-next-line
         enabled: true,
-        url: "https://mainnet.infura.io/v3/",
+        url: "https://mainnet.infura.io/v3/8b93e2f68f7f488888e6255ed3235d5c",
         blockNumber: 15767594,
       },
     },
