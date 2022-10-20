@@ -10,21 +10,46 @@ import "./Escrow.sol";
 
 contract EscrowFactory is Ownable, ReentrancyGuard {
     uint256 public createFee;
+    uint256 public feePercent;
     address public feeRecipient;
-    address public feePercent;
+    address public locker;
+    uint256 lockDuration;
 
     mapping(address => Escrow[]) escrows;
 
     /// @dev implement address of project contract
     address escrowImplementation;
 
-    constructor() {}
-
-    function createEscrow(string memory _uri) external {
-        Escrow newEscrow = Escrow(Clones.clone(escrowImplementation));
-        newEscrow.initialize(_uri, msg.sender);
-        escrows[msg.sender].push(newEscrow);
+    constructor(
+        address _locker,
+        uint256 _lockDuration,
+        uint256 _createFee,
+        uint256 _feePercent,
+        address _feeRecipient
+    ) {
+        locker = _locker;
+        lockDuration = _lockDuration;
+        createFee = _createFee;
+        feeRecipient = _feeRecipient;
+        feePercent = _feePercent;
     }
 
-    function destroy(Escrow _escrow) external {}
+    function createEscrow(string memory _uri) external payable {
+        require(msg.value == createFee, "Pay escrow creation fee!");
+        (bool sent, ) = feeRecipient.call{value: createFee}("");
+        if (sent) {
+            Escrow newEscrow = Escrow(Clones.clone(escrowImplementation));
+            newEscrow.initialize(
+                _uri,
+                msg.sender,
+                locker,
+                feePercent,
+                feeRecipient,
+                lockDuration
+            );
+            escrows[msg.sender].push(newEscrow);
+        }
+    }
+
+    function destroy() external {}
 }

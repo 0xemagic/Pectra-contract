@@ -4,21 +4,55 @@ pragma solidity ^0.8.2;
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract Locker is ReentrancyGuard {
-    string uri;
+    using SafeERC20 for IERC20;
     uint256 private constant LockDuration = 1 weeks;
+    struct LockInfo {
+        address token;
+        address beneficiary;
+        uint256 amount;
+        uint256 mID;
+        uint256 unlockTimestamp;
+    }
+    LockInfo[] lockInfo;
 
     constructor() {}
 
-    function Create(
+    function CreateLock(
         address _token,
-        address beneficiary,
-        uint256 mID,
-        uint256 unlockTimestamp
-    ) external {}
+        address _beneficiary,
+        uint256 _amount,
+        uint256 _mID,
+        uint256 _unlockTimestamp
+    ) external {
+        lockInfo.push(
+            LockInfo({
+                token: _token,
+                beneficiary: _beneficiary,
+                amount: _amount,
+                mID: _mID,
+                unlockTimestamp: _unlockTimestamp
+            })
+        );
+    }
 
-    function Release(uint256 lockID) external {}
+    function Release(uint256 lockID) external {
+        require(lockInfo[lockID].mID >= 0, "invalid lockID");
+        require(
+            block.timestamp >= lockInfo[lockID].unlockTimestamp,
+            "Not available fund"
+        );
+        IERC20(lockInfo[lockID].token).approve(
+            lockInfo[lockID].beneficiary,
+            lockInfo[lockID].amount
+        );
+        IERC20(lockInfo[lockID].token).transfer(
+            lockInfo[lockID].beneficiary,
+            lockInfo[lockID].amount
+        );
+    }
 
     receive() external payable {}
 }
