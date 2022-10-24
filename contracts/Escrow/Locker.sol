@@ -8,7 +8,6 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract Locker is ReentrancyGuard {
     using SafeERC20 for IERC20;
-    uint256 private constant LockDuration = 1 weeks;
     struct LockInfo {
         address token;
         address beneficiary;
@@ -26,7 +25,7 @@ contract Locker is ReentrancyGuard {
         uint256 _amount,
         uint256 _mID,
         uint256 _unlockTimestamp
-    ) external {
+    ) external returns (uint256) {
         lockInfo.push(
             LockInfo({
                 token: _token,
@@ -36,6 +35,7 @@ contract Locker is ReentrancyGuard {
                 unlockTimestamp: _unlockTimestamp
             })
         );
+        return lockInfo.length - 1;
     }
 
     function Release(uint256 lockID) external {

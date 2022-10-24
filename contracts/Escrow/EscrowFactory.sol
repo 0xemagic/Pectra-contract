@@ -51,5 +51,7 @@ contract EscrowFactory is Ownable, ReentrancyGuard {
         }
     }
 
-    function destroy() external {}
+    function destroy(address _owner) external {
+        delete escrows[_owner];
+    }
 }
