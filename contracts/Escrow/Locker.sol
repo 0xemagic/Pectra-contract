@@ -15,7 +15,7 @@ contract Locker is ReentrancyGuard {
         uint256 mID;
         uint256 unlockTimestamp;
     }
-    LockInfo[] lockInfo;
+    LockInfo[] public lockInfo;
 
     constructor() {}
 

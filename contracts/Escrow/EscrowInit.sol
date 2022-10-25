@@ -8,14 +8,14 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 
 import "./Escrow.sol";
 
-contract EscrowFactory is Ownable, ReentrancyGuard {
+contract EscrowInit is Ownable, ReentrancyGuard {
     uint256 public createFee;
     uint256 public feePercent;
     address public feeRecipient;
     address public locker;
     uint256 lockDuration;
 
-    mapping(address => Escrow[]) escrows;
+    mapping(address => Escrow[]) public escrows;
 
     /// @dev implement address of project contract
     address escrowImplementation;
@@ -25,13 +25,15 @@ contract EscrowFactory is Ownable, ReentrancyGuard {
         uint256 _lockDuration,
         uint256 _createFee,
         uint256 _feePercent,
-        address _feeRecipient
+        address _feeRecipient,
+        address _escrowImplementation
     ) {
         locker = _locker;
         lockDuration = _lockDuration;
         createFee = _createFee;
         feeRecipient = _feeRecipient;
         feePercent = _feePercent;
+        escrowImplementation = _escrowImplementation;
     }
 
     function createEscrow(string memory _uri) external payable {
@@ -51,7 +53,7 @@ contract EscrowFactory is Ownable, ReentrancyGuard {
         }
     }
 
-    function destroy(address _owner) external {
-        delete escrows[_owner];
-    }
+    // function destroy(address _owner, uint256 index) external {
+    //     delete escrows[_owner];
+    // }
 }

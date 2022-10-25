@@ -9,14 +9,14 @@ import "./interface/ILocker.sol";
 
 contract Escrow is ReentrancyGuard {
     using SafeERC20 for IERC20;
-    string uri;
-    address originator;
-    address locker;
-    uint256 feePercent;
-    address feeRecipient;
-    uint256 lockDuration;
-    uint256 milestoneID;
-    mapping(uint256 => uint256) lockList;
+    string public uri;
+    address public originator;
+    address public locker;
+    uint256 public feePercent;
+    address public feeRecipient;
+    uint256 public lockDuration;
+    uint256 public milestoneID;
+    mapping(uint256 => uint256) public lockList;
 
     enum MilestoneStatus {
         Created,
@@ -35,7 +35,7 @@ contract Escrow is ReentrancyGuard {
         MilestoneStatus status;
     }
 
-    Milestone[] milestones;
+    Milestone[] public milestones;
 
     function initialize(
         string memory _uri,
@@ -62,7 +62,7 @@ contract Escrow is ReentrancyGuard {
         _;
     }
     modifier onlyParticipant(uint256 mID) {
-        require(msg.sender == milestones[mID].participant, "Not owner");
+        require(msg.sender == milestones[mID].participant, "Not Participant");
         _;
     }
 
@@ -95,7 +95,6 @@ contract Escrow is ReentrancyGuard {
         uint256 timestamp,
         string memory metadata
     ) external onlyOriginator nonReentrant {
-        require(milestones[mID].amount > 0, "Invalid Milestone");
         require(
             milestones[mID].status == MilestoneStatus.Created ||
                 milestones[mID].status == MilestoneStatus.Deposited ||
@@ -114,7 +113,6 @@ contract Escrow is ReentrancyGuard {
         onlyParticipant(mID)
         nonReentrant
     {
-        require(milestones[mID].amount > 0, "Invalid Milestone");
         require(
             milestones[mID].status == MilestoneStatus.Deposited,
             "Invalid Milestone"
@@ -127,7 +125,6 @@ contract Escrow is ReentrancyGuard {
         onlyOriginator
         nonReentrant
     {
-        require(milestones[mID].amount > 0, "Invalid Milestone");
         require(
             milestones[mID].status == MilestoneStatus.Created,
             "Invalid Milestone"
@@ -141,7 +138,6 @@ contract Escrow is ReentrancyGuard {
     }
 
     function claimFund(uint256 mID) external nonReentrant {
-        require(milestones[mID].amount > 0, "Invalid Milestone");
         require(
             milestones[mID].status == MilestoneStatus.Released,
             "Invalid Milestone"
@@ -163,7 +159,6 @@ contract Escrow is ReentrancyGuard {
         onlyOriginator
         nonReentrant
     {
-        require(milestones[mID].amount > 0, "Invalid Milestone");
         require(
             milestones[mID].status > MilestoneStatus.Accepted,
             "Invalid Milestone"
@@ -193,7 +188,6 @@ contract Escrow is ReentrancyGuard {
     }
 
     function createDispute(uint256 mID) external onlyOriginator nonReentrant {
-        require(milestones[mID].amount > 0, "Invalid Milestone");
         require(
             milestones[mID].status == MilestoneStatus.Released,
             "Fund is not released"
@@ -211,7 +205,6 @@ contract Escrow is ReentrancyGuard {
         onlyParticipant(mID)
         nonReentrant
     {
-        require(milestones[mID].amount > 0, "Invalid Milestone");
         require(
             milestones[mID].status == MilestoneStatus.Disputed,
             "Invalid Milestone"
@@ -227,7 +220,6 @@ contract Escrow is ReentrancyGuard {
     }
 
     function cancelDispute(uint256 mID) external onlyOriginator nonReentrant {
-        require(milestones[mID].amount > 0, "Invalid Milestone");
         require(
             milestones[mID].status == MilestoneStatus.Disputed,
             "Invalid Milestone"
