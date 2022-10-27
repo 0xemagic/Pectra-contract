@@ -6,8 +6,12 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+import "./interface/IEscrowInit.sol";
+import "./interface/IEscrow.sol";
+
 contract Locker is ReentrancyGuard {
     using SafeERC20 for IERC20;
+
     struct LockInfo {
         address token;
         address beneficiary;
@@ -16,8 +20,13 @@ contract Locker is ReentrancyGuard {
         uint256 unlockTimestamp;
     }
     LockInfo[] public lockInfo;
+    address factoryAddress;
 
     constructor() {}
+
+    function setFactoryAddress(address _factory) external {
+        factoryAddress = _factory;
+    }
 
     function CreateLock(
         address _token,
@@ -26,6 +35,10 @@ contract Locker is ReentrancyGuard {
         uint256 _mID,
         uint256 _unlockTimestamp
     ) external returns (uint256) {
+        require(
+            IEscrowInit(factoryAddress).isEscrow(msg.sender) == true,
+            "not escrow contract"
+        );
         lockInfo.push(
             LockInfo({
                 token: _token,
@@ -35,21 +48,46 @@ contract Locker is ReentrancyGuard {
                 unlockTimestamp: _unlockTimestamp
             })
         );
+
+        IERC20(_token).safeTransferFrom(msg.sender, address(this), _amount);
         return lockInfo.length - 1;
     }
 
     function Release(uint256 lockID) external {
+        require(
+            IEscrowInit(factoryAddress).isEscrow(msg.sender) == true,
+            "not escrow contract"
+        );
         require(lockInfo[lockID].mID >= 0, "invalid lockID");
         require(
             block.timestamp >= lockInfo[lockID].unlockTimestamp,
             "Not available fund"
         );
-        IERC20(lockInfo[lockID].token).approve(
+        require(
+            IEscrow(msg.sender).milestones(lockInfo[lockID].mID).status ==
+                IEscrow.MilestoneStatus.Deposited,
+            "It is a deposted"
+        );
+        IERC20(lockInfo[lockID].token).safeTransfer(
             lockInfo[lockID].beneficiary,
             lockInfo[lockID].amount
         );
-        IERC20(lockInfo[lockID].token).transfer(
-            lockInfo[lockID].beneficiary,
+    }
+
+    function ReleaseDeposited(uint256 lockID) external {
+        require(
+            IEscrowInit(factoryAddress).isEscrow(msg.sender) == true,
+            "not escrow contract"
+        );
+        require(lockInfo[lockID].mID >= 0, "invalid lockID");
+        require(
+            IEscrow(msg.sender).milestones(lockInfo[lockID].mID).status ==
+                IEscrow.MilestoneStatus.Deposited,
+            "It is not deposted"
+        );
+        // require(isDeposited == true, "Can't resolve the active milestone");
+        IERC20(lockInfo[lockID].token).safeTransfer(
+            IEscrow(msg.sender).originator(),
             lockInfo[lockID].amount
         );
     }

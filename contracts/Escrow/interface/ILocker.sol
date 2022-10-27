@@ -12,4 +12,6 @@ interface ILocker {
     ) external returns (uint256);
 
     function Release(uint256 lockID) external;
+
+    function ReleaseDeposited(uint256 lockID) external;
 }

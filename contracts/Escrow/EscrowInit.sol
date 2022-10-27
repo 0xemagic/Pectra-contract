@@ -16,6 +16,7 @@ contract EscrowInit is Ownable, ReentrancyGuard {
     uint256 lockDuration;
 
     mapping(address => Escrow[]) public escrows;
+    mapping(address => bool) public isEscrow;
 
     /// @dev implement address of project contract
     address escrowImplementation;
@@ -39,18 +40,11 @@ contract EscrowInit is Ownable, ReentrancyGuard {
     function createEscrow(string memory _uri) external payable {
         require(msg.value == createFee, "Pay escrow creation fee!");
         (bool sent, ) = feeRecipient.call{value: createFee}("");
-        if (sent) {
-            Escrow newEscrow = Escrow(Clones.clone(escrowImplementation));
-            newEscrow.initialize(
-                _uri,
-                msg.sender,
-                locker,
-                feePercent,
-                feeRecipient,
-                lockDuration
-            );
-            escrows[msg.sender].push(newEscrow);
-        }
+        require(sent, "can't create escrow");
+        Escrow newEscrow = Escrow(Clones.clone(escrowImplementation));
+        newEscrow.initialize(_uri, msg.sender, locker);
+        escrows[msg.sender].push(newEscrow);
+        isEscrow[msg.sender] = true;
     }
 
     // function destroy(address _owner, uint256 index) external {

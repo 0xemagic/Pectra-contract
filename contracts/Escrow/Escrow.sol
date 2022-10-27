@@ -6,24 +6,26 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./interface/ILocker.sol";
+import "./interface/IEscrowInit.sol";
 
 contract Escrow is ReentrancyGuard {
     using SafeERC20 for IERC20;
     string public uri;
     address public originator;
     address public locker;
-    uint256 public feePercent;
-    address public feeRecipient;
-    uint256 public lockDuration;
     uint256 public milestoneID;
+    address public factory;
+    bool isInit;
     mapping(uint256 => uint256) public lockList;
 
     enum MilestoneStatus {
         Created,
         Deposited,
         Accepted,
+        Rquested,
         Released,
-        Disputed
+        Disputed,
+        Closed
     }
     struct Milestone {
         address token;
@@ -38,22 +40,19 @@ contract Escrow is ReentrancyGuard {
     Milestone[] public milestones;
 
     function initialize(
-        string memory _uri,
+        string calldata _uri,
         address _owner,
-        address _locker,
-        uint256 _feePercent,
-        address _feeRecipient,
-        uint256 _lockDuration
+        address _locker
     ) public {
+        require(isInit == false, "will not init again");
         uri = _uri;
         originator = _owner;
         locker = _locker;
-        feePercent = _feePercent;
-        feeRecipient = _feeRecipient;
-        lockDuration = _lockDuration;
+        factory = msg.sender;
+        isInit = true;
     }
 
-    function updateMetadata(string memory _uri) external nonReentrant {
+    function updateMetadata(string calldata _uri) external nonReentrant {
         uri = _uri;
     }
 
@@ -71,7 +70,7 @@ contract Escrow is ReentrancyGuard {
         address _participant,
         uint256 amount,
         uint256 timestamp,
-        string memory metadata
+        string calldata metadata
     ) external onlyOriginator nonReentrant {
         require(amount > 0, "Amount should not be zero");
         milestones.push(
@@ -93,12 +92,10 @@ contract Escrow is ReentrancyGuard {
         address _participant,
         uint256 amount,
         uint256 timestamp,
-        string memory metadata
+        string calldata metadata
     ) external onlyOriginator nonReentrant {
         require(
-            milestones[mID].status == MilestoneStatus.Created ||
-                milestones[mID].status == MilestoneStatus.Deposited ||
-                milestones[mID].status != MilestoneStatus.Accepted,
+            milestones[mID].status == MilestoneStatus.Created,
             "Invalid Milestone"
         );
         milestones[mID].token = _token;
@@ -114,7 +111,7 @@ contract Escrow is ReentrancyGuard {
         nonReentrant
     {
         require(
-            milestones[mID].status == MilestoneStatus.Deposited,
+            milestones[mID].status == MilestoneStatus.Created,
             "Invalid Milestone"
         );
         milestones[mID].status = MilestoneStatus.Accepted;
@@ -126,10 +123,10 @@ contract Escrow is ReentrancyGuard {
         nonReentrant
     {
         require(
-            milestones[mID].status == MilestoneStatus.Created,
+            milestones[mID].status == MilestoneStatus.Accepted,
             "Invalid Milestone"
         );
-        IERC20(milestones[mID].token).transferFrom(
+        IERC20(milestones[mID].token).safeTransferFrom(
             originator,
             address(this),
             milestones[mID].amount
@@ -145,13 +142,20 @@ contract Escrow is ReentrancyGuard {
         ILocker(locker).Release(lockList[mID]);
     }
 
-    function requestMilestone(uint256 mID) external nonReentrant {
-        // require(milestones[mID].amount > 0, "Invalid Milestone");
-        // require(
-        //     milestones[mID].status == MilestoneStatus.Deposited,
-        //     "Invalid Milestone"
-        // );
-        // ILocker(locker).Release(lockList[mID]);
+    function requestMilestone(uint256 mID)
+        external
+        nonReentrant
+        onlyParticipant(mID)
+    {
+        require(
+            milestones[mID].status == MilestoneStatus.Deposited,
+            "Invalid Milestone"
+        );
+        require(
+            milestones[mID].timestamp < block.timestamp,
+            "Invalid Milestone"
+        );
+        milestones[mID].status = MilestoneStatus.Rquested;
     }
 
     function releaseMilestone(uint256 mID)
@@ -160,14 +164,15 @@ contract Escrow is ReentrancyGuard {
         nonReentrant
     {
         require(
-            milestones[mID].status > MilestoneStatus.Accepted,
+            milestones[mID].status == MilestoneStatus.Deposited ||
+                milestones[mID].status == MilestoneStatus.Rquested,
             "Invalid Milestone"
         );
 
-        uint256 milestoneFee = (milestones[mID].amount * feePercent) / 1000;
-        IERC20(milestones[mID].token).transferFrom(
-            originator,
-            feeRecipient,
+        uint256 milestoneFee = (milestones[mID].amount *
+            IEscrowInit(factory).feePercent()) / 1000;
+        IERC20(milestones[mID].token).safeTransfer(
+            IEscrowInit(factory).feeRecipient(),
             milestoneFee
         );
         uint256 lockerID = ILocker(locker).CreateLock(
@@ -175,15 +180,10 @@ contract Escrow is ReentrancyGuard {
             milestones[mID].participant,
             milestones[mID].amount - milestoneFee,
             mID,
-            block.timestamp + lockDuration
+            block.timestamp + IEscrowInit(factory).lockDuration()
         );
         lockList[mID] = lockerID;
         milestones[mID].releasedTimestamp = block.timestamp;
-        IERC20(milestones[mID].token).transferFrom(
-            originator,
-            locker,
-            milestones[mID].amount - milestoneFee
-        );
         milestones[mID].status = MilestoneStatus.Released;
     }
 
@@ -193,7 +193,9 @@ contract Escrow is ReentrancyGuard {
             "Fund is not released"
         );
         require(
-            milestones[mID].releasedTimestamp + lockDuration > block.timestamp,
+            milestones[mID].releasedTimestamp +
+                IEscrowInit(factory).lockDuration() >
+                block.timestamp,
             "Already Claimed"
         );
 
@@ -209,14 +211,8 @@ contract Escrow is ReentrancyGuard {
             milestones[mID].status == MilestoneStatus.Disputed,
             "Invalid Milestone"
         );
-        uint256 milestoneFee = (milestones[mID].amount * feePercent) / 1000;
-
-        IERC20(milestones[mID].token).approve(locker, milestones[mID].amount);
-        IERC20(milestones[mID].token).transferFrom(
-            locker,
-            originator,
-            milestones[mID].amount - milestoneFee
-        );
+        ILocker(locker).ReleaseDeposited(lockList[mID]);
+        milestones[mID].status = MilestoneStatus.Closed;
     }
 
     function cancelDispute(uint256 mID) external onlyOriginator nonReentrant {
@@ -227,13 +223,13 @@ contract Escrow is ReentrancyGuard {
         milestones[mID].status = MilestoneStatus.Released;
     }
 
-    function destroy() external returns (bool) {
-        for (uint256 i = 0; i < milestones.length; i++) {
-            if (milestones[i].status != MilestoneStatus.Released) {
-                return false;
-            }
-        }
-        selfdestruct(payable(msg.sender));
-        return true;
-    }
+    // function destroy() external returns (bool) {
+    //     for (uint256 i = 0; i < milestones.length; i++) {
+    //         if (milestones[i].status != MilestoneStatus.Released) {
+    //             return false;
+    //         }
+    //     }
+    //     selfdestruct(payable(msg.sender));
+    //     return true;
+    // }
 }
