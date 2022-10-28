@@ -14,4 +14,6 @@ interface IEscrowInit {
     function feeRecipient() external view returns (address);
 
     function lockDuration() external view returns (uint256);
+
+    function locker() external view returns (address);
 }

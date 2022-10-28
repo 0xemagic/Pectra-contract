@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import "./interface/IEscrowInit.sol";
 import "./interface/IEscrow.sol";
+import "hardhat/console.sol";
 
 contract Locker is ReentrancyGuard {
     using SafeERC20 for IERC20;
@@ -80,11 +81,11 @@ contract Locker is ReentrancyGuard {
             "not escrow contract"
         );
         require(lockInfo[lockID].mID >= 0, "invalid lockID");
-        require(
-            IEscrow(msg.sender).milestones(lockInfo[lockID].mID).status ==
-                IEscrow.MilestoneStatus.Deposited,
-            "It is not deposted"
-        );
+        // require(
+        //     IEscrow(msg.sender).milestones(lockInfo[lockID].mID).status ==
+        //         IEscrow.MilestoneStatus.Disputed,
+        //     "It is not deposted"
+        // );
         // require(isDeposited == true, "Can't resolve the active milestone");
         IERC20(lockInfo[lockID].token).safeTransfer(
             IEscrow(msg.sender).originator(),
@@ -92,5 +93,5 @@ contract Locker is ReentrancyGuard {
         );
     }
 
-    receive() external payable {}
+    // fallback() external payable {}
 }

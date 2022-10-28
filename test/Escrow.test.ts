@@ -4,7 +4,20 @@ import { solidity } from "ethereum-waffle";
 import hre, { ethers } from "hardhat";
 import { Artifact } from "hardhat/types";
 
-import { Dai, DaiFactory, Escrow, EscrowFactory, EscrowInit, EscrowInitFactory, Locker, LockerFactory, Usdc, UsdcFactory, Usdt, UsdtFactory } from "../typechain";
+import {
+  Dai,
+  DaiFactory,
+  Escrow,
+  EscrowFactory,
+  EscrowInit,
+  EscrowInitFactory,
+  Locker,
+  LockerFactory,
+  Usdc,
+  UsdcFactory,
+  Usdt,
+  UsdtFactory,
+} from "../typechain";
 import { advanceTimeAndBlock, getLatestBlockTimestamp } from "../utils/util";
 
 const { expect } = chai;
@@ -60,6 +73,7 @@ describe("Escrow", () => {
     USDCToken = await USDCTOKEN.deploy();
     const DAITOKEN = <DaiFactory>await ethers.getContractFactory("DAI");
     DAIToken = await DAITOKEN.deploy();
+    await locker.setFactoryAddress(escrowInit.address);
     await escrowInit.connect(alice).createEscrow(url, {
       value: ethers.utils.parseEther("0.1"),
     });
@@ -171,17 +185,17 @@ describe("Escrow", () => {
         timestamp,
         "Init project"
       );
-    await newEscrow.connect(alice).depositMilestone(0);
-    const balance = await USDTToken.balanceOf(newEscrow.address);
-    expect(balance).to.be.equal(payAmount);
     await expect(
       newEscrow.connect(alice).depositMilestone(0)
     ).to.be.revertedWith("Invalid Milestone");
+    await newEscrow.connect(bob).agreeMilestone(0);
+    await newEscrow.connect(alice).depositMilestone(0);
+    const balance = await USDTToken.balanceOf(newEscrow.address);
+    expect(balance).to.be.equal(payAmount);
   });
 
   it("Agree milestone", async () => {
     const timestamp = await getLatestBlockTimestamp();
-
     await newEscrow
       .connect(alice)
       .createMilestone(
@@ -191,17 +205,14 @@ describe("Escrow", () => {
         timestamp,
         "Init project"
       );
-    await expect(newEscrow.agreeMilestone(0)).to.be.revertedWith(
-      "Not Participant"
-    );
 
+    await newEscrow.connect(bob).agreeMilestone(0);
+    await newEscrow.connect(alice).depositMilestone(0);
     await expect(newEscrow.connect(bob).agreeMilestone(0)).to.be.revertedWith(
       "Invalid Milestone"
     );
-    await newEscrow.connect(alice).depositMilestone(0);
-    await newEscrow.connect(bob).agreeMilestone(0);
     const milestoneInfo = await newEscrow.milestones(0);
-    expect(milestoneInfo.status).to.be.equal(2);
+    expect(milestoneInfo.status).to.be.equal(1);
   });
 
   it("Release milestone", async () => {
@@ -217,13 +228,11 @@ describe("Escrow", () => {
         "Init project"
       );
     await expect(newEscrow.releaseMilestone(0)).to.be.revertedWith("Not owner");
-
-    await newEscrow.connect(alice).depositMilestone(0);
+    await newEscrow.connect(bob).agreeMilestone(0);
     await expect(
       newEscrow.connect(alice).releaseMilestone(0)
     ).to.be.revertedWith("Invalid Milestone");
-
-    await newEscrow.connect(bob).agreeMilestone(0);
+    await newEscrow.connect(alice).depositMilestone(0);
     const milestoneInfo = await newEscrow.milestones(0);
     await newEscrow.connect(alice).releaseMilestone(0);
     const balance = await USDTToken.balanceOf(locker.address);
@@ -243,9 +252,9 @@ describe("Escrow", () => {
         "Init project"
       );
     await expect(newEscrow.createDispute(0)).to.be.revertedWith("Not owner");
+    await newEscrow.connect(bob).agreeMilestone(0);
 
     await newEscrow.connect(alice).depositMilestone(0);
-    await newEscrow.connect(bob).agreeMilestone(0);
     await expect(newEscrow.connect(alice).createDispute(0)).to.be.revertedWith(
       "Fund is not released"
     );
@@ -269,9 +278,9 @@ describe("Escrow", () => {
         "Init project"
       );
     await expect(newEscrow.createDispute(0)).to.be.revertedWith("Not owner");
+    await newEscrow.connect(bob).agreeMilestone(0);
 
     await newEscrow.connect(alice).depositMilestone(0);
-    await newEscrow.connect(bob).agreeMilestone(0);
     await expect(newEscrow.connect(alice).createDispute(0)).to.be.revertedWith(
       "Fund is not released"
     );
@@ -297,9 +306,9 @@ describe("Escrow", () => {
     await expect(newEscrow.connect(alice).resolveDispute(0)).to.be.revertedWith(
       "Not Participant"
     );
+    await newEscrow.connect(bob).agreeMilestone(0);
 
     await newEscrow.connect(alice).depositMilestone(0);
-    await newEscrow.connect(bob).agreeMilestone(0);
 
     await newEscrow.connect(alice).releaseMilestone(0);
     await expect(newEscrow.connect(bob).resolveDispute(0)).to.be.revertedWith(

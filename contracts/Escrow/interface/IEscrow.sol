@@ -33,5 +33,5 @@ interface IEscrow {
 
     function originator() external returns (address);
 
-    function milestones(uint256) external view returns (Milestone calldata);
+    function milestones(uint256) external view returns (Milestone memory);
 }

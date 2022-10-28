@@ -13,7 +13,7 @@ contract EscrowInit is Ownable, ReentrancyGuard {
     uint256 public feePercent;
     address public feeRecipient;
     address public locker;
-    uint256 lockDuration;
+    uint256 public lockDuration;
 
     mapping(address => Escrow[]) public escrows;
     mapping(address => bool) public isEscrow;
@@ -42,9 +42,9 @@ contract EscrowInit is Ownable, ReentrancyGuard {
         (bool sent, ) = feeRecipient.call{value: createFee}("");
         require(sent, "can't create escrow");
         Escrow newEscrow = Escrow(Clones.clone(escrowImplementation));
-        newEscrow.initialize(_uri, msg.sender, locker);
+        newEscrow.initialize(_uri, msg.sender);
         escrows[msg.sender].push(newEscrow);
-        isEscrow[msg.sender] = true;
+        isEscrow[address(newEscrow)] = true;
     }
 
     // function destroy(address _owner, uint256 index) external {

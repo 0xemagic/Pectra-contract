@@ -7,12 +7,12 @@ import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./interface/ILocker.sol";
 import "./interface/IEscrowInit.sol";
+import "hardhat/console.sol";
 
 contract Escrow is ReentrancyGuard {
     using SafeERC20 for IERC20;
     string public uri;
     address public originator;
-    address public locker;
     uint256 public milestoneID;
     address public factory;
     bool isInit;
@@ -39,15 +39,10 @@ contract Escrow is ReentrancyGuard {
 
     Milestone[] public milestones;
 
-    function initialize(
-        string calldata _uri,
-        address _owner,
-        address _locker
-    ) public {
+    function initialize(string calldata _uri, address _owner) public {
         require(isInit == false, "will not init again");
         uri = _uri;
         originator = _owner;
-        locker = _locker;
         factory = msg.sender;
         isInit = true;
     }
@@ -139,7 +134,7 @@ contract Escrow is ReentrancyGuard {
             milestones[mID].status == MilestoneStatus.Released,
             "Invalid Milestone"
         );
-        ILocker(locker).Release(lockList[mID]);
+        ILocker(IEscrowInit(factory).locker()).Release(lockList[mID]);
     }
 
     function requestMilestone(uint256 mID)
@@ -168,6 +163,10 @@ contract Escrow is ReentrancyGuard {
                 milestones[mID].status == MilestoneStatus.Rquested,
             "Invalid Milestone"
         );
+        IERC20(milestones[mID].token).approve(
+            IEscrowInit(factory).locker(),
+            milestones[mID].amount
+        );
 
         uint256 milestoneFee = (milestones[mID].amount *
             IEscrowInit(factory).feePercent()) / 1000;
@@ -175,7 +174,7 @@ contract Escrow is ReentrancyGuard {
             IEscrowInit(factory).feeRecipient(),
             milestoneFee
         );
-        uint256 lockerID = ILocker(locker).CreateLock(
+        uint256 lockerID = ILocker(IEscrowInit(factory).locker()).CreateLock(
             milestones[mID].token,
             milestones[mID].participant,
             milestones[mID].amount - milestoneFee,
@@ -211,7 +210,7 @@ contract Escrow is ReentrancyGuard {
             milestones[mID].status == MilestoneStatus.Disputed,
             "Invalid Milestone"
         );
-        ILocker(locker).ReleaseDeposited(lockList[mID]);
+        ILocker(IEscrowInit(factory).locker()).ReleaseDeposited(lockList[mID]);
         milestones[mID].status = MilestoneStatus.Closed;
     }
 
