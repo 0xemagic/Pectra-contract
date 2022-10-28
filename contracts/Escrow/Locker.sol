@@ -59,15 +59,9 @@ contract Locker is ReentrancyGuard {
             IEscrowInit(factoryAddress).isEscrow(msg.sender) == true,
             "not escrow contract"
         );
-        require(lockInfo[lockID].mID >= 0, "invalid lockID");
         require(
             block.timestamp >= lockInfo[lockID].unlockTimestamp,
             "Not available fund"
-        );
-        require(
-            IEscrow(msg.sender).milestones(lockInfo[lockID].mID).status ==
-                IEscrow.MilestoneStatus.Deposited,
-            "It is a deposted"
         );
         IERC20(lockInfo[lockID].token).safeTransfer(
             lockInfo[lockID].beneficiary,
@@ -80,13 +74,6 @@ contract Locker is ReentrancyGuard {
             IEscrowInit(factoryAddress).isEscrow(msg.sender) == true,
             "not escrow contract"
         );
-        require(lockInfo[lockID].mID >= 0, "invalid lockID");
-        // require(
-        //     IEscrow(msg.sender).milestones(lockInfo[lockID].mID).status ==
-        //         IEscrow.MilestoneStatus.Disputed,
-        //     "It is not deposted"
-        // );
-        // require(isDeposited == true, "Can't resolve the active milestone");
         IERC20(lockInfo[lockID].token).safeTransfer(
             IEscrow(msg.sender).originator(),
             lockInfo[lockID].amount

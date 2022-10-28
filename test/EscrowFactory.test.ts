@@ -2,7 +2,6 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-wit
 import chai from "chai";
 import { solidity } from "ethereum-waffle";
 import hre, { ethers } from "hardhat";
-import { advanceTimeAndBlock, getLatestBlockTimestamp } from "../utils/util";
 
 import {
   Escrow,
@@ -12,6 +11,7 @@ import {
   Locker,
   LockerFactory,
 } from "../typechain";
+import { advanceTimeAndBlock, getLatestBlockTimestamp } from "../utils/util";
 
 const { expect } = chai;
 chai.use(solidity);

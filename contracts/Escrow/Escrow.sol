@@ -129,12 +129,13 @@ contract Escrow is ReentrancyGuard {
         milestones[mID].status = MilestoneStatus.Deposited;
     }
 
-    function claimFund(uint256 mID) external nonReentrant {
+    function claimFund(uint256 mID) external nonReentrant onlyParticipant(mID) {
         require(
             milestones[mID].status == MilestoneStatus.Released,
             "Invalid Milestone"
         );
         ILocker(IEscrowInit(factory).locker()).Release(lockList[mID]);
+        milestones[mID].status = MilestoneStatus.Closed;
     }
 
     function requestMilestone(uint256 mID)
@@ -146,10 +147,7 @@ contract Escrow is ReentrancyGuard {
             milestones[mID].status == MilestoneStatus.Deposited,
             "Invalid Milestone"
         );
-        require(
-            milestones[mID].timestamp < block.timestamp,
-            "Invalid Milestone"
-        );
+        require(milestones[mID].timestamp < block.timestamp, "Not Released");
         milestones[mID].status = MilestoneStatus.Rquested;
     }
 

@@ -103,6 +103,13 @@ describe("Escrow", () => {
     const uri = await newEscrow.uri();
     expect(uri).to.be.equal(url);
   });
+  it("initialize", async () => {
+    const newUrl = "https://moonbear.finance/";
+
+    await expect(
+      newEscrow.initialize(newUrl, alice.address)
+    ).to.be.revertedWith("will not init again");
+  });
 
   it("update metadata", async () => {
     const newUrl = "https://moonbear.finance/";
@@ -110,6 +117,7 @@ describe("Escrow", () => {
     const uri = await newEscrow.uri();
     expect(uri).to.be.equal(newUrl);
   });
+
   it("Create new milestone", async () => {
     const timestamp = await getLatestBlockTimestamp();
     await expect(
@@ -167,6 +175,30 @@ describe("Escrow", () => {
         timestamp,
         "Init project"
       );
+    await newEscrow
+      .connect(alice)
+      .updateMilestone(
+        0,
+        USDTToken.address,
+        bob.address,
+        payAmount,
+        timestamp,
+        "Init project"
+      );
+    await newEscrow.connect(bob).agreeMilestone(0);
+    await newEscrow.connect(alice).depositMilestone(0);
+    await expect(
+      newEscrow
+        .connect(alice)
+        .updateMilestone(
+          0,
+          USDTToken.address,
+          bob.address,
+          payAmount,
+          timestamp,
+          "Init project"
+        )
+    ).to.be.revertedWith("Invalid Milestone");
     const milestoneInfo = await newEscrow.milestones(0);
     expect(milestoneInfo.token).to.be.equal(USDTToken.address);
     expect(milestoneInfo.amount).to.be.equal(payAmount);
@@ -319,5 +351,111 @@ describe("Escrow", () => {
     const milestoneInfo = await newEscrow.milestones(0);
     const balance = await USDTToken.balanceOf(locker.address);
     expect(balance).to.be.equal(0);
+  });
+  it("Cancel dispute", async () => {
+    const timestamp = await getLatestBlockTimestamp();
+
+    await newEscrow
+      .connect(alice)
+      .createMilestone(
+        USDTToken.address,
+        bob.address,
+        payAmount,
+        timestamp,
+        "Init project"
+      );
+    await expect(newEscrow.cancelDispute(0)).to.be.revertedWith("Not owner");
+    await newEscrow.connect(bob).agreeMilestone(0);
+    await newEscrow.connect(alice).depositMilestone(0);
+    await newEscrow.connect(alice).releaseMilestone(0);
+    await expect(newEscrow.connect(alice).cancelDispute(0)).to.be.revertedWith(
+      "Invalid Milestone"
+    );
+    await newEscrow.connect(alice).createDispute(0);
+    await newEscrow.connect(alice).cancelDispute(0);
+
+    const milestoneInfo = await newEscrow.milestones(0);
+    expect(milestoneInfo.status).to.be.equal(4);
+  });
+  it("Claim Fund", async () => {
+    const timestamp = await getLatestBlockTimestamp();
+
+    await newEscrow
+      .connect(alice)
+      .createMilestone(
+        USDTToken.address,
+        bob.address,
+        payAmount,
+        timestamp,
+        "Init project"
+      );
+    await expect(newEscrow.claimFund(0)).to.be.revertedWith("Not Participant");
+    await newEscrow.connect(bob).agreeMilestone(0);
+    await newEscrow.connect(alice).depositMilestone(0);
+    await expect(newEscrow.connect(bob).claimFund(0)).to.be.revertedWith(
+      "Invalid Milestone"
+    );
+    await newEscrow.connect(alice).releaseMilestone(0);
+    await expect(newEscrow.connect(bob).claimFund(0)).to.be.revertedWith(
+      "Not available fund"
+    );
+    advanceTimeAndBlock(100);
+    const balance0 = await USDTToken.balanceOf(locker.address);
+    await newEscrow.connect(bob).claimFund(0);
+
+    const balance1 = await USDTToken.balanceOf(locker.address);
+    const balance2 = await USDTToken.balanceOf(bob.address);
+    expect(balance1).to.be.equal(0);
+    expect(balance2).to.be.equal(paidAmount);
+
+    const milestoneInfo = await newEscrow.milestones(0);
+
+    expect(milestoneInfo.status).to.be.equal(6);
+  });
+  it("Request milestone", async () => {
+    const timestamp = await getLatestBlockTimestamp();
+
+    await newEscrow
+      .connect(alice)
+      .createMilestone(
+        USDTToken.address,
+        bob.address,
+        payAmount,
+        timestamp,
+        "Init project"
+      );
+    await expect(newEscrow.requestMilestone(0)).to.be.revertedWith(
+      "Not Participant"
+    );
+    await expect(newEscrow.connect(bob).requestMilestone(0)).to.be.revertedWith(
+      "Invalid Milestone"
+    );
+    await newEscrow.connect(bob).agreeMilestone(0);
+    await newEscrow.connect(alice).depositMilestone(0);
+    await newEscrow.connect(bob).requestMilestone(0);
+
+    const milestoneInfo = await newEscrow.milestones(0);
+    expect(milestoneInfo.status).to.be.equal(3);
+  });
+  it("Request milestone, timeLock", async () => {
+    const timestamp = await getLatestBlockTimestamp();
+
+    await newEscrow
+      .connect(alice)
+      .createMilestone(
+        USDTToken.address,
+        bob.address,
+        payAmount,
+        timestamp + 1000,
+        "Init project"
+      );
+    await expect(newEscrow.requestMilestone(0)).to.be.revertedWith(
+      "Not Participant"
+    );
+    await newEscrow.connect(bob).agreeMilestone(0);
+    await newEscrow.connect(alice).depositMilestone(0);
+    await expect(newEscrow.connect(bob).requestMilestone(0)).to.be.revertedWith(
+      "Not Released"
+    );
   });
 });

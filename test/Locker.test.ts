@@ -3,6 +3,7 @@ import chai from "chai";
 import { solidity } from "ethereum-waffle";
 import hre, { ethers } from "hardhat";
 import { Artifact } from "hardhat/types";
+
 import {
   Dai,
   DaiFactory,
@@ -61,6 +62,7 @@ describe("Locker", () => {
       owner.address,
       escrow.address
     );
+    await locker.setFactoryAddress(escrowInit.address);
     const USDTTOKEN = <UsdtFactory>await ethers.getContractFactory("USDT");
     USDTToken = await USDTTOKEN.deploy();
     const USDCTOKEN = <UsdcFactory>await ethers.getContractFactory("USDC");
@@ -69,14 +71,16 @@ describe("Locker", () => {
     DAIToken = await DAITOKEN.deploy();
   });
   it("Create New Lock", async () => {
-    await locker.CreateLock(
-      USDTToken.address,
-      alice.address,
-      depositAmount,
-      0,
-      0
+    await expect(
+      locker.CreateLock(USDTToken.address, alice.address, depositAmount, 0, 0)
+    ).to.be.revertedWith("not escrow contract");
+  });
+  it("Release", async () => {
+    await expect(locker.Release(0)).to.be.revertedWith("not escrow contract");
+  });
+  it("Release Deposited", async () => {
+    await expect(locker.ReleaseDeposited(0)).to.be.revertedWith(
+      "not escrow contract"
     );
-    const lockData = await locker.lockInfo(0);
-    expect(lockData.token).to.be.equal(USDTToken.address);
   });
 });
