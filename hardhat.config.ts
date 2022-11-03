@@ -23,6 +23,10 @@ const config: HardhatUserConfig = {
       url: "http://127.0.0.1:8545",
       timeout: 10000000,
     },
+    bnbTest: {
+      url: `https://data-seed-prebsc-1-s1.binance.org:8545`,
+      timeout: 10000000,
+    },
     rinkeby: {
       url: `https://rinkeby.infura.io/v3/70c4cf77c9054fd3a3196659f7dfe4f7`,
       timeout: 10000000,
