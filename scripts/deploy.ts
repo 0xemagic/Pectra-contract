@@ -7,12 +7,14 @@ async function main() {
 
   const lockedAmount = ethers.utils.parseEther("1");
 
-  const Lock = await ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  const VRFConsumer = await ethers.getContractFactory("VRFConsumer");
+  const vrfConsumer = await VRFConsumer.deploy(2120);
 
-  await lock.deployed();
+  await vrfConsumer.deployed();
 
-  console.log(`Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`);
+  console.log(
+    `Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${vrfConsumer.address}`
+  );
 }
 
 // We recommend this pattern to be able to use async/await everywhere

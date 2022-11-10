@@ -8,6 +8,9 @@ import "solidity-coverage";
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
+  etherscan: {
+    apiKey: "",
+  },
   networks: {
     hardhat: {
       chainId: 1,
@@ -24,8 +27,10 @@ const config: HardhatUserConfig = {
       timeout: 10000000,
     },
     bnbTest: {
+      chainId: 97,
       url: `https://data-seed-prebsc-1-s1.binance.org:8545`,
       timeout: 10000000,
+      accounts: [""],
     },
     rinkeby: {
       url: `https://rinkeby.infura.io/v3/70c4cf77c9054fd3a3196659f7dfe4f7`,
@@ -47,6 +52,7 @@ const config: HardhatUserConfig = {
           },
         },
       },
+      { version: "0.8.4" },
     ],
   },
 };
