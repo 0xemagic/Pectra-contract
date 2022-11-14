@@ -5,7 +5,9 @@ pragma solidity ^0.8.2;
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
  * Request testnet LINK and ETH here: https://faucets.chain.link/
@@ -19,6 +21,8 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
  */
 
 contract VRFConsumer is VRFConsumerBaseV2, ConfirmedOwner, ReentrancyGuard {
+    using SafeERC20 for IERC20;
+
     event RequestSent(uint256 requestId, uint32 numWords);
     event RequestFulfilled(uint256 requestId, uint256[] randomWords);
 
@@ -26,6 +30,10 @@ contract VRFConsumer is VRFConsumerBaseV2, ConfirmedOwner, ReentrancyGuard {
         bool fulfilled; // whether the request has been successfully fulfilled
         bool exists; // whether a requestId exists
         uint256[] randomWords;
+    }
+    enum LotteryStatus {
+        Open,
+        Close
     }
     mapping(uint256 => RequestStatus) public s_requests; /* requestId --> requestStatus */
     VRFCoordinatorV2Interface COORDINATOR;
@@ -43,7 +51,7 @@ contract VRFConsumer is VRFConsumerBaseV2, ConfirmedOwner, ReentrancyGuard {
     // For a list of available gas lanes on each network,
     // see https://docs.chain.link/docs/vrf/v2/subscription/supported-networks/#configurations
     bytes32 keyHash =
-        0xd4bb89654db74673a187bd804519e65e3f71a52bc55f11da7601a13dcf505314;
+        0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f;
 
     // Depends on the number of requested values that you want sent to the
     // fulfillRandomWords() function. Storing each word costs about 20,000 gas,
@@ -51,7 +59,7 @@ contract VRFConsumer is VRFConsumerBaseV2, ConfirmedOwner, ReentrancyGuard {
     // this limit based on the network that you select, the size of the request,
     // and the processing of the callback request in the fulfillRandomWords()
     // function.
-    uint32 callbackGasLimit = 100000;
+    uint32 callbackGasLimit = 200000;
 
     // The default is 3, but you can set this higher.
     uint16 requestConfirmations = 3;
@@ -61,24 +69,28 @@ contract VRFConsumer is VRFConsumerBaseV2, ConfirmedOwner, ReentrancyGuard {
     uint32 numWords = 2;
 
     //Lotery member
-    address[] members;
-    uint256 currentRequestID;
-    address private constant pancakeRouter =
-        0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3;
-    address private constant LINK = 0x84b9B910527Ad5C03A9Ca831909E21e236EA7b06;
+    address[] public members;
+    uint256 public currentRequestID;
+    address public router;
+    address public LINK;
+    LotteryStatus status = LotteryStatus.Close;
 
     /**
      * HARDCODED FOR BNB TESTNET
      * COORDINATOR: 0x6A2AAd07396B36Fe02a22b33cf443582f682c82f
      */
-    constructor(uint64 subscriptionId)
-        VRFConsumerBaseV2(0x6A2AAd07396B36Fe02a22b33cf443582f682c82f)
-        ConfirmedOwner(msg.sender)
-    {
-        COORDINATOR = VRFCoordinatorV2Interface(
-            0x6A2AAd07396B36Fe02a22b33cf443582f682c82f
-        );
-        s_subscriptionId = subscriptionId;
+    constructor(
+        address _vrfCoordinator,
+        address _link,
+        uint64 _subscriptionId,
+        address _feeRecipient,
+        address _router
+    ) VRFConsumerBaseV2(_vrfCoordinator) ConfirmedOwner(msg.sender) {
+        COORDINATOR = VRFCoordinatorV2Interface(_vrfCoordinator);
+        s_subscriptionId = _subscriptionId;
+        feeRecipient = _feeRecipient;
+        LINK = _link;
+        router = _router;
     }
 
     // Assumes the subscription is funded sufficiently.
@@ -109,8 +121,14 @@ contract VRFConsumer is VRFConsumerBaseV2, ConfirmedOwner, ReentrancyGuard {
         require(s_requests[_requestId].exists, "request not found");
         s_requests[_requestId].fulfilled = true;
         s_requests[_requestId].randomWords = _randomWords;
+        uint256 lotteryFee = (address(this).balance * 100) / 1000;
+        payable(feeRecipient).transfer(lotteryFee);
+        uint256 winnerID = s_requests[_requestId].randomWords[0] % 5;
+        (bool successWinner, ) = payable(members[winnerID]).call{
+            value: address(this).balance
+        }("");
         delete members;
-        currentRequestID = 0;
+        status = LotteryStatus.Close;
         emit RequestFulfilled(_requestId, _randomWords);
     }
 
@@ -125,30 +143,37 @@ contract VRFConsumer is VRFConsumerBaseV2, ConfirmedOwner, ReentrancyGuard {
     }
 
     function entryLottery() external payable nonReentrant {
-        require(msg.value == 0.1 ether, "entry fee should be 0.1 BNB");
-        require(members.length <= 5, "lottery is not started yet");
+        require(msg.value == 0.1 ether, "entry fee should be 0.1 Ether");
+        require(members.length < 5, "lottery is not started yet");
         members.push(msg.sender);
         if (members.length == 5) {
             payable(msg.sender).transfer(0.002 ether);
-            // currentRequestID = requestRandomWords();
-            // address[] memory path;
-            // path = new address[](2);
-            // path[0] = IPancakeRouter(pancakeRouter).WETH();
-            // path[1] = LINK;
-            // IPancakeRouter(pancakeRouter).swapExactETHForTokens{
-            //     value: 0.02 ether
-            // }(0, path, address(this), block.timestamp);
+            address[] memory path;
+            path = new address[](2);
+            path[0] = IUniswapRouter(router).WETH();
+            path[1] = LINK;
+            IUniswapRouter(router).swapETHForExactTokens{value: 0.1 ether}(
+                5e15,
+                path,
+                address(this),
+                block.timestamp
+            );
+
+            currentRequestID = requestRandomWords();
+            status = LotteryStatus.Open;
         }
     }
+
+    fallback() external payable {}
 }
 
-interface IPancakeRouter {
+interface IUniswapRouter {
     function factory() external pure returns (address);
 
     function WETH() external pure returns (address);
 
-    function swapExactETHForTokens(
-        uint256 amountOutMin,
+    function swapETHForExactTokens(
+        uint256 amountOut,
         address[] calldata path,
         address to,
         uint256 deadline
