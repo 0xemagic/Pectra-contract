@@ -1,4 +1,6 @@
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
+import { getImplementationAddress } from "@openzeppelin/upgrades-core";
+const hre = require("hardhat");
 
 async function main() {
   const currentTimestampInSeconds = Math.round(Date.now() / 1000);
@@ -7,19 +9,26 @@ async function main() {
 
   const lockedAmount = ethers.utils.parseEther("1");
 
-  const VRFConsumer = await ethers.getContractFactory("VRFConsumer");
-  // const vrfConsumer = await VRFConsumer.deploy(
-  //   "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed",
-  //   "0x326C977E6efc84E512bB9C30f76E30c160eD06FB",
-  //   2524,
-  //   "0x903e3E9b3F9bC6401Ad77ec8953Eb2FB6fEFC3a3",
-  //   "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506"
-  // );
+  const UpgradesFund = await ethers.getContractFactory(
+    "UpgradeableStabilityFund"
+  );
+  const upgradesFund = await upgrades.upgradeProxy(
+    "0xeab8becB9da913E91204A17146Fbdf9ABB327670",
+    UpgradesFund
+  );
 
-  // await vrfConsumer.deployed();
+  // const upgradesFund = await upgrades.deployProxy(UpgradesFund);
 
+  await upgradesFund.deployed();
+  const currentImplAddress = await getImplementationAddress(
+    ethers.provider,
+    upgradesFund.address
+  );
+  await hre.run("verify:verify", {
+    address: currentImplAddress,
+  });
   console.log(
-    `Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${vrfConsumer.address}`
+    `Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${upgradesFund.address},, ${currentImplAddress}`
   );
 }
 

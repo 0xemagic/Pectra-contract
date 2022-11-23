@@ -2,6 +2,7 @@ import { HardhatUserConfig } from "hardhat/config";
 
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
+import "@openzeppelin/hardhat-upgrades";
 import "hardhat-deploy";
 import "hardhat-typechain";
 import "solidity-coverage";
@@ -28,7 +29,7 @@ const config: HardhatUserConfig = {
     },
     mumbai: {
       chainId: 80001,
-      url: `https://rpc-mumbai.maticvigil.com/`,
+      url: `https://matic-mumbai.chainstacklabs.com/`,
       timeout: 10000000,
       accounts: [""],
     },
