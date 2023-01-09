@@ -54,15 +54,26 @@ contract NFTAdminTest is Test {
         nft = new MyNFT();
     }
 
-    function testMint() public {
+    function testDeployContractAndMintNFT() public returns (address) {
         vm.prank(alice);
-        (address newContract, ) = nft.deployAndMint(69);
+        (address newContract, uint256 nftId) = nft.deployAndMint(69);
         assertEq(nft.ownerOf(1), alice, "alice should be the owner of the NFT");
         assertEq(
             ControlledByNFT(newContract).number(),
             69,
             "number should be equal"
         );
+        assertEq(
+            nft.contractToId(newContract),
+            nftId,
+            "contractToId should be equal"
+        );
+        return address(newContract);
+    }
+
+    function testAdminIsNFTOwner() public {
+        address newContract = testDeployContractAndMintNFT();
+
         vm.prank(bob);
         vm.expectRevert();
         ControlledByNFT(newContract).changeNumber(42);

@@ -4,11 +4,11 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 
 import {PectraImplementation} from "../src/Proxy/PectraImplementation.sol";
-import {ProxyFactory} from "../src/Proxy/ProxyFactory.sol";
+import {NonFungibleTradingPositions} from "../src/Proxy/NonFungibleTradingPositions.sol";
 
 contract ProxyTest is Test {
     PectraImplementation public implementation;
-    ProxyFactory public factory;
+    NonFungibleTradingPositions public factory;
 
     address public alice = address(0xa);
 
@@ -17,7 +17,7 @@ contract ProxyTest is Test {
         vm.label(alice, "alice");
         implementation = new PectraImplementation();
         vm.label(address(implementation), "implementation");
-        factory = new ProxyFactory(address(implementation));
+        factory = new NonFungibleTradingPositions(address(implementation));
         vm.label(address(factory), "factory");
     }
 
