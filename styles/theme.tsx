@@ -72,7 +72,7 @@ export const customTheme = {
     },
     Text: {
       variants: {
-        medium: {
+        paragraph: {
           fontFamily: "Inter",
           fontWeight: "400",
           fontStyle: "normal",
