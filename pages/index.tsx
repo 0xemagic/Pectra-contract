@@ -20,16 +20,21 @@ export default function Home() {
         ],
       }}
     />
-    <Flex direction="column" minH="100vh">
-      <Heading variant="hero">
+    <Flex 
+    direction="column" 
+    minH="100vh"
+    px="4rem"
+    >
+      <Flex     direction="column" 
+mt="9rem">      <Heading variant="hero">
         SWAP ASSETS
       </Heading>
       <Heading fontSize="100px" variant="colored">
       WITH PECTRA
       </Heading>
-      <Text>
+      <Text textAlign={"start"} mt="3.5rem">
         Pair trading made easy. 
-      </Text>
+      </Text></Flex>
     </Flex>
     </>
   )

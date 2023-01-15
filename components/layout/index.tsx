@@ -37,7 +37,8 @@ export default function Layout({ chains, children }: LayoutProps) {
             })
       }
     >
-      <Box minH={"100vh"} h="full">
+      <Box minH={"100vh"} h="full"     bg="linear-gradient(180deg, #0C1506 0%, #151D10 100%)"
+>
         <Flex
           position="absolute"
           top={0}
@@ -56,9 +57,9 @@ export default function Layout({ chains, children }: LayoutProps) {
           </Flex>
 
           <Flex           alignItems="center">
-            <Button mr="1rem" variant="ghost" onClick={toggleColorMode}>
+            {/* <Button mr="1rem" variant="ghost" onClick={toggleColorMode}>
               {colorMode === "dark" ? <HiSun /> : <HiMoon />}
-            </Button>
+            </Button> */}
             <ConnectButton
               chainStatus={"none"}
             //   showBalance={{
