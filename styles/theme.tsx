@@ -11,8 +11,8 @@ const breakpoints = {
 };
 
 const config: ThemeConfig = {
-  initialColorMode: "system",
-  useSystemColorMode: true,
+  initialColorMode: "light",
+  useSystemColorMode: false,
 };
 
 export const customTheme = {
@@ -69,7 +69,6 @@ export const customTheme = {
         },
       },
     },
-  },
   Text: {
     variants: {
       paragraph: {
@@ -84,7 +83,7 @@ export const customTheme = {
   Button: {
     variants: {
       primary: {
-        bg: "brand",
+        bgColor: "brand",
         color: "#182112",
         _hover: {
           bgColor: "#3EB751",
@@ -96,8 +95,22 @@ export const customTheme = {
         w: "155px",
         h: "48px",
       },
+      secondary: {
+        bgColor: "#FFFFFF",
+        color: "#182112",
+        _hover: {
+          bgColor: "#cccccc",
+        },
+        borderRadius: "12px",
+        fontFamily: "Integral CF",
+        fontWeight: "400",
+        fontStyle: "normal",
+        w: "155px",
+        h: "48px",
+      }
     },
   },
+},
 };
 
 const theme = extendTheme(customTheme);
