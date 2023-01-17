@@ -47,10 +47,10 @@ export const customTheme = {
     Heading: {
       variants: {
         hero: {
-            fontFamily: "Integral CF Medium",
-            fontStyle: "normal",
-            fontSize: "100px",
-            lineHeight: "100%",
+          fontFamily: "Integral CF Medium",
+          fontStyle: "normal",
+          fontSize: "100px",
+          lineHeight: "100%",
         },
         heading: {
           fontFamily: "Integral CF",
@@ -59,27 +59,44 @@ export const customTheme = {
           fontSize: "37px",
           lineHeight: "100%",
         },
-        colored: {    
-            fontFamily: "Integral CF",
-            fontWeight: "400",
-            fontStyle: "normal",
-            fontSize: "37px",
-            lineHeight: "100%",
-            textShadow: "0px 4px 12px #518128",
-        },
+        colored: {
+          fontFamily: "Integral CF",
+          fontWeight: "400",
+          fontStyle: "normal",
+          fontSize: "37px",
+          lineHeight: "100%",
+          textShadow: "0px 4px 12px #518128",
         },
       },
     },
-    Text: {
-      variants: {
-        paragraph: {
-          fontFamily: "Inter",
-          fontWeight: "400",
-          fontStyle: "normal",
-          fontSize: "1rem",
-          lineHeight: "1.5rem",
-        },
+  },
+  Text: {
+    variants: {
+      paragraph: {
+        fontFamily: "Inter",
+        fontWeight: "400",
+        fontStyle: "normal",
+        fontSize: "1rem",
+        lineHeight: "1.5rem",
       },
+    },
+  },
+  Button: {
+    variants: {
+      primary: {
+        bg: "brand",
+        color: "#182112",
+        _hover: {
+          bgColor: "#3EB751",
+        },
+        borderRadius: "12px",
+        fontFamily: "Integral CF",
+        fontWeight: "400",
+        fontStyle: "normal",
+        w: "155px",
+        h: "48px",
+      },
+    },
   },
 };
 

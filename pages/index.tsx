@@ -29,7 +29,7 @@ export default function Home() {
 mt="9rem">      <Heading variant="hero">
         SWAP ASSETS
       </Heading>
-      <Heading fontSize="100px" variant="colored">
+      <Heading color="#ACE075" fontSize="100px" variant="colored" mt="-0.5rem">
       WITH PECTRA
       </Heading>
       <Text textAlign={"start"} mt="3.5rem">
