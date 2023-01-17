@@ -36,7 +36,7 @@ export default function Home() {
             Pair trading made easy.
           </Text>
         </Flex>
-        <Flex px="1.75rem" py="1rem" w="395px" h="66px" bg="#192213" direction="row" mt="2rem" borderRadius={"12px"} alignItems="center" justifyItems="center">
+        <Flex px="1.75rem" py="1rem" w="fit-content" h="66px" bg="#192213" direction="row" mt="2rem" borderRadius={"12px"} alignItems="center" justifyItems="center">
             <Text alignSelf="center" mr="0.75rem" variant="paragraph" textAlign={"center"}>
               Available on
             </Text>
@@ -52,6 +52,8 @@ export default function Home() {
           </Button>
           <Button variant="secondary">JOIN DISCORD</Button>
         </Flex>
+        <Image pos="absolute" right="-6rem" top="15%" h="600px" w="600px" src="/assets/spectra1.svg" alt="spectra-protocol-logo" />
+        <Image pos="absolute" right="-3rem" top="15%" h="600px" src="/assets/spectra2.svg" alt="spectra-protocol-logo" />
       </Flex>
     </>
   );

@@ -15,8 +15,6 @@ import {
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
 
-import { HiMoon, HiSun } from "react-icons/hi";
-
 import {
   RiInstagramFill,
   RiTwitterFill,
@@ -112,7 +110,7 @@ export default function Layout({ chains, children }: LayoutProps) {
                     alignItems={"center"}
                     justifyContent="center"
                     borderRadius="12px"
-                    _hover={{ bg: "#2C3327"}}
+                    _hover={{ bg: "#2C3327" }}
                   >
                     {link.icon}
                   </Flex>
@@ -125,22 +123,21 @@ export default function Layout({ chains, children }: LayoutProps) {
             {/* <Button mr="1rem" variant="ghost" onClick={toggleColorMode}>
               {colorMode === "dark" ? <HiSun /> : <HiMoon />}
             </Button> */}
-      {router.pathname === "/" ?
-       <Button variant="primary">
-          ENTER
-       </Button> :    
-      <ConnectButton
-              chainStatus={"none"}
-              showBalance={{
-                smallScreen: false,
-                largeScreen: true,
-              }}
-              accountStatus={{
-                smallScreen: "avatar",
-                largeScreen: "full",
-              }}
-            />
-            }
+            {router.pathname === "/" ? (
+              <Button variant="primary">ENTER</Button>
+            ) : (
+              <ConnectButton
+                chainStatus={"none"}
+                showBalance={{
+                  smallScreen: false,
+                  largeScreen: true,
+                }}
+                accountStatus={{
+                  smallScreen: "avatar",
+                  largeScreen: "full",
+                }}
+              />
+            )}
           </Flex>
         </Flex>
         <Box w="full">{children}</Box>
