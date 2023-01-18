@@ -49,21 +49,21 @@ export const customTheme = {
         hero: {
           fontFamily: "Integral CF Medium",
           fontStyle: "normal",
-          fontSize: "100px",
+          fontSize: "2.25rem",
           lineHeight: "100%",
         },
         heading: {
           fontFamily: "Integral CF",
           fontWeight: "400",
           fontStyle: "normal",
-          fontSize: "37px",
+          fontSize: "2.25rem",
           lineHeight: "100%",
         },
         colored: {
           fontFamily: "Integral CF",
           fontWeight: "400",
           fontStyle: "normal",
-          fontSize: "37px",
+          fontSize: "2.25rem",
           lineHeight: "100%",
           textShadow: "0px 4px 12px #518128",
         },
@@ -73,6 +73,8 @@ export const customTheme = {
     variants: {
       paragraph: {
         fontFamily: "Inter",
+        color: "#FFFFFF",
+        opacity: "0.7",
         fontWeight: "400",
         fontStyle: "normal",
         fontSize: "1rem",
