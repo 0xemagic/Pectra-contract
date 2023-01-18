@@ -25,8 +25,6 @@ import { FaDiscord } from "react-icons/fa";
 import { SiMedium } from "react-icons/si";
 import { useRouter } from "next/router";
 
-import { HiSun, HiMoon } from "react-icons/hi";
-
 interface LayoutProps {
   children: JSX.Element;
   chains: any;
@@ -143,7 +141,7 @@ export default function Layout({ chains, children }: LayoutProps) {
             )}
           </Flex>
         </Flex>
-        <Box w="full" px='4.25rem'>{children}</Box>
+        <Box w="full">{children}</Box>
         <Flex display={{base: "flex", md: "none"}} gap="0.5rem" alignSelf="start" px={{base: "2rem", md: "4rem"}}>
             {links.map((link) => {
               return (
