@@ -15,8 +15,6 @@ import {
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
 
-import { HiMoon, HiSun } from "react-icons/hi";
-
 import {
   RiInstagramFill,
   RiTwitterFill,
@@ -26,6 +24,8 @@ import {
 import { FaDiscord } from "react-icons/fa";
 import { SiMedium } from "react-icons/si";
 import { useRouter } from "next/router";
+
+import { HiSun, HiMoon } from "react-icons/hi";
 
 interface LayoutProps {
   children: JSX.Element;
@@ -77,17 +77,18 @@ export default function Layout({ chains, children }: LayoutProps) {
             })
       }
     >
-      <Box
+      <Flex
         minH={"100vh"}
         h="full"
         bg={router.pathname =='/'? "linear-gradient(180deg, #0C1506 0%, #151D10 100%)" : "#101010"}
+        direction="column"
       >
         <Flex
           position="absolute"
           top={0}
           justifyContent="space-between"
           py="3rem"
-          px="4rem"
+          px={{base:"2rem", md: "4rem"}}
           h="56px"
           alignItems="center"
           pos="sticky"
@@ -101,7 +102,7 @@ export default function Layout({ chains, children }: LayoutProps) {
             </Heading>
           </Flex>
 
-          <Flex gap="0.5rem">
+          <Flex display={{base: "none", md: "flex"}} gap="0.5rem">
             {links.map((link) => {
               return (
                 <Link href={link.href} key={link.href} isExternal>
@@ -142,8 +143,27 @@ export default function Layout({ chains, children }: LayoutProps) {
             )}
           </Flex>
         </Flex>
-        <Box w="full" px="4rem">{children}</Box>
-      </Box>
+        <Box w="full">{children}</Box>
+        <Flex display={{base: "flex", md: "none"}} gap="0.5rem" alignSelf="start" px={{base: "2rem", md: "4rem"}}>
+            {links.map((link) => {
+              return (
+                <Link href={link.href} key={link.href} isExternal>
+                  <Flex
+                    w="3rem"
+                    h="3rem"
+                    bg="#21281C"
+                    alignItems={"center"}
+                    justifyContent="center"
+                    borderRadius="12px"
+                    _hover={{ bg: "#2C3327" }}
+                  >
+                    {link.icon}
+                  </Flex>
+                </Link>
+              );
+            })}
+          </Flex>
+      </Flex>
     </RainbowKitProvider>
   );
 }
