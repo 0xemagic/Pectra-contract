@@ -64,7 +64,7 @@ const OpenPositions = () => {
           </Thead>
           <Tbody>
             {marketPositions.map((position, key) => (
-              <Tr key={key} bg="#252525" borderRadius="7px">
+              <Tr key={key} my={2} bg="#252525" borderRadius="7px">
                 <Td>
                   <Flex alignItems="center" gap={2}>
                     <CircleIcon />
