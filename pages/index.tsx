@@ -23,7 +23,7 @@ export default function Home() {
       <Flex direction="column" minH="100vh" px="4rem">
         <Flex direction="column" mt="6rem">
           {" "}
-          <Heading variant="hero">SWAP ASSETS</Heading>
+          <Heading variant="hero">TRADE PAIRS</Heading>
           <Heading
             color="#ACE075"
             fontSize="100px"
@@ -32,7 +32,7 @@ export default function Home() {
           >
             WITH PECTRA
           </Heading>
-          <Text variant="paragraph" textAlign={"start"} mt="2rem">
+          <Text variant="paragraph" textAlign={"start"} mt="2rem" color="#FFFFFF">
             Pair trading made easy.
           </Text>
         </Flex>

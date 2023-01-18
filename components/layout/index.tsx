@@ -25,6 +25,8 @@ import { FaDiscord } from "react-icons/fa";
 import { SiMedium } from "react-icons/si";
 import { useRouter } from "next/router";
 
+import { HiSun, HiMoon } from "react-icons/hi";
+
 interface LayoutProps {
   children: JSX.Element;
   chains: any;
@@ -120,9 +122,9 @@ export default function Layout({ chains, children }: LayoutProps) {
           </Flex>
 
           <Flex alignItems="center">
-            {/* <Button mr="1rem" variant="ghost" onClick={toggleColorMode}>
+            <Button mr="1rem" variant="ghost" onClick={toggleColorMode}>
               {colorMode === "dark" ? <HiSun /> : <HiMoon />}
-            </Button> */}
+            </Button>
             {router.pathname === "/" ? (
               <Button variant="primary">ENTER</Button>
             ) : (
