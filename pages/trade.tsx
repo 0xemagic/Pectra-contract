@@ -14,7 +14,7 @@ import {
 
 const Trade = () => {
   return (
-    <>
+    <Box px='4.25rem'>
       <Flex gap={5} w="full" fontFamily={"heading"}>
         <VStack w="27.625rem" gap={3}>
           <Box
@@ -77,7 +77,7 @@ const Trade = () => {
           </Box>
         </VStack>
       </Flex>
-    </>
+    </Box>
   );
 };
 
