@@ -1,3 +1,4 @@
+import OpenPositions from "@/components/OpenPositions";
 import ShortLongComp from "@/components/ShortLongComp";
 import {
   Box,
@@ -73,7 +74,7 @@ const Trade = () => {
             borderRadius={"0.5rem"}
             background="#1E1E1E"
           >
-            Open Positions
+          <OpenPositions />
           </Box>
         </VStack>
       </Flex>
