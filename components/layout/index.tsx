@@ -143,7 +143,7 @@ export default function Layout({ chains, children }: LayoutProps) {
             )}
           </Flex>
         </Flex>
-        <Box w="full">{children}</Box>
+        <Box w="full" px='4.25rem'>{children}</Box>
         <Flex display={{base: "flex", md: "none"}} gap="0.5rem" alignSelf="start" px={{base: "2rem", md: "4rem"}}>
             {links.map((link) => {
               return (

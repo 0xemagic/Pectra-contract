@@ -1,7 +1,13 @@
 import {
   Box,
+  Button,
   Flex,
   Select,
+  Slider,
+  SliderFilledTrack,
+  SliderMark,
+  SliderThumb,
+  SliderTrack,
   Tab,
   TabList,
   Tabs,
@@ -10,6 +16,12 @@ import {
 } from "@chakra-ui/react";
 
 const ShortLongComp = () => {
+  const labelStyles = {
+    mt: "3",
+    ml: "-1.5",
+    fontSize: "sm",
+    fontStyle: "body",
+  };
   return (
     <>
       <Tabs borderRadius="2xl" isFitted variant="unstyled">
@@ -150,10 +162,96 @@ const ShortLongComp = () => {
             </Flex>
           </Flex>
         </Box>
+        <Flex
+          w="full"
+          fontWeight={600}
+          fontSize="1.01rem"
+          fontFamily="body"
+          gap={3}
+        >
+          <Text>Leverage</Text>
+          <Text
+            px={3}
+            py={1}
+            fontWeight={500}
+            fontSize="0.9rem"
+            bg="#2F2F2F"
+            borderRadius="7px"
+          >
+            2x
+          </Text>
+        </Flex>
+        <Slider
+          min={0}
+          max={2}
+          step={1}
+          aria-label="slider-ex-2"
+          colorScheme="#3F3F3F"
+          defaultValue={1}
+        >
+          <SliderMark value={0} {...labelStyles}>
+            0x
+          </SliderMark>
+          <SliderMark value={1} {...labelStyles}>
+            1x
+          </SliderMark>
+          <SliderMark value={2} {...labelStyles}>
+            2x
+          </SliderMark>
+          <SliderTrack borderRadius="1rem" h="20px">
+            <SliderFilledTrack />
+          </SliderTrack>
+          <SliderThumb boxSize={6} />
+        </Slider>
+
+        <VStack pt={4} w="full" gap={3}>
+          <Flex w='full'
+            alignItems="center"
+            justify="space-between"
+            fontFamily="body"
+            fontWeight={500}
+            fontSize="0.9rem"
+          >
+            <Text>Leverage</Text>
+            <Text>2x</Text>
+          </Flex>
+          <Flex w='full'
+            alignItems="center"
+            justify="space-between"
+            fontFamily="body"
+            fontWeight={500}
+            fontSize="0.9rem"
+          >
+            <Text>Entity Prise</Text>
+            <Text>$2000</Text>
+          </Flex>
+          <Flex w='full'
+            alignItems="center"
+            justify="space-between"
+            fontFamily="body"
+            fontWeight={500}
+            fontSize="0.9rem"
+          >
+            <Text>Liquidation Price</Text>
+            <Text>$2000</Text>
+          </Flex>
+          <Flex w='full'
+            alignItems="center"
+            justify="space-between"
+            fontFamily="body"
+            fontWeight={500}
+            fontSize="0.9rem"
+          >
+            <Text>Fees</Text>
+            <Text>0.02 ETH</Text>
+          </Flex>
+        </VStack>
+        <Button bg='#FFFFFF' color='black' fontFamily='header' w='full' fontWeight={600} fontSize='1.25rem'>
+          Open Position
+        </Button>
       </VStack>
     </>
   );
 };
-
 
 export default ShortLongComp;
