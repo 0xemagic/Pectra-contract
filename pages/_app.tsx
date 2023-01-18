@@ -1,5 +1,5 @@
 import "@/styles/globals.css";
-import '@rainbow-me/rainbowkit/styles.css';
+import "@rainbow-me/rainbowkit/styles.css";
 import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
 import theme from "../styles/theme";
@@ -10,16 +10,14 @@ import "@fontsource/inter/variable-full.css";
 import { getDefaultWallets } from "@rainbow-me/rainbowkit";
 import { createClient, configureChains } from "wagmi";
 import { WagmiConfig } from "wagmi";
-import { arbitrum } from '@wagmi/chains'
+import { arbitrum } from "@wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 
 import Layout from "../components/layout";
 
 export const { chains, provider, webSocketProvider } = configureChains(
   [arbitrum],
-  [
-    publicProvider(),
-  ]
+  [publicProvider()]
 );
 
 const { connectors } = getDefaultWallets({
@@ -37,11 +35,11 @@ const wagmiClient = createClient({
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
-            <WagmiConfig client={wagmiClient}>
-      <Fonts />
-      <Layout chains={chains}>
-      <Component {...pageProps} />
-      </Layout>
+      <WagmiConfig client={wagmiClient}>
+        <Fonts />
+        <Layout chains={chains}>
+          <Component {...pageProps} />
+        </Layout>
       </WagmiConfig>
     </ChakraProvider>
   );

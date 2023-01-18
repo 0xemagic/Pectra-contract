@@ -80,7 +80,7 @@ export default function Layout({ chains, children }: LayoutProps) {
       <Box
         minH={"100vh"}
         h="full"
-        bg="linear-gradient(180deg, #0C1506 0%, #151D10 100%)"
+        bg={router.pathname =='/'? "linear-gradient(180deg, #0C1506 0%, #151D10 100%)" : "#101010"}
       >
         <Flex
           position="absolute"
@@ -112,7 +112,7 @@ export default function Layout({ chains, children }: LayoutProps) {
                     alignItems={"center"}
                     justifyContent="center"
                     borderRadius="12px"
-                    _hover={{ bg: "#2C3327"}}
+                    _hover={{ bg: "#2C3327" }}
                   >
                     {link.icon}
                   </Flex>
@@ -125,25 +125,24 @@ export default function Layout({ chains, children }: LayoutProps) {
             {/* <Button mr="1rem" variant="ghost" onClick={toggleColorMode}>
               {colorMode === "dark" ? <HiSun /> : <HiMoon />}
             </Button> */}
-      {router.pathname === "/" ?
-       <Button variant="primary">
-          ENTER
-       </Button> :    
-      <ConnectButton
-              chainStatus={"none"}
-              showBalance={{
-                smallScreen: false,
-                largeScreen: true,
-              }}
-              accountStatus={{
-                smallScreen: "avatar",
-                largeScreen: "full",
-              }}
-            />
-            }
+            {router.pathname === "/" ? (
+              <Button variant="primary">ENTER</Button>
+            ) : (
+              <ConnectButton
+                chainStatus={"none"}
+                showBalance={{
+                  smallScreen: false,
+                  largeScreen: true,
+                }}
+                accountStatus={{
+                  smallScreen: "avatar",
+                  largeScreen: "full",
+                }}
+              />
+            )}
           </Flex>
         </Flex>
-        <Box w="full">{children}</Box>
+        <Box w="full" px="4rem">{children}</Box>
       </Box>
     </RainbowKitProvider>
   );
