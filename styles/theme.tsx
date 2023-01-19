@@ -109,7 +109,20 @@ export const customTheme = {
         fontStyle: "normal",
         w: "155px",
         h: "48px",
-      }
+      },
+    tertiary: {
+      bgColor:'#FFFFFF',
+      color: "#182112",
+      _hover: {
+        bgColor: "#cccccc",
+      },
+      borderRadius: "12px",
+      fontFamily: "Inter",
+      fontWeight: "600",
+      fontStyle: "normal",
+      width:'full',
+      fontSize: '1.25rem'
+    }
     },
   },
 },

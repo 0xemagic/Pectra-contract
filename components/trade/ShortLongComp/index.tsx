@@ -1,7 +1,9 @@
+import { useState } from "react";
 import {
   Box,
   Button,
   Flex,
+  NumberInput,
   Select,
   Slider,
   SliderFilledTrack,
@@ -16,12 +18,23 @@ import {
 } from "@chakra-ui/react";
 
 const ShortLongComp = () => {
+  const [leverage, setLeverage] = useState(1);
+
   const labelStyles = {
     mt: "3",
     ml: "-1.5",
     fontSize: "sm",
     fontStyle: "body",
   };
+
+  const tokens = [
+    "ETH",
+    "BTC",
+    "MATIC",
+    "LINK",
+    "UNI",
+  ]
+
   return (
     <>
       <Tabs borderRadius="2xl" isFitted variant="unstyled">
@@ -32,7 +45,12 @@ const ShortLongComp = () => {
               borderColor: "rgba(255, 255, 255, 0.2)",
               borderWidth: "2px",
               borderRadius: "7px",
+              mr: "-0.25rem",
+              borderRight: "1px solid rgba(255, 255, 255, 0.2)"
             }}
+            border="1px solid rgba(255, 255, 255, 0.2)"
+            borderRight="none"
+            borderLeftRadius="7px"
           >
             Open
           </Tab>
@@ -42,7 +60,12 @@ const ShortLongComp = () => {
               borderColor: "rgba(255, 255, 255, 0.2)",
               borderWidth: "2px",
               borderRadius: "7px",
+              ml: "-0.25rem",
+              borderLeft: "1px solid rgba(255, 255, 255, 0.2)"
             }}
+            border="1px solid rgba(255, 255, 255, 0.2)"
+            borderLeft="none"
+            borderRightRadius="7px"
           >
             Close
           </Tab>
@@ -82,12 +105,11 @@ const ShortLongComp = () => {
                 fontWeight={600}
                 fontSize="1.01rem"
                 w="fit-content"
-                ml="auto"
-                mr={0}
                 variant="unstyled"
-                placeholder={"1 ETH"}
+                placeholder={"ETH"}
               >
-                <option value="1 eth">1 ETH</option>
+                {tokens.map((token) => {
+                  return <option value={token}>{token}</option>})}
               </Select>
               <Flex ml="auto" mr={0} fontSize="0.875rem">
                 <Text mr={2} fontWeight={300}>
@@ -178,7 +200,7 @@ const ShortLongComp = () => {
             bg="#2F2F2F"
             borderRadius="7px"
           >
-            2x
+            {leverage}x
           </Text>
         </Flex>
         <Slider
@@ -188,6 +210,7 @@ const ShortLongComp = () => {
           aria-label="slider-ex-2"
           colorScheme="#3F3F3F"
           defaultValue={1}
+          onChange={(val) => setLeverage(val)}
         >
           <SliderMark value={0} {...labelStyles}>
             0x
@@ -198,6 +221,17 @@ const ShortLongComp = () => {
           <SliderMark value={2} {...labelStyles}>
             2x
           </SliderMark>
+          <SliderMark
+          value={leverage}
+          textAlign='center'
+          bg='brand'
+          color='black'
+          mb='-10'
+          ml='-5'
+          w='2rem'
+        >
+          {leverage}x
+        </SliderMark>
           <SliderTrack borderRadius="1rem" h="20px">
             <SliderFilledTrack />
           </SliderTrack>
@@ -246,7 +280,7 @@ const ShortLongComp = () => {
             <Text>0.02 ETH</Text>
           </Flex>
         </VStack>
-        <Button bg='#FFFFFF' color='black' fontFamily='header' w='full' fontWeight={600} fontSize='1.25rem'>
+        <Button variant="tertiary">
           Open Position
         </Button>
       </VStack>

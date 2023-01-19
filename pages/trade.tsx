@@ -1,4 +1,4 @@
-import ShortLongComp from "@/components/ShortLongComp";
+import ShortLongComp from "@/components/trade/ShortLongComp";
 import {
   Box,
   Flex,
@@ -12,16 +12,35 @@ import {
   VStack,
 } from "@chakra-ui/react";
 
+import { NextSeo } from "next-seo";
+
 const Trade = () => {
   return (
-    <Box px='4.25rem'>
-      <Flex gap={5} w="full" fontFamily={"heading"}>
-        <VStack w="27.625rem" gap={3}>
+    <>
+      <NextSeo
+        title="Pectra Protocol Trade"
+        description="Pair trading made easy."
+        openGraph={{
+          title: "Pectra Protocol Trade",
+          description: "Pair trading made easy.",
+          images: [
+            {
+              url: "https://www.spectraprotocol.com/spectra-protocol.png",
+              width: 800,
+              height: 600,
+              alt: "Pectra Protocol",
+            },
+          ],
+        }}
+      />
+      <Flex w="full" fontFamily={"heading"} direction="row" px="4.25rem">
+        <Flex w="27.625rem" direction={{base: "row", md: "column"}}>
           <Box
             h="fit-content"
             w="full"
             borderRadius={"0.5rem"}
-            background="#1E1E1E"
+            background="#202020"
+            border="2px solid #404040"
             fontWeight="bold"
             px="1.68rem"
             py="1.5rem"
@@ -32,26 +51,26 @@ const Trade = () => {
           <Box
             w="full"
             borderRadius={"0.5rem"}
-            background="#1E1E1E"
+            background="#202020"
             fontStyle="body"
             px="1.68rem"
             py="1.25rem"
           >
             <ShortLongComp />
           </Box>
-        </VStack>
+        </Flex>
 
-        <VStack gap={3} flex={1}>
+        <Flex flex={1} direction="column">
           <Box
             h="fit-content"
             w="full"
             borderRadius={"0.5rem"}
-            background="#1E1E1E"
+            background="#202020"
             px="1.68rem"
             py="1.15rem"
             fontSize="1.25rem"
           >
-            <Select variant="outline" placeholder={`"BTC/ETH"`} />
+            <Select variant="outline" placeholder={`BTC/ETH`} />
           </Box>
 
           <Box
@@ -60,7 +79,7 @@ const Trade = () => {
             py="1.15rem"
             fontSize="1.25rem"
             borderRadius={"0.5rem"}
-            background="#1E1E1E"
+            background="#202020"
           >
             {" "}
             Charts
@@ -71,13 +90,13 @@ const Trade = () => {
             fontSize="1.25rem"
             w="full"
             borderRadius={"0.5rem"}
-            background="#1E1E1E"
+            background="#202020"
           >
             Open Positions
           </Box>
-        </VStack>
+        </Flex>
       </Flex>
-    </Box>
+    </>
   );
 };
 
