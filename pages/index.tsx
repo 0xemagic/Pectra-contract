@@ -1,7 +1,12 @@
 import { Flex, Text, Heading, Button, Image } from "@chakra-ui/react";
 import { NextSeo } from "next-seo";
 
+import { useRouter } from "next/router";
+
 export default function Home() {
+
+  const router = useRouter();
+
   return (
     <>
       <NextSeo
@@ -73,6 +78,7 @@ export default function Home() {
             variant="primary"
             boxShadow="0px -1px 22px #518128"
             mr="0.5rem"
+            onClick={() => router.push("/trade")}
           >
             START TRADING
           </Button>
