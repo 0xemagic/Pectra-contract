@@ -1,16 +1,12 @@
 import {
   Box,
   Flex,
-  Table,
-  TableCaption,
-  TableContainer,
+  Table, TableContainer,
   Tbody,
   Td,
-  Text,
-  Tfoot,
-  Th,
+  Text, Th,
   Thead,
-  Tr,
+  Tr
 } from "@chakra-ui/react";
 import CircleIcon from "../CircleIcon";
 
