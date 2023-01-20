@@ -9,6 +9,8 @@ import {
 import CloseComp from "../CloseComp";
 import OpenComp from "../OpenComp";
 
+const ShortLongComp = () => {
+
   return (
     <>
       <Tabs borderRadius="2xl" isFitted variant="unstyled">
@@ -53,7 +55,6 @@ import OpenComp from "../OpenComp";
           </TabPanel>
         </TabPanels>
       </Tabs>
-     </Tabs>
     </>
   );
 };
