@@ -53,8 +53,7 @@ import OpenComp from "../OpenComp";
           </TabPanel>
         </TabPanels>
       </Tabs>
-      </Tabs>
-     
+     </Tabs>
     </>
   );
 };
