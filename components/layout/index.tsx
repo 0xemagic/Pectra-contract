@@ -93,17 +93,17 @@ export default function Layout({ chains, children }: LayoutProps) {
           zIndex="popover"
           w="98vw"
         >
-          <Flex>
+          <Flex onClick={() => router.push("/")} _hover={{cursor: "pointer"}}>
             <Image src="/icons/spectra.svg" alt="spectra-protocol-logo" />
             <Heading ml="1rem" variant="heading">
               PECTRA
             </Heading>
           </Flex>
 
-          <Flex display={{base: "none", md: "flex"}} gap="0.5rem">
+          <Flex display={{base: "none", md: "flex"}} justifySelf={router.pathname === "/" ? "center" : "end"}>
             {links.map((link) => {
               return (
-                <Link href={link.href} key={link.href} isExternal>
+                <Link href={link.href} key={link.href} isExternal mt="0.5rem">
                   <Flex
                     w="3.5rem"
                     h="3.5rem"
@@ -125,7 +125,7 @@ export default function Layout({ chains, children }: LayoutProps) {
               {colorMode === "dark" ? <HiSun /> : <HiMoon />}
             </Button> */}
             {router.pathname === "/" ? (
-              <Button variant="primary">ENTER</Button>
+              <Button variant="primary" onClick={() => router.push("/trade")}>ENTER</Button>
             ) : (
               <ConnectButton
                 chainStatus={"none"}

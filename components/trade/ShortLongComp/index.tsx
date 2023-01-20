@@ -1,14 +1,16 @@
+import { useState, useEffect } from "react";
 import {
   Tab,
   TabList,
   TabPanel,
   TabPanels,
-  Tabs
+  Tabs,
 } from "@chakra-ui/react";
 import CloseComp from "../CloseComp";
 import OpenComp from "../OpenComp";
 
 const ShortLongComp = () => {
+
   return (
     <>
       <Tabs borderRadius="2xl" isFitted variant="unstyled">
@@ -19,7 +21,12 @@ const ShortLongComp = () => {
               borderColor: "rgba(255, 255, 255, 0.2)",
               borderWidth: "2px",
               borderRadius: "7px",
+              mr: "-0.25rem",
+              borderRight: "1px solid rgba(255, 255, 255, 0.2)"
             }}
+            border="1px solid rgba(255, 255, 255, 0.2)"
+            borderRight="none"
+            borderLeftRadius="7px"
           >
             Open
           </Tab>
@@ -29,7 +36,12 @@ const ShortLongComp = () => {
               borderColor: "rgba(255, 255, 255, 0.2)",
               borderWidth: "2px",
               borderRadius: "7px",
+              ml: "-0.25rem",
+              borderLeft: "1px solid rgba(255, 255, 255, 0.2)"
             }}
+            border="1px solid rgba(255, 255, 255, 0.2)"
+            borderLeft="none"
+            borderRightRadius="7px"
           >
             Close
           </Tab>

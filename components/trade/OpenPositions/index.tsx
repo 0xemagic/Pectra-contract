@@ -8,7 +8,7 @@ import {
   Thead,
   Tr
 } from "@chakra-ui/react";
-import CircleIcon from "../CircleIcon";
+import CircleIcon from "../../UI/CircleIcon";
 
 const OpenPositions = () => {
   const marketPositions = [

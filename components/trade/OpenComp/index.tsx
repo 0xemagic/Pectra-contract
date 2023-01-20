@@ -1,4 +1,9 @@
+import { useState, useEffect } from "react";
+
 import { Box, Button, Flex, Select, Slider, SliderFilledTrack, SliderMark, SliderThumb, SliderTrack, Text, VStack } from "@chakra-ui/react";
+
+import { ethPriceQuery, btcPriceQuery, truncate } from "@/components/utils";
+import { client2 } from "@/components/utils";
 
 const OpenComp = () => {
   const labelStyles = {
@@ -7,8 +12,44 @@ const OpenComp = () => {
     fontSize: "sm",
     fontStyle: "body",
   };
+
+  const [leverage, setLeverage] = useState(1);
+  const [amount, setAmount] = useState(0);
+  const [longToken, setLongToken] = useState("ETH");
+  const [shortToken, setShortToken] = useState("BTC");
+  const [ethPrice, setEthPrice] = useState(0);
+  const [btcPrice, setBtcPrice] = useState(0);
+
+  const sameToken = longToken === shortToken;
+
+  const tokens = [
+    "ETH",
+    "BTC",
+    "MATIC",
+    "LINK",
+    "UNI",
+  ]
+
+  async function fetchETHPrice() {
+    const data = await client2.query(ethPriceQuery, {}).toPromise();
+    setEthPrice(data.data.bundle.ethPriceUSD);
+  }
+
+  async function fetchBTCPrice() {
+    const data = await client2.query(btcPriceQuery, {}).toPromise();
+    setBtcPrice(data.data.pool.token1Price * data.data.bundle.ethPriceUSD);
+  }
+
+  useEffect(() => {
+    const getTokensPrice = async () => {
+      fetchETHPrice();
+      fetchBTCPrice();
+    };
+    getTokensPrice();
+  });
+
   return <>
-  <Text
+      <Text
         fontFamily="body"
         color="#ffffff"
         fontSize="1.06rem"
@@ -42,18 +83,21 @@ const OpenComp = () => {
                 fontWeight={600}
                 fontSize="1.01rem"
                 w="fit-content"
-                ml="auto"
-                mr={0}
                 variant="unstyled"
-                placeholder={"1 ETH"}
+                onChange={(e) => setLongToken(e.target.value)}
+                value={longToken}
+                isInvalid={sameToken}
               >
-                <option value="1 eth">1 ETH</option>
+                {tokens.map((token) => {
+                  return <option value={token}>{token}</option>})}
               </Select>
               <Flex ml="auto" mr={0} fontSize="0.875rem">
                 <Text mr={2} fontWeight={300}>
                   current price:
                 </Text>
-                <Text fontWeight={600}>$1200</Text>
+                <Text fontWeight={600}>$              {longToken === "ETH"
+                ? truncate(ethPrice.toString(), 2)
+                : truncate(btcPrice.toString(), 2)}</Text>
               </Flex>
             </Flex>
           </Flex>
@@ -84,15 +128,20 @@ const OpenComp = () => {
                 ml="auto"
                 mr={0}
                 variant="unstyled"
-                placeholder={"0.07 BTC"}
+                onChange={(e) => setShortToken(e.target.value)}
+                value={shortToken}
+                isInvalid={sameToken}
               >
-                <option value="1 eth">0.07 BTC</option>
+                    {tokens.map((token) => {
+                  return <option value={token}>{token}</option>})}
               </Select>
               <Flex ml="auto" mr={0} fontSize="0.875rem">
                 <Text mr={2} fontWeight={300}>
                   current price:
                 </Text>
-                <Text fontWeight={600}>$16000</Text>
+                <Text fontWeight={600}>$     {shortToken === "ETH"
+                ? truncate(ethPrice.toString(), 2)
+                : truncate(btcPrice.toString(), 2)}</Text>
               </Flex>
             </Flex>
           </Flex>
@@ -138,7 +187,7 @@ const OpenComp = () => {
             bg="#2F2F2F"
             borderRadius="7px"
           >
-            2x
+            {leverage}x
           </Text>
         </Flex>
         <Slider
@@ -148,16 +197,28 @@ const OpenComp = () => {
           aria-label="slider-ex-2"
           colorScheme="#3F3F3F"
           defaultValue={1}
+          onChange={(val) => setLeverage(val)}
         >
           <SliderMark value={0} {...labelStyles}>
-            0x
+          <Text variant="paragraph">0x</Text>
           </SliderMark>
           <SliderMark value={1} {...labelStyles}>
-            1x
+          <Text variant="paragraph">1x</Text>
           </SliderMark>
           <SliderMark value={2} {...labelStyles}>
-            2x
+          <Text variant="paragraph">2x</Text>
           </SliderMark>
+          <SliderMark
+          value={leverage}
+          textAlign='center'
+          bg='brand'
+          color='black'
+          mt='-10'
+          ml='-5'
+          w='1.5rem'
+        >
+            <Text variant="paragraph" color="black">{leverage}x</Text>
+        </SliderMark>
           <SliderTrack borderRadius="1rem" h="20px">
             <SliderFilledTrack />
           </SliderTrack>
@@ -173,7 +234,7 @@ const OpenComp = () => {
             fontSize="0.9rem"
           >
             <Text>Leverage</Text>
-            <Text>2x</Text>
+            <Text>{leverage}x</Text>
           </Flex>
           <Flex w='full'
             alignItems="center"
@@ -206,10 +267,11 @@ const OpenComp = () => {
             <Text>0.02 ETH</Text>
           </Flex>
         </VStack>
-        <Button bg='#FFFFFF' color='black' fontFamily='header' w='full' fontWeight={600} fontSize='1.25rem'>
+        <Button variant="tertiary">
           Open Position
         </Button>
-      </VStack></>
+        </VStack>
+        </>
 }
 
 export default OpenComp
