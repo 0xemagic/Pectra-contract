@@ -138,8 +138,8 @@ const ShortLongComp = () => {
                 value={longToken}
                 isInvalid={sameToken}
               >
-                {tokens.map((token) => {
-                  return <option value={token}>{token}</option>})}
+                {tokens.map((token, index) => {
+                  return <option key={index} value={token}>{token}</option>})}
               </Select>
               <Flex ml="auto" mr={0} fontSize="0.875rem">
                 <Text mr={2} fontWeight={300}>
@@ -182,8 +182,8 @@ const ShortLongComp = () => {
                 value={shortToken}
                 isInvalid={sameToken}
               >
-                    {tokens.map((token) => {
-                  return <option value={token}>{token}</option>})}
+                    {tokens.map((token, index) => {
+                  return <option key={index}>{token}</option>})}
               </Select>
               <Flex ml="auto" mr={0} fontSize="0.875rem">
                 <Text mr={2} fontWeight={300}>
