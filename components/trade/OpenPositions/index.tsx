@@ -41,7 +41,7 @@ const OpenPositions = () => {
     },
   ];
   return (
-    <>
+    <Flex bg="#202020" p="1.75rem" direction="column" borderRadius="12px">
       <Text fontFamily="body" fontWeight={600} fontSize="1.1rem">
         Open Positions
       </Text>
@@ -92,7 +92,7 @@ const OpenPositions = () => {
           </Tbody>
         </Table>
       </TableContainer>
-    </>
+    </Flex>
   );
 };
 

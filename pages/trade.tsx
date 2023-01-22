@@ -6,6 +6,7 @@ import {
 } from "@chakra-ui/react";
 
 import OpenPositions from "@/components/trade/OpenPositions";
+import Charts from "@/components/trade/Charts";
 
 import { NextSeo } from "next-seo";
 
@@ -29,7 +30,7 @@ const Trade = () => {
         }}
       />
       <Flex w="full" fontFamily={"heading"} direction="row" px="4.25rem">
-        <Flex w="27.625rem" direction={{base: "row", md: "column"}}>
+        <Flex w="27.625rem" direction={{base: "row", md: "column"}}             mr="1rem">
           <Box
             h="fit-content"
             w="full"
@@ -40,6 +41,7 @@ const Trade = () => {
             px="1.68rem"
             py="1.5rem"
             fontSize="1.25rem"
+            mb="1rem"
           >
             TRADE
           </Box>
@@ -61,9 +63,11 @@ const Trade = () => {
             w="full"
             borderRadius={"0.5rem"}
             background="#202020"
+            border="2px solid #404040"
             px="1.68rem"
             py="1.15rem"
             fontSize="1.25rem"
+            mb="1rem"
           >
             <Select variant="outline" placeholder={`BTC/ETH`} />
           </Box>
@@ -75,9 +79,9 @@ const Trade = () => {
             fontSize="1.25rem"
             borderRadius={"0.5rem"}
             background="#202020"
+            mb="1rem"
           >
-            {" "}
-            Charts
+            <Charts/>
           </Box>
           <OpenPositions/>
         </Flex>
