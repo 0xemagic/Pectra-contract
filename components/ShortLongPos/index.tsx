@@ -25,31 +25,37 @@ const PositionComp: React.FC<PositionCompProps> = ({
           : "linear-gradient(263.59deg, #B14F4F 0.01%, #804242 94.79%)"
       }
       borderRadius="1.25rem"
-      w="full" h='full'
+      w="full"
+      h="full"
     >
       <Flex justify="space-between" alignItems="flex-start" w="full">
-       {data && <VStack
-          alignItems="end"
-          fontStyle={"heading"}
-          textAlign="right"
-          py={position === 'LONG' ? "1.01rem" : '0rem'}
-          px={position === 'LONG' ? "1.18rem" : '0rem'}
-          bg="transparent"
-          border={position === 'LONG' ?  "1px solid rgba(255, 255, 255, 0.2)" : '0px'}
-          borderRadius="0.825rem"
-          w="fit-content"
-        >
-          {
-            data.map((item, index) => (
+        {data && (
+          <VStack
+            alignItems="end"
+            fontStyle={"heading"}
+            textAlign="right"
+            py={position === "LONG" ? "1.01rem" : "0rem"}
+            px={position === "LONG" ? "1.18rem" : "0rem"}
+            bg="transparent"
+            border={
+              position === "LONG" ? "1px solid rgba(255, 255, 255, 0.2)" : "0px"
+            }
+            borderRadius="0.825rem"
+            w="fit-content"
+          >
+            {data.map((item, index) => (
               <Text
                 key={index}
                 fontWeight={500}
-                fontSize={position === "LONG" ? "1.25rem" : "0.75rem"}
+                fontSize={
+                  position === "LONG" && index === 0 ? "1.25rem" : "0.75rem"
+                }
               >
                 {item}
               </Text>
             ))}
-        </VStack>}
+          </VStack>
+        )}
         <Spacer />
         <VStack
           gap="0.5rem"

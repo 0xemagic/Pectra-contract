@@ -1,6 +1,7 @@
 import PositionComp, { PositionCompProps } from "@/components/ShortLongPos";
 import {
   Box,
+  Flex,
   Grid,
   GridItem,
   Tab,
@@ -8,6 +9,7 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  Text,
 } from "@chakra-ui/react";
 
 const Overview = () => {
@@ -31,49 +33,54 @@ const Overview = () => {
       asset: "ETH",
       assetAmount: "10x",
       dateOpened: "1/11/23",
-
     },
     {
       position: "LONG",
       asset: "ETH",
       assetAmount: "10x",
       dateOpened: "1/11/23",
-
     },
     {
       position: "LONG",
       asset: "ETH",
       assetAmount: "10x",
       dateOpened: "1/11/23",
-
     },
     {
       position: "LONG",
       asset: "ETH",
       assetAmount: "10x",
       dateOpened: "1/11/23",
-
     },
     {
       position: "SHORT",
       asset: "ETH",
       assetAmount: "10x",
       dateOpened: "1/11/23",
-
     },
     {
       position: "SHORT",
       asset: "ETH",
       assetAmount: "10x",
       dateOpened: "1/11/23",
-
     },
     {
       position: "LONG",
       asset: "ETH",
       assetAmount: "10x",
       dateOpened: "1/11/23",
-
+    },
+    {
+      position: "SHORT",
+      asset: "ETH",
+      assetAmount: "10x",
+      dateOpened: "1/11/23",
+    },
+    {
+      position: "LONG",
+      asset: "ETH",
+      assetAmount: "10x",
+      dateOpened: "1/11/23",
     },
   ];
   return (
@@ -129,7 +136,7 @@ const Overview = () => {
             </Tab>
           </TabList>
           <TabPanels>
-            <TabPanel>
+            <TabPanel h="40.75rem" overflowY="auto">
               <Grid gap="1.875rem" templateColumns="repeat(3, 1fr)">
                 {positions.map(
                   (
@@ -152,6 +159,19 @@ const Overview = () => {
             <TabPanel></TabPanel>
           </TabPanels>
         </Tabs>
+        <Flex
+          fontFamily="body"
+          fontWeight={600}
+          fontSize="1.25rem"
+          mt="3.625rem"
+          gap="2rem"
+        >
+          <Text>Net: XX</Text>
+          <Text>Net: YY</Text>
+          <Text>Net: ZZ</Text>
+          <Text>Net: WW</Text>
+          <Text>Net: OO</Text>
+        </Flex>
       </Box>
     </Box>
   );
