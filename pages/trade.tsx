@@ -1,12 +1,46 @@
 import ShortLongComp from "@/components/trade/ShortLongComp";
 import { Box, Flex, Select } from "@chakra-ui/react";
 
+import { useEffect, useState } from "react";
+
 import OpenPositions from "@/components/trade/OpenPositions";
 import Charts from "@/components/trade/Charts";
 
 import { NextSeo } from "next-seo";
 
+type SymbolProps = {
+  label: string;
+  symbol: string;
+}
+
 const Trade = () => {
+
+  const symbols = [
+    {
+      label: "BTC/ETH",
+      symbol: "BINANCE:ETHBTC",
+    },
+    {
+      label: "BTC/UNI",
+      symbol: "BINANCE:UNIBTC",
+    },
+    {
+      label: "BTC/LINK",
+      symbol: "BINANCE:LINKBTC",
+    },
+    {
+      label: "BTC/MATIC",
+      symbol: "BINANCE:MATICBTC",
+    },
+  ]
+
+  const [symbol, setSymbol] = useState<SymbolProps>(symbols[1]);
+
+  const handleChange = (selectedValue: string) => {
+    const selectedObject = symbols.find(symb => symb.label === selectedValue);
+    setSymbol(selectedObject!);
+  }
+
   return (
     <>
       <NextSeo
@@ -65,12 +99,20 @@ const Trade = () => {
             fontSize="1.25rem"
             mb="1rem"
           >
-            <Select variant="outline" placeholder={`BTC/ETH`} />
+            <Select
+                variant="outline"
+                onChange={(e) => handleChange(e.target.value)}
+                value={symbol!.label}
+              >
+                {symbols.map((symb, index) => {
+                  return <option key={index}>{symb.label}</option>;
+                })}
+              </Select>
           </Box>
 
           <Box
             w="full"
-            h="500px"
+            h="full"
             px="1.68rem"
             py="1.15rem"
             fontSize="1.25rem"
@@ -78,7 +120,7 @@ const Trade = () => {
             background="#202020"
             mb="1rem"
           >
-            <Charts />
+            <Charts symb={symbol.symbol} />
           </Box>
           <OpenPositions />
         </Flex>

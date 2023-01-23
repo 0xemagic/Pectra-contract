@@ -22,6 +22,7 @@ import {
   maticPriceQuery,
   uniPriceQuery,
 } from "@/components/utils";
+import {commify} from "ethers/lib/utils";
 import { client2 } from "@/components/utils";
 
 const OpenComp = () => {
@@ -121,12 +122,13 @@ const OpenComp = () => {
             <Text fontWeight={600} fontFamily="heading" fontSize="0.9rem">
               LONG
             </Text>
-            <Flex gap="0.75rem" flexDir="column" justifyContent="flex-end">
+            <Flex flexDir="column">
               <Select
                 fontWeight={600}
                 fontSize="1.01rem"
-                w="fit-content"
+                w="4rem"
                 m="auto"
+                mr="-1rem"
                 variant="unstyled"
                 onChange={(e) => setLongToken(e.target.value)}
                 value={longToken}
@@ -141,8 +143,7 @@ const OpenComp = () => {
                   current price:
                 </Text>
                 <Text fontWeight={600}>
-                  ${" "}
-                  {truncate(longPrice!.price.toString(), 2)}
+                  ${truncate(commify(longPrice!.price.toString()), 2)}
                 </Text>
               </Flex>
             </Flex>
@@ -170,8 +171,9 @@ const OpenComp = () => {
               <Select
                 fontWeight={600}
                 fontSize="1.01rem"
-                w="fit-content"
+                w="4rem"
                 m="auto"
+                mr="-1rem"
                 variant="unstyled"
                 onChange={(e) => setShortToken(e.target.value)}
                 value={shortToken}
@@ -186,8 +188,7 @@ const OpenComp = () => {
                   current price:
                 </Text>
                 <Text fontWeight={600}>
-                  ${" "}
-                  {truncate(shortPrice!.price.toString(), 2)}
+                  ${truncate(commify(shortPrice!.price.toString()), 2)}
                 </Text>
               </Flex>
             </Flex>
