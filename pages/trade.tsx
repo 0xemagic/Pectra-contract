@@ -1,9 +1,5 @@
 import ShortLongComp from "@/components/trade/ShortLongComp";
-import {
-  Box,
-  Flex,
-  Select,
-} from "@chakra-ui/react";
+import { Box, Flex, Select } from "@chakra-ui/react";
 
 import OpenPositions from "@/components/trade/OpenPositions";
 import Charts from "@/components/trade/Charts";
@@ -30,7 +26,7 @@ const Trade = () => {
         }}
       />
       <Flex w="full" fontFamily={"heading"} direction="row" px="4.25rem">
-        <Flex w="27.625rem" direction={{base: "row", md: "column"}}             mr="1rem">
+        <Flex w="27.625rem" direction={{ base: "row", md: "column" }} mr="1rem">
           <Box
             h="fit-content"
             w="full"
@@ -82,9 +78,9 @@ const Trade = () => {
             background="#202020"
             mb="1rem"
           >
-            <Charts/>
+            <Charts />
           </Box>
-          <OpenPositions/>
+          <OpenPositions />
         </Flex>
       </Flex>
     </>
