@@ -8,6 +8,7 @@ export default function Charts() {
 
     const onLoadScriptRef: any = useRef();
 
+    // @ts-expect-error
     useEffect(() => {
         onLoadScriptRef.current = createWidget;
   
