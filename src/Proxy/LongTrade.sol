@@ -1,10 +1,10 @@
-pragma solidity ^0.8.0;
-import {PositionRouter} from "@gmx-contracts/contracts/core/PositionRouter.sol";
+pragma solidity ^0.6.0;
+import {PositionRouter} from "gmx-contracts/core/PositionRouter.sol";
 
 contract GMXAssetProxy {
     PositionRouter public positionRouter =
-        PositionRouter("0xE510571cAc76279DADf6c4b6eAcE5370F86e3dC2");
-    address owner;
+        PositionRouter(0xE510571cAc76279DADf6c4b6eAcE5370F86e3dC2);
+    address public owner;
     address assetAddress;
     uint256 assetValue;
     uint256 leverage;
@@ -23,43 +23,54 @@ contract GMXAssetProxy {
     }
 
     function openPosition(
-        _path,
-        _amount,
-        _minOut,
-        _sizeDelta,
-        _isLong,
-        _price
+        address[] memory path,
+        address _indexToken,
+        uint256 _minOut,
+        uint256 _sizeDelta,
+        bool _isLong,
+        uint256 _acceptablePrice,
+        uint256 _executionFee,
+        bytes32 _referralCode,
+        address _callbackTarget
     ) public {
-        PositionManager.increasePosition(
-            _path,
-            assetAddress,
-            _amount,
+        positionRouter.createIncreasePositionETH(
+            path,
+            _indexToken,
             _minOut,
             _sizeDelta,
             _isLong,
-            _price
+            _acceptablePrice,
+            _executionFee,
+            _referralCode,
+            _callbackTarget
         );
     }
 
     function closePosition(
-        _collateralToken,
-        _indexToken,
-        _collateralDelta,
-        _sizeDelta,
-        _isLong,
-        _receiver,
-        _price,
-        _sizeDelta
+        address[] memory _path,
+        address _indexToken,
+        uint256 _collateralDelta,
+        uint256 _sizeDelta,
+        bool _isLong,
+        address _receiver,
+        uint256 _acceptablePrice,
+        uint256 _minOut,
+        uint256 _executionFee,
+        bool _withdrawETH,
+        address _callbackTarget
     ) public {
-        PositionManager.decreasePosition(
-            _collateralToken,
+        positionRouter.createDecreasePosition(
+            _path,
             _indexToken,
             _collateralDelta,
             _sizeDelta,
             _isLong,
             _receiver,
-            _price,
-            _sizeDelta
+            _acceptablePrice,
+            _minOut,
+            _executionFee,
+            _withdrawETH,
+            _callbackTarget
         );
     }
 
