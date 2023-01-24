@@ -61,6 +61,8 @@ export default function Layout({ chains, children }: LayoutProps) {
     },
   ];
 
+  const isIndex = router.pathname === "/";
+
   return (
     <RainbowKitProvider
       chains={chains}
@@ -100,14 +102,14 @@ export default function Layout({ chains, children }: LayoutProps) {
             </Heading>
           </Flex>
 
-          <Flex display={{base: "none", md: "flex"}} justifySelf={router.pathname === "/" ? "center" : "end"}>
+          <Flex display={{base: "none", md: "flex"}} justifySelf={isIndex ? "center" : "end"}>
             {links.map((link) => {
               return (
-                <Link href={link.href} key={link.href} isExternal mt="0.5rem">
+                <Link href={link.href} key={link.href} isExternal mt="0.5rem" mr="0.5rem">
                   <Flex
                     w="3.5rem"
                     h="3.5rem"
-                    bg="#21281C"
+                    bg={isIndex ? "#22291C" : "none"}
                     alignItems={"center"}
                     justifyContent="center"
                     borderRadius="12px"
@@ -149,11 +151,11 @@ export default function Layout({ chains, children }: LayoutProps) {
                   <Flex
                     w="3rem"
                     h="3rem"
-                    bg="#21281C"
+                    bg={isIndex ? "#22291C" : "none"}
                     alignItems={"center"}
                     justifyContent="center"
                     borderRadius="12px"
-                    _hover={{ bg: "#2C3327" }}
+                    _hover={{bg: isIndex ? "#2C3327" : ""}}
                   >
                     {link.icon}
                   </Flex>

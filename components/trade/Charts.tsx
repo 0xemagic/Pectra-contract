@@ -5,7 +5,6 @@ import { useRef, useEffect } from "react";
 let tvScriptLoadingPromise: any;
 
 export default function Charts(symb: any) {
-  console.log(symb.symb)
   const onLoadScriptRef: any = useRef();
 
   // @ts-expect-error
@@ -45,7 +44,6 @@ export default function Charts(symb: any) {
           locale: "en",
           toolbar_bg: "#f1f3f6",
           enable_publishing: false,
-          hide_legend: true,
           range: "1D",
         });
       }

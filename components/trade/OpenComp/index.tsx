@@ -12,6 +12,13 @@ import {
   SliderTrack,
   Text,
   VStack,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+  Input,
+  InputGroup,
 } from "@chakra-ui/react";
 
 import {
@@ -34,7 +41,7 @@ const OpenComp = () => {
   };
 
   const [leverage, setLeverage] = useState(1);
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState<string>("0");
   const [longToken, setLongToken] = useState("ETH");
   const [shortToken, setShortToken] = useState("BTC");
   const [ethPrice, setEthPrice] = useState(0);
@@ -126,10 +133,11 @@ const OpenComp = () => {
               <Select
                 fontWeight={600}
                 fontSize="1.01rem"
-                w="4rem"
+                w="fit-content"
                 m="auto"
                 mr="-1rem"
                 variant="unstyled"
+                iconColor="#ACE075"
                 onChange={(e) => setLongToken(e.target.value)}
                 value={longToken}
                 isInvalid={sameToken}
@@ -171,10 +179,11 @@ const OpenComp = () => {
               <Select
                 fontWeight={600}
                 fontSize="1.01rem"
-                w="4rem"
+                w="fit-content"
                 m="auto"
                 mr="-1rem"
                 variant="unstyled"
+                iconColor="#FF7272"
                 onChange={(e) => setShortToken(e.target.value)}
                 value={shortToken}
                 isInvalid={sameToken}
@@ -195,13 +204,7 @@ const OpenComp = () => {
           </Flex>
         </Box>
         <Box
-          bg="#171717"
-          w="full"
-          borderColor="rgba(255, 255, 255, 0.2)"
-          borderWidth="2px"
-          borderRadius="7px"
-          py="0.875rem"
-          px="1.25rem"
+         
         >
           <Flex
             fontFamily="body"
@@ -209,13 +212,49 @@ const OpenComp = () => {
             alignItems="center"
             w="full"
           >
-            <Text fontWeight={600} fontFamily="heading" fontSize="0.9rem">
+            {/* <Text fontWeight={600} fontFamily="heading" fontSize="0.9rem">
               Amount
-            </Text>
+            </Text> */}
             <Flex gap="0.75rem" flexDir="column" justifyContent="flex-end">
+            <NumberInput
+            as={Flex}
+          placeholder={"0.0"}
+          min={0}
+          step={100}
+          flex={1}
+          value={truncate(amount, 2)}
+          onChange={setAmount}
+          allowMouseWheel
+          inputMode="numeric"
+          bg="#171717"
+          w="full"
+          borderColor="rgba(255, 255, 255, 0.2)"
+          borderWidth="2px"
+          borderRadius="7px"
+          py="0.875rem"
+          px="1.25rem"
+          direction="row"
+          alignItems="center"
+        >
+          <NumberInputField
+            onChange={(e) => setAmount(e.target.value.toString())}
+            textAlign="end"
+            border="none"
+            fontSize="1.5rem"
+            _focus={{ boxShadow: "none" }}
+            color="#FFFFFF"
+            opacity="0.7"
+          />
+          <Text fontSize="1.5rem" mr="1.5rem">USDC</Text>
+          <NumberInputStepper>
+            <NumberIncrementStepper />
+            <NumberDecrementStepper />
+          </NumberInputStepper>
+        </NumberInput>
+{/*         
               <Text fontWeight={600} fontSize="1.01rem">
                 1200 USDC
-              </Text>
+              </Text> */}
             </Flex>
           </Flex>
         </Box>
