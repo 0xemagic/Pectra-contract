@@ -1,9 +1,10 @@
-import { Flex, Text, Heading, Button, Image } from "@chakra-ui/react";
+import { Flex, Text, Heading, Button, Image, useColorMode } from "@chakra-ui/react";
 import { NextSeo } from "next-seo";
 
 import { useRouter } from "next/router";
 
 export default function Home() {
+  const { colorMode } = useColorMode();
 
   const router = useRouter();
 
@@ -43,8 +44,8 @@ export default function Home() {
             variant="paragraph"
             textAlign={"start"}
             mt={{base: "2.5rem", md: "2rem"}}
-            color="#FFFFFF"
             w={{ base: "350px", md: "550px" }}
+            fontWeight="500"
           >
             Pair trading made easy. Choose a token to short, and a token to
             long. Pectra will automatically set up a pair trade for you. Save gas,
@@ -56,7 +57,7 @@ export default function Home() {
           py="1rem"
           w="fit-content"
           h="66px"
-          bg="#192213"
+          bg={colorMode === "dark" ? "#192213" : "linear-gradient(0deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.02))"}
           direction="row"
           mt="2rem"
           borderRadius={"12px"}
@@ -71,7 +72,7 @@ export default function Home() {
           >
             Available on
           </Text>
-          <Image h="58px" src="/icons/arbitrum-text.svg" />
+          <Image ml={colorMode === "dark" ? "-0.25rem" : "-0.75rem"} h="58px" src={colorMode === "dark" ? "/icons/arbitrum-dark.svg" : "/icons/arbitrum-light.svg"} />
         </Flex>
         <Flex direction="row" mt={{base: "2.5rem", md: "5rem"}}>
           <Button

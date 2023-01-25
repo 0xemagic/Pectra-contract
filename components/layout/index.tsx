@@ -21,6 +21,7 @@ import {
   RiTelegramFill,
   RiGithubFill,
 } from "react-icons/ri";
+import { HiSun, HiMoon } from "react-icons/hi";
 import { FaDiscord } from "react-icons/fa";
 import { SiMedium } from "react-icons/si";
 import { useRouter } from "next/router";
@@ -36,27 +37,27 @@ export default function Layout({ chains, children }: LayoutProps) {
 
   const links = [
     {
-      icon: <RiInstagramFill color="#FFFFFF" size="32px" />,
+      icon: <RiInstagramFill color={colorMode === "dark" ? "#FFFFFF" : "222222"} size="32px" />,
       href: "https://www.instagram.com/spectraprotocol/",
     },
     {
-      icon: <RiTwitterFill color="#FFFFFF" size="32px" />,
+      icon: <RiTwitterFill color={colorMode === "dark" ? "#FFFFFF" : "222222"} size="32px" />,
       href: "https://twitter.com/spectraprotocol",
     },
     {
-      icon: <RiTelegramFill color="#FFFFFF" size="32px" />,
+      icon: <RiTelegramFill color={colorMode === "dark" ? "#FFFFFF" : "222222"} size="32px" />,
       href: "https://t.me/spectraprotocol",
     },
     {
-      icon: <SiMedium color="#FFFFFF" size="32px" />,
+      icon: <SiMedium color={colorMode === "dark" ? "#FFFFFF" : "222222"} size="32px" />,
       href: "https://medium.com/spectra-protocol",
     },
     {
-      icon: <FaDiscord color="#FFFFFF" size="32px" />,
+      icon: <FaDiscord color={colorMode === "dark" ? "#FFFFFF" : "222222"} size="32px" />,
       href: "https://discord.gg/2Z8Y4Z4",
     },
     {
-      icon: <RiGithubFill color="#FFFFFF" size="32px" />,
+      icon: <RiGithubFill color={colorMode === "dark" ? "#FFFFFF" : "222222"} size="32px" />,
       href: "https://github.com/spectra-protocol",
     },
   ];
@@ -80,7 +81,7 @@ export default function Layout({ chains, children }: LayoutProps) {
       <Flex
         minH={"100vh"}
         h="full"
-        bg={router.pathname =='/'? "linear-gradient(180deg, #0C1506 0%, #151D10 100%)" : "#101010"}
+        bg={isIndex ? (colorMode === "dark" ? "linear-gradient(180deg, #0C1506 0%, #151D10 100%)" : "linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 100%)") : (colorMode === "dark" ? "#101010" : "#FFFFFF")}
         direction="column"
       >
         <Flex
@@ -109,7 +110,7 @@ export default function Layout({ chains, children }: LayoutProps) {
                   <Flex
                     w="3.5rem"
                     h="3.5rem"
-                    bg={isIndex ? "#22291C" : "none"}
+                    bg={isIndex ? (colorMode === "dark" ? "#22291C" : "#F5F5F5") : "none"}
                     alignItems={"center"}
                     justifyContent="center"
                     borderRadius="12px"
@@ -123,9 +124,9 @@ export default function Layout({ chains, children }: LayoutProps) {
           </Flex>
 
           <Flex alignItems="center">
-            {/* <Button mr="1rem" variant="ghost" onClick={toggleColorMode}>
+            <Button mr="1rem" variant="ghost" onClick={toggleColorMode}>
               {colorMode === "dark" ? <HiSun /> : <HiMoon />}
-            </Button> */}
+            </Button>
             {router.pathname === "/" ? (
               <Button variant="primary" onClick={() => router.push("/trade")}>ENTER</Button>
             ) : (
@@ -151,7 +152,7 @@ export default function Layout({ chains, children }: LayoutProps) {
                   <Flex
                     w="3rem"
                     h="3rem"
-                    bg={isIndex ? "#22291C" : "none"}
+                    bg={isIndex ? (colorMode === "dark" ? "#22291C" : "#F5F5F5") : "none"}
                     alignItems={"center"}
                     justifyContent="center"
                     borderRadius="12px"
