@@ -23,8 +23,8 @@ contract GMXAssetProxy {
     }
 
     function openPosition(
-        address[] memory path,
-        address _indexToken,
+        address[] memory path, // token we're using
+        address _indexToken, // arbscan 
         uint256 _minOut,
         uint256 _sizeDelta,
         bool _isLong,
