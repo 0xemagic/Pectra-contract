@@ -23,10 +23,10 @@ contract GMXAssetProxy {
     }
 
     function openPosition(
-        address[] memory path, // token we're using
-        address _indexToken, // arbscan 
-        uint256 _minOut,
-        uint256 _sizeDelta,
+        address[] memory path, // path we are short or long to
+        address _indexToken, // asset we're trying to long or short 
+        uint256 _minOut, // the min amount of collateralToken to swap for.
+        uint256 _sizeDelta, 
         bool _isLong,
         uint256 _acceptablePrice,
         uint256 _executionFee,

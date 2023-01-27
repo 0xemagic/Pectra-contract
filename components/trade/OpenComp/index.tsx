@@ -75,6 +75,10 @@ const OpenComp = () => {
     { name: "UNI", price: uniPrice },
   ];
 
+  useEffect(() => {
+    console.log("data", data);
+  }, [data])
+  
   async function fetchETHPrice() {
     const data = await client2.query(ethPriceQuery, {}).toPromise();
     setEthPrice(data.data.bundle.ethPriceUSD);
