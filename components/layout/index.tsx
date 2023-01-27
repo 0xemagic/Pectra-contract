@@ -114,7 +114,7 @@ export default function Layout({ chains, children }: LayoutProps) {
                     alignItems={"center"}
                     justifyContent="center"
                     borderRadius="12px"
-                    _hover={{ bg: "#2C3327" }}
+                    _hover={{bg: isIndex ? (colorMode === "dark" ? "#2C3327" : "") : (colorMode === "dark" ? "#242323" : "")}}
                   >
                     {link.icon}
                   </Flex>
@@ -156,7 +156,7 @@ export default function Layout({ chains, children }: LayoutProps) {
                     alignItems={"center"}
                     justifyContent="center"
                     borderRadius="12px"
-                    _hover={{bg: isIndex ? "#2C3327" : ""}}
+                    _hover={{bg: isIndex ? (colorMode === "dark" ? "#2C3327" : "") : (colorMode === "dark" ? "#242323" : "")}}
                   >
                     {link.icon}
                   </Flex>

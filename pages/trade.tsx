@@ -112,7 +112,7 @@ const Trade = () => {
 
           <Box
             w="full"
-            h="full"
+            minH="50vh"
             px="1.68rem"
             py="1.15rem"
             fontSize="1.25rem"
