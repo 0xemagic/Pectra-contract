@@ -7,6 +7,7 @@ import {
   useColorMode,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import SecondComp from "./SecondComp";
 
 const LandingPage = () => {
   const router = useRouter();
@@ -105,6 +106,8 @@ const LandingPage = () => {
           src="/assets/spectra2.svg"
           alt="spectra-protocol-logo"
         />
+
+        <SecondComp />
       </Flex>
     </>
   );
