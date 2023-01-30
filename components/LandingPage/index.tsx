@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import SecondComp from "./SecondComp";
+import Stats from "./Stats";
 
 const LandingPage = () => {
   const router = useRouter();
@@ -114,6 +115,7 @@ const LandingPage = () => {
         />
 
         <SecondComp />
+        <Stats />
       </Stack>
     </>
   );
