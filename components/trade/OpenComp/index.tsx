@@ -124,7 +124,6 @@ const OpenComp = () => {
         fontFamily="body"
         color="#ffffff"
         fontSize="1.06rem"
-        mt="1.8125rem"
         mb="1.25rem"
         fontWeight="600"
       >
@@ -137,7 +136,7 @@ const OpenComp = () => {
           borderColor="#ACE075"
           borderWidth="2px"
           borderRadius="7px"
-          py="0.875rem"
+          py="0.5rem"
           px="1.25rem"
         >
           <Flex
@@ -161,6 +160,7 @@ const OpenComp = () => {
                 onChange={(e) => setLongToken(e.target.value)}
                 value={longToken}
                 isInvalid={sameToken}
+                mb="0.25rem"
               >
                 {tokens.map((token, index) => {
                   return <option key={index}>{token.name}</option>;
@@ -183,7 +183,7 @@ const OpenComp = () => {
           borderColor="#FF7272"
           borderWidth="2px"
           borderRadius="7px"
-          py="0.875rem"
+          py="0.5rem"
           px="1.25rem"
         >
           <Flex
@@ -195,7 +195,7 @@ const OpenComp = () => {
             <Text fontWeight={600} fontFamily="heading" fontSize="0.9rem">
               Short
             </Text>
-            <Flex gap="0.75rem" flexDir="column" justifyContent="flex-end">
+            <Flex flexDir="column">
               <Select
                 fontWeight={600}
                 fontSize="1.01rem"
@@ -207,6 +207,7 @@ const OpenComp = () => {
                 onChange={(e) => setShortToken(e.target.value)}
                 value={shortToken}
                 isInvalid={sameToken}
+                mb="0.25rem"
               >
                 {tokens.map((token, index) => {
                   return <option key={index}>{token.name}</option>;
