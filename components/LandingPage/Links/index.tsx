@@ -9,7 +9,7 @@ import { AiFillGithub } from "react-icons/ai";
 const Links = () => {
   const links = [
     {
-      label: <Icon  as={AiFillInstagram} width="5.625rem" height="5.625rem" />,
+      label: <Icon as={AiFillInstagram} width="5.625rem" height="5.625rem" />,
       link: "https://www.instagram.com/",
     },
     {
@@ -135,22 +135,36 @@ const Links = () => {
         fontWeight={500}
         fontFamily="heading"
         fontSize="3.125rem"
-        mb='4.375rem'
+        mb="4.375rem"
       >
-LINKS
+        LINKS
       </Heading>
-      <Grid gap='0.75rem' templateColumns={{base: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', md: 'repeat(5, 1fr)', lg: 'repeat(6, 1fr)'}}>
+      <Grid
+        gap="0.75rem"
+        templateColumns={{
+          base: "repeat(2, 1fr)",
+          sm: "repeat(3, 1fr)",
+          md: "repeat(5, 1fr)",
+          lg: "repeat(6, 1fr)",
+        }}
+      >
         {links.map((link, index) => (
-          <GridItem borderRadius='20px' bg={index / 6 < 1 ? '#757575' :  '#556D55' } h='13.75rem' w='auto'
+          <GridItem
+            borderRadius="20px"
+            bg={index / 6 < 1 ? "#757575" : "#556D55"}
+            h="13.75rem"
+            w="auto"
             key={index}
             colSpan={1}
             rowSpan={1}
             p={4}
-            color={index / 6 >= 2 ? '#A4EF6A' : 'white'}
+            color={index / 6 >= 2 ? "#A4EF6A" : "white"}
             display="flex"
             justifyContent="center"
             alignItems="center"
-          >{link.label}</GridItem>
+          >
+            {link.label}
+          </GridItem>
         ))}
       </Grid>
     </Box>

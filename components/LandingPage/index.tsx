@@ -5,7 +5,7 @@ import {
   Image,
   Stack,
   Text,
-  useColorMode
+  useColorMode,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import Links from "./Links";
@@ -20,9 +20,9 @@ const LandingPage = () => {
       <Stack
         gap={{ base: "5.625rem", md: "11.5rem" }}
         minH="80vh"
-        maxW={'100vw'}
-        overflowX={'hidden'}
-        justify='left'
+        maxW={"100vw"}
+        overflowX={"hidden"}
+        justify="left"
         px={{ base: "2rem", md: "4rem" }}
       >
         <Flex direction="column" mt="6rem" w="full">

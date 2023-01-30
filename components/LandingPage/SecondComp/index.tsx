@@ -30,7 +30,11 @@ const SecondComp = () => {
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus tempor
         purus aliquet, maximus augue vitae, porta mauris. Aenean id sagittis ex.
       </Text>
-      <Grid w="full" gap="1.75rem" templateColumns={{base: "repeat(1, 1fr)", md: "repeat(3, 1fr)"}}>
+      <Grid
+        w="full"
+        gap="1.75rem"
+        templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(3, 1fr)" }}
+      >
         {data.map((item, index) => (
           <GridItem
             py="1.3125rem"

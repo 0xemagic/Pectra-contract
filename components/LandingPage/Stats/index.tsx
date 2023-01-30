@@ -36,7 +36,7 @@ const Stats = () => {
       >
         TRUSTED BY OVER 7000 TRADERs
       </Heading>
-      <Grid 
+      <Grid
         w="full"
         gap="0.75rem"
         templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(3, 1fr)" }}

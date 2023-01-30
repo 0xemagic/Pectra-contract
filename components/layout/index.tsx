@@ -253,8 +253,12 @@ export default function Layout({ chains, children }: LayoutProps) {
             );
           })}
         </Flex>
-        <Flex py="3rem"
-          px={{ base: "2rem", md: "4rem" }} onClick={() => router.push("/")} _hover={{ cursor: "pointer" }}>
+        <Flex
+          py="3rem"
+          px={{ base: "2rem", md: "4rem" }}
+          onClick={() => router.push("/")}
+          _hover={{ cursor: "pointer" }}
+        >
           <Image src="/icons/spectra.svg" alt="spectra-protocol-logo" />
           <Heading ml="1rem" variant="heading">
             PECTRA
