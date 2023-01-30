@@ -207,7 +207,14 @@ export default function Layout({ chains, children }: LayoutProps) {
             )}
           </Flex>
         </Flex>
-        <Box w="full" position={'relative'} overflowY='auto'>{children}</Box>
+        <Box
+          maxW="100vw"
+          position={"relative"}
+          overflowX="hidden"
+          overflowY="auto"
+        >
+          {children}
+        </Box>
         <Flex
           display={{ base: "flex", md: "none" }}
           gap="0.5rem"
@@ -245,6 +252,13 @@ export default function Layout({ chains, children }: LayoutProps) {
               </Link>
             );
           })}
+        </Flex>
+        <Flex py="3rem"
+          px={{ base: "2rem", md: "4rem" }} onClick={() => router.push("/")} _hover={{ cursor: "pointer" }}>
+          <Image src="/icons/spectra.svg" alt="spectra-protocol-logo" />
+          <Heading ml="1rem" variant="heading">
+            PECTRA
+          </Heading>
         </Flex>
       </Flex>
     </RainbowKitProvider>
