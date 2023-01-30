@@ -3,8 +3,9 @@ import {
   Flex,
   Heading,
   Image,
+  Stack,
   Text,
-  useColorMode,
+  useColorMode
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import SecondComp from "./SecondComp";
@@ -14,7 +15,12 @@ const LandingPage = () => {
   const { colorMode } = useColorMode();
   return (
     <>
-      <Flex direction="column" minH="80vh" px={{ base: "2rem", md: "4rem" }}>
+      <Stack
+        gap={{ base: "5.625rem", md: "11.5rem" }}
+        minH="80vh"
+        justify='left'
+        px={{ base: "2rem", md: "4rem" }}
+      >
         <Flex direction="column" mt="6rem" w="full">
           {" "}
           <Heading fontSize={{ base: "2.75rem", md: "6rem" }} variant="hero">
@@ -108,7 +114,7 @@ const LandingPage = () => {
         />
 
         <SecondComp />
-      </Flex>
+      </Stack>
     </>
   );
 };
