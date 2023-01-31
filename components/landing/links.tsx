@@ -130,7 +130,7 @@ const Links = () => {
     },
   ];
   return (
-    <Box>
+    <Box pt="10rem">
       <Heading
         fontWeight={500}
         fontFamily="heading"

@@ -19,7 +19,7 @@ const Stats = () => {
     },
   ];
   return (
-    <VStack>
+    <VStack pt="10rem">
       <Text
         fontFamily="heading"
         fontWeight={500}

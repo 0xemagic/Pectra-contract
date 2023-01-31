@@ -17,27 +17,27 @@ const OpenPositions = () => {
       side: "Long",
       size: "2.123",
       leverage: "2x",
-      stat1: "##",
-      stat2: "##",
-      stat3: "##",
+      entry: "1,300",
+      liquidation: "800",
+      collateral: "700",
     },
     {
       market: "ETH",
       side: "Short",
       size: "2.123",
       leverage: "2x",
-      stat1: "##",
-      stat2: "##",
-      stat3: "##",
+      entry: "1,600",
+      liquidation: "1,800",
+      collateral: "200",
     },
     {
       market: "ETH",
       side: "Short",
       size: "2.123",
       leverage: "2x",
-      stat1: "##",
-      stat2: "##",
-      stat3: "##",
+      entry: "1,200",
+      liquidation: "1,700",
+      collateral: "1,500",
     },
   ];
   return (
@@ -51,11 +51,11 @@ const OpenPositions = () => {
             <Tr>
               <Th>Market</Th>
               <Th>Side</Th>
-              <Th isNumeric>Size</Th>
+              <Th >Size</Th>
               <Th>Leverage</Th>
-              <Th>Stat</Th>
-              <Th>Stat</Th>
-              <Th>Stat</Th>
+              <Th>Entry Price</Th>
+              <Th>Liq. Price</Th>
+              <Th>Collateral</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -71,10 +71,11 @@ const OpenPositions = () => {
                   <Box
                     bg={
                       position.side === "Long"
-                        ? '"rgba(172, 224, 117, 0.2)"'
+                        ? "rgba(172, 224, 117, 0.2)"
                         : "#4D3030"
                     }
-                    p={2}
+                    px={2}
+                    py={1}
                     borderRadius="7px"
                     w="fit-content"
                     color={position.side === "Long" ? "brand" : "#FF7272"}
@@ -82,11 +83,11 @@ const OpenPositions = () => {
                     {position.side}
                   </Box>
                 </Td>
-                <Td isNumeric>{position.size}</Td>
+                <Td>{position.size}</Td>
                 <Td>{position.leverage}</Td>
-                <Td>##</Td>
-                <Td>##</Td>
-                <Td>##</Td>
+                <Td>{position.entry}</Td>
+                <Td>{position.liquidation}</Td>
+                <Td>{position.collateral}</Td>
               </Tr>
             ))}
           </Tbody>

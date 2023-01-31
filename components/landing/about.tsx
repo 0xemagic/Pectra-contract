@@ -8,14 +8,14 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-const SecondComp = () => {
+const About = () => {
   const data = [
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
   ];
   return (
-    <Box>
+    <Box pt="10rem">
       <Heading fontSize={{ base: "2.1875rem", md: "3.125rem" }} variant="hero">
         What we do
       </Heading>
@@ -67,4 +67,4 @@ const SecondComp = () => {
   );
 };
 
-export default SecondComp;
+export default About;

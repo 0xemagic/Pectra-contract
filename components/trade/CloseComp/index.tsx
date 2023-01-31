@@ -1,11 +1,11 @@
-import PositionComp from "@/components/ShortLongPos";
+import PositionComp from "@/components/trade";
 import { Box, Button, Flex, Text, VStack } from "@chakra-ui/react";
 
 const CloseComp = () => {
   return (
     <>
       <Box mb="1.56rem" fontFamily={"body"} fontWeight={600} fontSize="1.06rem">
-        Redeem peETH/BTC
+        Close a Position
       </Box>
 
       <PositionComp

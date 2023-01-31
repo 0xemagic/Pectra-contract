@@ -25,7 +25,7 @@ export const customTheme = {
         fontDisplay: "swap",
       },
       body: {
-        minHeight: "100vh",
+        // minHeight: "100vh",
       },
       svg: {
         display: "inline",

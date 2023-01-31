@@ -121,6 +121,7 @@ export default function Layout({ chains, children }: LayoutProps) {
             : "#FFFFFF"
         }
         direction="column"
+        pb="4rem"
       >
         <Flex
           position="absolute"
@@ -143,7 +144,7 @@ export default function Layout({ chains, children }: LayoutProps) {
 
           <Flex
             display={{ base: "none", md: "flex" }}
-            justifySelf={isIndex ? "center" : "end"}
+            justifySelf={isIndex ? "center" : "left"}
           >
             {links.map((link) => {
               return (
@@ -253,7 +254,7 @@ export default function Layout({ chains, children }: LayoutProps) {
             );
           })}
         </Flex>
-        <Flex
+        {/* <Flex
           py="3rem"
           px={{ base: "2rem", md: "4rem" }}
           onClick={() => router.push("/")}
@@ -263,7 +264,7 @@ export default function Layout({ chains, children }: LayoutProps) {
           <Heading ml="1rem" variant="heading">
             PECTRA
           </Heading>
-        </Flex>
+        </Flex> */}
       </Flex>
     </RainbowKitProvider>
   );

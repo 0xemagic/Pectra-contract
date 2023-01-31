@@ -3,7 +3,7 @@ import { Box, Flex, Select } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
 
-import OpenPositions from "@/components/trade/OpenPositions";
+import OpenPositions from "@/components/trade/PositionsTable";
 import Charts from "@/components/trade/Charts";
 
 import { NextSeo } from "next-seo";
