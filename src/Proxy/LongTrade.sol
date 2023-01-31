@@ -25,7 +25,7 @@ contract GMXAssetProxy {
         assetValue = _assetValue;
     }
 
-    function approveAsset() {
+    function approveAsset() public {
         (bool success, bytes memory data) = gmxRouterAddress.delegatecall(
             abi.encodeWithSignature(
                 "approvePlugin(address)",
