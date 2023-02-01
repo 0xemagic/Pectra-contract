@@ -136,8 +136,8 @@ export default function Layout({ chains, children }: LayoutProps) {
           w="98vw"
         >
           <Flex onClick={() => router.push("/")} _hover={{ cursor: "pointer" }}>
-            <Image src="/icons/spectra.svg" alt="spectra-protocol-logo" />
-            <Heading ml="1rem" variant="heading">
+            <Image src="/icons/spectra.svg" alt="spectra-protocol-logo" h="2.25rem" />
+            <Heading ml="1rem" variant="heading" fontSize={{base: "2rem", md: "2.25rem"}}>
               PECTRA
             </Heading>
           </Flex>
@@ -190,7 +190,7 @@ export default function Layout({ chains, children }: LayoutProps) {
               {colorMode === "dark" ? <HiSun /> : <HiMoon />}
             </Button>
             {router.pathname === "/" ? (
-              <Button variant="primary" onClick={() => router.push("/trade")}>
+              <Button variant="primary" w={{base: "100px", md: "155px"}} onClick={() => router.push("/trade")}>
                 ENTER
               </Button>
             ) : (

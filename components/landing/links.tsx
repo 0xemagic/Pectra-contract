@@ -1,4 +1,4 @@
-import { Box, Grid, GridItem, Text, Icon, Heading } from "@chakra-ui/react";
+import { Box, Grid, GridItem, Link, Icon, Heading } from "@chakra-ui/react";
 import { AiFillInstagram } from "react-icons/ai";
 import { TbBrandTwitter } from "react-icons/tb";
 import { FaDiscord } from "react-icons/fa";
@@ -10,127 +10,31 @@ const Links = () => {
   const links = [
     {
       label: <Icon as={AiFillInstagram} width="5.625rem" height="5.625rem" />,
-      link: "https://www.instagram.com/",
+      link: "https://www.instagram.com/spectra-protocol",
     },
     {
       label: <Icon as={TbBrandTwitter} width="5.625rem" height="5.625rem" />,
-      link: "https://www.twitter.com/",
+      link: "https://www.twitter.com/spectra-protocol",
     },
     {
       label: <Icon as={FaDiscord} width="5.625rem" height="5.625rem" />,
-      link: "https://www.twitter.com/",
+      link: "https://www.discord.com/spectra-protocol",
     },
     {
       label: <Icon as={ImTelegram} width="5.625rem" height="5.625rem" />,
-      link: "https://www.twitter.com/",
+      link: "https://www.telegram.com/spectra-protocol",
     },
     {
       label: <Icon as={SiMedium} width="5.625rem" height="5.625rem" />,
-      link: "https://www.medium.com/",
+      link: "https://www.medium.com/spectra-protocol",
     },
     {
       label: <Icon as={AiFillGithub} width="5.625rem" height="5.625rem" />,
-      link: "https://www.github.com/",
-    },
-    {
-      label: (
-        <Text fontFamily="heading" fontWeight={500} fontSize="1.375rem">
-          ENTER APP
-        </Text>
-      ),
-      link: "https://www.instagram.com/",
-    },
-    {
-      label: (
-        <Text fontFamily="heading" fontWeight={500} fontSize="1.375rem">
-          ENTER APP
-        </Text>
-      ),
-      link: "https://www.instagram.com/",
-    },
-    {
-      label: (
-        <Text fontFamily="heading" fontWeight={500} fontSize="1.375rem">
-          ENTER APP
-        </Text>
-      ),
-      link: "https://www.instagram.com/",
-    },
-    {
-      label: (
-        <Text fontFamily="heading" fontWeight={500} fontSize="1.375rem">
-          ENTER APP
-        </Text>
-      ),
-      link: "https://www.instagram.com/",
-    },
-    {
-      label: (
-        <Text fontFamily="heading" fontWeight={500} fontSize="1.375rem">
-          ENTER APP
-        </Text>
-      ),
-      link: "https://www.instagram.com/",
-    },
-    {
-      label: (
-        <Text fontFamily="heading" fontWeight={500} fontSize="1.375rem">
-          ENTER APP
-        </Text>
-      ),
-      link: "https://www.instagram.com/",
-    },
-    {
-      label: (
-        <Text fontFamily="heading" fontWeight={500} fontSize="1.375rem">
-          ENTER APP
-        </Text>
-      ),
-      link: "https://www.instagram.com/",
-    },
-    {
-      label: (
-        <Text fontFamily="heading" fontWeight={500} fontSize="1.375rem">
-          ENTER APP
-        </Text>
-      ),
-      link: "https://www.instagram.com/",
-    },
-    {
-      label: (
-        <Text fontFamily="heading" fontWeight={500} fontSize="1.375rem">
-          ENTER APP
-        </Text>
-      ),
-      link: "https://www.instagram.com/",
-    },
-    {
-      label: (
-        <Text fontFamily="heading" fontWeight={500} fontSize="1.375rem">
-          ENTER APP
-        </Text>
-      ),
-      link: "https://www.instagram.com/",
-    },
-    {
-      label: (
-        <Text fontFamily="heading" fontWeight={500} fontSize="1.375rem">
-          ENTER APP
-        </Text>
-      ),
-      link: "https://www.instagram.com/",
-    },
-    {
-      label: (
-        <Text fontFamily="heading" fontWeight={500} fontSize="1.375rem">
-          ENTER APP
-        </Text>
-      ),
-      link: "https://www.instagram.com/",
+      link: "https://www.github.com/spectra-protocol",
     },
   ];
   return (
-    <Box pt="10rem">
+    <Box pt="10rem" pb="10rem">
       <Heading
         fontWeight={500}
         fontFamily="heading"
@@ -143,7 +47,6 @@ const Links = () => {
         gap="0.75rem"
         templateColumns={{
           base: "repeat(2, 1fr)",
-          sm: "repeat(3, 1fr)",
           md: "repeat(5, 1fr)",
           lg: "repeat(6, 1fr)",
         }}
@@ -151,19 +54,21 @@ const Links = () => {
         {links.map((link, index) => (
           <GridItem
             borderRadius="20px"
-            bg={index / 6 < 1 ? "#757575" : "#556D55"}
-            h="13.75rem"
+            bg="#272D22"
+            h="10rem"
             w="auto"
             key={index}
             colSpan={1}
             rowSpan={1}
             p={4}
-            color={index / 6 >= 2 ? "#A4EF6A" : "white"}
+            color="white"
             display="flex"
             justifyContent="center"
             alignItems="center"
           >
+            <Link href={link.link}>
             {link.label}
+            </Link>
           </GridItem>
         ))}
       </Grid>

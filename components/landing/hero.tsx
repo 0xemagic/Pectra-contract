@@ -53,11 +53,12 @@ export default function Hero() {
           </Text>
           <Image ml={colorMode === "dark" ? "-0.25rem" : "-0.75rem"} h="58px" src={colorMode === "dark" ? "/icons/arbitrum-dark.svg" : "/icons/arbitrum-light.svg"} />
         </Flex>
-        <Flex direction="row" mt={{base: "2.5rem", md: "5rem"}}>
+        <Flex direction={{base: "column", md: "row"}} align={{base: "center", md: "start"}} mt={{base: "2.5rem", md: "5rem"}}>
           <Button
             variant="primary"
             boxShadow="0px -1px 22px #518128"
-            mr="0.5rem"
+            mr={{base: "none", md: "0.5rem"}}
+            mb={{base: "1rem", md: "none"}}
             onClick={() => router.push("/trade")}
           >
             START TRADING

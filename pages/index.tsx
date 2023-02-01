@@ -1,13 +1,7 @@
-import LandingPage from "@/components/LandingPage";
-import { useColorMode } from "@chakra-ui/react";
+import LandingPage from "@/components/landing";
 import { NextSeo } from "next-seo";
 
-import { useRouter } from "next/router";
-
 export default function Home() {
-  const { colorMode } = useColorMode();
-
-  const router = useRouter();
 
   return (
     <>
