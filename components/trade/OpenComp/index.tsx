@@ -380,7 +380,7 @@ const OpenComp = () => {
         </Button>
       </VStack>
 
-      <OpenPositionModal write={write!} isOpen={isOpen} onClose={onClose} onOpen={onOpen} longPrice={longPrice!} shortPrice={shortPrice!} amount={amount} />
+      <OpenPositionModal write={write!} isOpen={isOpen} onClose={onClose} onOpen={onOpen} longPrice={longPrice!} shortPrice={shortPrice!} amount={amount} leverage={leverage} />
 
     </>
   );

@@ -9,6 +9,7 @@ import {
   ModalHeader,
   Button,
   Text,
+  VStack,
 } from "@chakra-ui/react";
 
 import { BiDownArrowAlt } from "react-icons/bi";
@@ -28,6 +29,7 @@ type OpenPositionModalProps = {
   longPrice: any;
   shortPrice: any;
   amount: string;
+  leverage: number;
 };
 
 type BoxesProps = {
@@ -35,7 +37,12 @@ type BoxesProps = {
   border: string;
   value: string;
   title: string;
-    token?: string;
+  token?: string;
+};
+
+type ValuesProps = {
+  title: string;
+  value: string | number;
 };
 
 const OpenPositionModal = ({
@@ -46,6 +53,7 @@ const OpenPositionModal = ({
   longPrice,
   shortPrice,
   amount,
+  leverage
 }: OpenPositionModalProps) => {
   const Boxes = ({ bg, border, value, title, token }: BoxesProps) => {
     return (
@@ -67,11 +75,30 @@ const OpenPositionModal = ({
         >
           <Text>{title}</Text>
           <Flex>
-          <Text variant="paragraph" mr="0.5rem">{value}</Text>
+            <Text variant="paragraph" mr="0.5rem">
+              {value}
+            </Text>
             <Text variant="paragraph">{token}</Text>
           </Flex>
         </Flex>
       </Box>
+    );
+  };
+
+  const Values = ({ title, value }: ValuesProps) => {
+    return (
+      <Flex
+        w="full"
+        alignItems="center"
+        justify="space-between"
+        fontFamily="body"
+        fontWeight={500}
+        fontSize="0.9rem"
+        mb="1rem"
+      >
+        <Text variant="paragraph">{title}</Text>
+        <Text>{value}</Text>
+      </Flex>
     );
   };
 
@@ -86,13 +113,19 @@ const OpenPositionModal = ({
             <Boxes
               bg="transparent"
               border="1px solid #505050"
-              value={amount}       
-              token="USDC"       
+              value={amount}
+              token="USDC"
               title="Pay"
             />
             <BiDownArrowAlt size="2rem" />
 
-            <Boxes bg="#404040" border="none" value={truncate((+amount / longPrice.price).toString(), 5)} token={longPrice.name} title="Long" />
+            <Boxes
+              bg="#404040"
+              border="none"
+              value={truncate((+amount / longPrice.price).toString(), 5)}
+              token={longPrice.name}
+              title="Long"
+            />
             <Boxes
               bg="#404040"
               border="none"
@@ -100,6 +133,21 @@ const OpenPositionModal = ({
               token={shortPrice.name}
               title="Short"
             />
+
+            <Flex mt="1rem" mb="1rem" direction="column" w="full">
+              <Values title="Collateral Token" value="ETH" />
+              <Values title="Collateral Value" value={amount} />
+              <Values title="Leverage" value={`${leverage}x`} />
+              <Values title="Position Value" value={+amount * leverage} />
+              <Values
+                title="Liquidation Price"
+                value={truncate(
+                  (longPrice.price / shortPrice.price).toString(),
+                  5
+                )}
+              />
+              <Values title="Fees" value="0.3$" />
+            </Flex>
 
             <Button variant="secondary" onClick={() => write?.()}>
               Open Position
