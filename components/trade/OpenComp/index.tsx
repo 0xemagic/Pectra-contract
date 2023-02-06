@@ -17,8 +17,7 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  Input,
-  InputGroup,
+  useDisclosure
 } from "@chakra-ui/react";
 
 import {
@@ -32,6 +31,7 @@ import {
 import { commify } from "ethers/lib/utils";
 import { client2 } from "@/components/utils";
 import useContract from "@/components/hooks/useContract";
+import OpenPositionModal from "@/components/modals/openPositionModal";
 
 const OpenComp = () => {
   const labelStyles = {
@@ -64,6 +64,7 @@ const OpenComp = () => {
   ];
 
   const { data, isLoading, isSuccess, write } = useContract(args);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const sameToken = longToken === shortToken;
 
@@ -231,9 +232,6 @@ const OpenComp = () => {
             alignItems="center"
             w="full"
           >
-            {/* <Text fontWeight={600} fontFamily="heading" fontSize="0.9rem">
-              Amount
-            </Text> */}
             <Flex gap="0.75rem" flexDir="column" justifyContent="flex-end">
               <NumberInput
                 as={Flex}
@@ -272,10 +270,6 @@ const OpenComp = () => {
                   <NumberDecrementStepper />
                 </NumberInputStepper>
               </NumberInput>
-              {/*         
-              <Text fontWeight={600} fontSize="1.01rem">
-                1200 USDC
-              </Text> */}
             </Flex>
           </Flex>
         </Box>
@@ -381,10 +375,13 @@ const OpenComp = () => {
             <Text>0.02 ETH</Text>
           </Flex>
         </VStack>
-        <Button disabled={!write} onClick={() => write?.()} variant="tertiary">
+        <Button disabled={!write} onClick={() => onOpen()} variant="tertiary">
           Open Position
         </Button>
       </VStack>
+
+      <OpenPositionModal write={write!} isOpen={isOpen} onClose={onClose} onOpen={onOpen} longPrice={longPrice!} shortPrice={shortPrice!} amount={amount} />
+
     </>
   );
 };
