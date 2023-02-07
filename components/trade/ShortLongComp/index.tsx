@@ -1,15 +1,15 @@
-import { useState, useEffect } from "react";
 import {
   Tab,
   TabList,
   TabPanel,
   TabPanels,
-  Tabs,
+  Tabs
 } from "@chakra-ui/react";
 import CloseComp from "../CloseComp";
 import OpenComp from "../OpenComp";
 
 const ShortLongComp = () => {
+
 
   return (
     <>

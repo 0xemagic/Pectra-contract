@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Box,
   Button,
   Flex,
-  Select,
+  
+   Select,
   Slider,
   SliderFilledTrack,
   SliderMark,
@@ -17,20 +18,16 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  Input,
-  InputGroup,
+  useDisclosure,
 } from "@chakra-ui/react";
 
+import { useWriteOpenPosition } from "@/components/hooks/useContract";
 import {
-  ethPriceQuery,
-  btcPriceQuery,
-  linkPriceQuery,
-  truncate,
-  maticPriceQuery,
-  uniPriceQuery,
+  btcPriceQuery, client2, ethPriceQuery, linkPriceQuery, maticPriceQuery, truncate, uniPriceQuery
 } from "@/components/utils";
-import {commify} from "ethers/lib/utils";
-import { client2 } from "@/components/utils";
+import { commify } from "ethers/lib/utils";
+import OpenPositionModal from "@/components/modals/openPositionModal";
+import ErrorModal from "@/components/modals/errorModal";
 
 const OpenComp = () => {
   const labelStyles = {
@@ -50,14 +47,57 @@ const OpenComp = () => {
   const [uniPrice, setUniPrice] = useState(0);
   const [maticPrice, setMaticPrice] = useState(0);
 
+  const [error, setError] = useState(false);
+  const [noAmount, setNoAmount] = useState(false);
+
+  const args = [
+    ["0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"],
+    "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+    20,
+    20,
+    true,
+    10,
+    10,
+    "0x3030303030303030303030303030303030303030303030303030303030303030",
+    "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
+  ];
+
+  const { data, isLoading, isSuccess, write } = useWriteOpenPosition(args);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isErrorOpen,
+    onOpen: onErrorOpen,
+    onClose: onErrorClose,
+  } = useDisclosure();
+
   const sameToken = longToken === shortToken;
 
   const tokens = [
-   { name: "ETH", price: ethPrice},
-    {name: "BTC", price: btcPrice},
-   {name: "MATIC", price: maticPrice},
-    {name: "LINK", price: linkPrice},
-    {name: "UNI", price: uniPrice}];
+    { name: "ETH", price: ethPrice },
+    { name: "BTC", price: btcPrice },
+    { name: "MATIC", price: maticPrice },
+    { name: "LINK", price: linkPrice },
+    { name: "UNI", price: uniPrice },
+  ];
+
+  useEffect(() => {
+    if (longToken === shortToken) {
+      setError(true);
+      onErrorOpen();
+    } else {
+      setError(false);
+    }
+  }, [longToken, shortToken]);
+
+  useEffect(() => {
+    if (noAmount && amount === "0") {
+      onErrorOpen();
+    }
+
+    if (amount !== "0") {
+      setNoAmount(false);
+    } 
+  }, [error, noAmount, amount]);
 
   async function fetchETHPrice() {
     const data = await client2.query(ethPriceQuery, {}).toPromise();
@@ -204,54 +244,51 @@ const OpenComp = () => {
             </Flex>
           </Flex>
         </Box>
-        <Box
-         
-        >
+        <Box>
           <Flex
             fontFamily="body"
             justify="space-between"
             alignItems="center"
             w="full"
           >
-            {/* <Text fontWeight={600} fontFamily="heading" fontSize="0.9rem">
-              Amount
-            </Text> */}
             <Flex gap="0.75rem" flexDir="column" justifyContent="flex-end">
-            <NumberInput
-            as={Flex}
-          placeholder={"0.0"}
-          min={0}
-          step={100}
-          flex={1}
-          value={truncate(amount, 2)}
-          onChange={setAmount}
-          allowMouseWheel
-          inputMode="numeric"
-          bg="#171717"
-          w="full"
-          borderColor="rgba(255, 255, 255, 0.2)"
-          borderWidth="2px"
-          borderRadius="7px"
-          py="0.875rem"
-          px="1.25rem"
-          direction="row"
-          alignItems="center"
-        >
-          <NumberInputField
-            onChange={(e) => setAmount(e.target.value.toString())}
-            textAlign="end"
-            border="none"
-            fontSize="1.5rem"
-            _focus={{ boxShadow: "none" }}
-            color="#FFFFFF"
-            opacity="0.7"
-          />
-          <Text fontSize="1.5rem" mr="1.5rem">USDC</Text>
-          <NumberInputStepper>
-            <NumberIncrementStepper />
-            <NumberDecrementStepper />
-          </NumberInputStepper>
-        </NumberInput>
+              <NumberInput
+                as={Flex}
+                placeholder={"0.0"}
+                min={0}
+                step={100}
+                flex={1}
+                value={truncate(amount, 2)}
+                onChange={setAmount}
+                allowMouseWheel
+                inputMode="numeric"
+                bg="#171717"
+                w="full"
+                borderColor={noAmount || error ? "red" : "rgba(255, 255, 255, 0.2)"}
+                borderWidth="2px"
+                borderRadius="7px"
+                py="0.875rem"
+                px="1.25rem"
+                direction="row"
+                alignItems="center"
+              >
+                <NumberInputField
+                  onChange={(e) => setAmount(e.target.value.toString())}
+                  textAlign="end"
+                  border="none"
+                  fontSize="1.5rem"
+                  _focus={{ boxShadow: "none" }}
+                  color="#FFFFFF"
+                  opacity="0.7"
+                />
+                <Text fontSize="1.5rem" mr="1.5rem">
+                  USDC
+                </Text>
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
             </Flex>
           </Flex>
         </Box>
@@ -275,22 +312,22 @@ const OpenComp = () => {
           </Text>
         </Flex>
         <Slider
-          min={0}
-          max={2}
+          min={1}
+          max={3}
           step={1}
           aria-label="slider-ex-2"
           colorScheme="#3F3F3F"
           defaultValue={1}
           onChange={(val) => setLeverage(val)}
         >
-          <SliderMark value={0} {...labelStyles}>
-            <Text variant="paragraph">0x</Text>
-          </SliderMark>
           <SliderMark value={1} {...labelStyles}>
             <Text variant="paragraph">1x</Text>
           </SliderMark>
           <SliderMark value={2} {...labelStyles}>
             <Text variant="paragraph">2x</Text>
+          </SliderMark>
+          <SliderMark value={3} {...labelStyles}>
+            <Text variant="paragraph">3x</Text>
           </SliderMark>
           <SliderMark
             value={leverage}
@@ -357,8 +394,36 @@ const OpenComp = () => {
             <Text>0.02 ETH</Text>
           </Flex>
         </VStack>
-        <Button variant="tertiary">Open Position</Button>
+        <Button
+          disabled={!write}
+          onClick={amount !== "0" ? () => onOpen() : () => setNoAmount(true)}
+          variant="tertiary"
+        >
+          Open Position
+        </Button>
       </VStack>
+
+      <OpenPositionModal
+        write={write!}
+        isOpen={isOpen}
+        onClose={onClose}
+        onOpen={onOpen}
+        longPrice={longPrice!}
+        shortPrice={shortPrice!}
+        amount={amount}
+        leverage={leverage}
+      />
+
+      <ErrorModal
+        error={error ? "Tokens are the same" : "Invalid amount"}
+        message={
+          error
+            ? "Cannot choose the same token for LONG and SHORT"
+            : "You cannot open a position without funds."
+        }
+        isOpen={isErrorOpen}
+        onClose={onErrorClose}
+      />
     </>
   );
 };

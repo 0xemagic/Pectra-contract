@@ -1,5 +1,5 @@
 import { extendTheme, ThemeConfig } from "@chakra-ui/react";
-import type { StyleFunctionProps } from '@chakra-ui/styled-system'
+import type { StyleFunctionProps } from "@chakra-ui/styled-system";
 
 const breakpoints = {
   sm: "380px",
@@ -25,7 +25,7 @@ export const customTheme = {
         fontDisplay: "swap",
       },
       body: {
-        minHeight: "100vh",
+        // minHeight: "100vh",
       },
       svg: {
         display: "inline",
@@ -69,63 +69,63 @@ export const customTheme = {
         },
       },
     },
-  Text: {
-    variants: {
-      paragraph: (props: StyleFunctionProps) => ({
-        fontFamily: "Inter",
-        color: props.colorMode === "dark" ? "#FFFFFF" : "#182112",
-        opacity: "0.7",
-        fontWeight: "400",
-        fontStyle: "normal",
-        fontSize: "1rem",
-        lineHeight: "1.5rem",
-      }),
-    },
-  },
-  Button: {
-    variants: {
-      primary: (props: StyleFunctionProps) => ({
-        bgColor: "brand",
-        color: "#182112",
-        _hover: {
-          bgColor: props.colorMode === "dark" ? "#3EB751" : "#BBFF81",
-        },
-        borderRadius: "12px",
-        fontFamily: "Integral CF",
-        fontWeight: "400",
-        fontStyle: "normal",
-        w: "155px",
-        h: "48px",
-      }),
-      secondary: (props: StyleFunctionProps) => ({
-        bgColor: props.colorMode === "dark" ? "#FFFFFF" : "#E6E6E6",
-        color:  props.colorMode === "dark" ? "#182112" : "#222222",
-        _hover: {
-          bgColor: props.colorMode === "dark" ? "#cccccc" : "#E6E6E6",
-        },
-        borderRadius: "12px",
-        fontFamily: "Integral CF",
-        fontWeight: "400",
-        fontStyle: "normal",
-        w: "155px",
-        h: "48px",
-      }),
-    tertiary: {
-      bgColor:'#FFFFFF',
-      color: "#182112",
-      _hover: {
-        bgColor: "#cccccc",
+    Text: {
+      variants: {
+        paragraph: (props: StyleFunctionProps) => ({
+          fontFamily: "Inter",
+          color: props.colorMode === "dark" ? "#FFFFFF" : "#182112",
+          opacity: "0.7",
+          fontWeight: "400",
+          fontStyle: "normal",
+          fontSize: "1rem",
+          lineHeight: "1.5rem",
+        }),
       },
-      borderRadius: "12px",
-      fontFamily: "Inter",
-      fontWeight: "600",
-      fontStyle: "normal",
-      width:'full',
-      fontSize: '1.25rem'
-    }
+    },
+    Button: {
+      variants: {
+        primary: (props: StyleFunctionProps) => ({
+          bgColor: "brand",
+          color: "#182112",
+          _hover: {
+            bgColor: props.colorMode === "dark" ? "#3EB751" : "#BBFF81",
+          },
+          borderRadius: "12px",
+          fontFamily: "Integral CF",
+          fontWeight: "400",
+          fontStyle: "normal",
+          w: "155px",
+          h: "48px",
+        }),
+        secondary: (props: StyleFunctionProps) => ({
+          bgColor: props.colorMode === "dark" ? "#FFFFFF" : "#E6E6E6",
+          color: props.colorMode === "dark" ? "#182112" : "#222222",
+          _hover: {
+            bgColor: props.colorMode === "dark" ? "#cccccc" : "#E6E6E6",
+          },
+          borderRadius: "12px",
+          fontFamily: "Integral CF",
+          fontWeight: "400",
+          fontStyle: "normal",
+          w: "155px",
+          h: "48px",
+        }),
+        tertiary: {
+          bgColor: "#FFFFFF",
+          color: "#182112",
+          _hover: {
+            bgColor: "#cccccc",
+          },
+          borderRadius: "12px",
+          fontFamily: "Inter",
+          fontWeight: "600",
+          fontStyle: "normal",
+          width: "full",
+          fontSize: "1.25rem",
+        },
+      },
     },
   },
-},
 };
 
 const theme = extendTheme(customTheme);

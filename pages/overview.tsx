@@ -1,4 +1,4 @@
-import PositionComp, { PositionCompProps } from "@/components/ShortLongPos";
+import PositionComp, { PositionCompProps } from "@/components/trade";
 import {
   Box,
   Flex,
