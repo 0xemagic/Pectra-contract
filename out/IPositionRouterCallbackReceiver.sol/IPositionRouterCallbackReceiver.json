@@ -1,0 +1,273 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "positionKey",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bool",
+          "name": "isExecuted",
+          "type": "bool"
+        },
+        {
+          "internalType": "bool",
+          "name": "isIncrease",
+          "type": "bool"
+        }
+      ],
+      "name": "gmxPositionCallback",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "gmxPositionCallback(bytes32,bool,bool)": "edf3daec"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.6.12+commit.27d51765\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"positionKey\",\"type\":\"bytes32\"},{\"internalType\":\"bool\",\"name\":\"isExecuted\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"isIncrease\",\"type\":\"bool\"}],\"name\":\"gmxPositionCallback\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"lib/gmx-contracts/contracts/core/interfaces/IPositionRouterCallbackReceiver.sol\":\"IPositionRouterCallbackReceiver\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@openzeppelin-upgradeable/=lib/openzeppelin-contracts-upgradeable/\",\":@openzeppelin/=lib/openzeppelin-contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":gmx-contracts/=lib/gmx-contracts/contracts/\"]},\"sources\":{\"lib/gmx-contracts/contracts/core/interfaces/IPositionRouterCallbackReceiver.sol\":{\"keccak256\":\"0x5fc2aa6850ec3066ef0ddf605acc1ded5fe7600aabeccd1a1010344618fb4b19\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://a61960b08bc00224284ae57bcdfaf0455dba2be7c8998f7eb64a2c6f65dafb50\",\"dweb:/ipfs/QmY55QbC51RqBPhAdRB2V5HyWxVp5qjL6XiLphJs5yL6As\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.6.12+commit.27d51765"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "positionKey",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bool",
+              "name": "isExecuted",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "isIncrease",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "gmxPositionCallback"
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {},
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {},
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":@openzeppelin-upgradeable/=lib/openzeppelin-contracts-upgradeable/",
+        ":@openzeppelin/=lib/openzeppelin-contracts/",
+        ":ds-test/=lib/forge-std/lib/ds-test/src/",
+        ":forge-std/=lib/forge-std/src/",
+        ":gmx-contracts/=lib/gmx-contracts/contracts/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "lib/gmx-contracts/contracts/core/interfaces/IPositionRouterCallbackReceiver.sol": "IPositionRouterCallbackReceiver"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "lib/gmx-contracts/contracts/core/interfaces/IPositionRouterCallbackReceiver.sol": {
+        "keccak256": "0x5fc2aa6850ec3066ef0ddf605acc1ded5fe7600aabeccd1a1010344618fb4b19",
+        "urls": [
+          "bzz-raw://a61960b08bc00224284ae57bcdfaf0455dba2be7c8998f7eb64a2c6f65dafb50",
+          "dweb:/ipfs/QmY55QbC51RqBPhAdRB2V5HyWxVp5qjL6XiLphJs5yL6As"
+        ],
+        "license": "MIT"
+      }
+    },
+    "version": 1
+  },
+  "ast": {
+    "absolutePath": "lib/gmx-contracts/contracts/core/interfaces/IPositionRouterCallbackReceiver.sol",
+    "id": 3465,
+    "exportedSymbols": {
+      "IPositionRouterCallbackReceiver": [
+        3464
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "35:174:6",
+    "nodes": [
+      {
+        "id": 3454,
+        "nodeType": "PragmaDirective",
+        "src": "35:23:6",
+        "nodes": [],
+        "literals": [
+          "solidity",
+          "^",
+          "0.6",
+          ".0"
+        ]
+      },
+      {
+        "id": 3464,
+        "nodeType": "ContractDefinition",
+        "src": "62:145:6",
+        "nodes": [
+          {
+            "id": 3463,
+            "nodeType": "FunctionDefinition",
+            "src": "111:93:6",
+            "nodes": [],
+            "documentation": null,
+            "functionSelector": "edf3daec",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "gmxPositionCallback",
+            "overrides": null,
+            "parameters": {
+              "id": 3461,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3456,
+                  "mutability": "mutable",
+                  "name": "positionKey",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 3463,
+                  "src": "140:19:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  },
+                  "typeName": {
+                    "id": 3455,
+                    "name": "bytes32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "140:7:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes32",
+                      "typeString": "bytes32"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3458,
+                  "mutability": "mutable",
+                  "name": "isExecuted",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 3463,
+                  "src": "161:15:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 3457,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "161:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3460,
+                  "mutability": "mutable",
+                  "name": "isIncrease",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 3463,
+                  "src": "178:15:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 3459,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "178:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "139:55:6"
+            },
+            "returnParameters": {
+              "id": 3462,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "203:0:6"
+            },
+            "scope": 3464,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "linearizedBaseContracts": [
+          3464
+        ],
+        "name": "IPositionRouterCallbackReceiver",
+        "scope": 3465
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 6
+}
