@@ -29,7 +29,7 @@ contract GMXAssetProxy {
         (bool success, bytes memory data) = gmxRouterAddress.delegatecall(
             abi.encodeWithSignature(
                 "approvePlugin(address)",
-                0xb87a436B93fFE9D75c5cFA7bAcFff96430b09868
+                address(this)
             )
         );
         require(success, "approvePlugin call failed");
@@ -47,9 +47,6 @@ contract GMXAssetProxy {
         bytes32 _referralCode,
         address _callbackTarget
     ) public {
-        if (!approved[msg.sender]) {
-            approveAsset();
-        }
         positionRouter.createIncreasePositionETH(
             path,
             _indexToken,

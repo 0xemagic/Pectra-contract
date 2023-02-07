@@ -1,37 +1,25 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Box,
   Button,
-  Flex,
-  Select,
+  Flex, NumberDecrementStepper, NumberIncrementStepper, NumberInput,
+  NumberInputField,
+  NumberInputStepper, Select,
   Slider,
   SliderFilledTrack,
   SliderMark,
   SliderThumb,
   SliderTrack,
   Text,
-  VStack,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-  Input,
-  InputGroup,
+  VStack
 } from "@chakra-ui/react";
 
+import { useWriteOpenPosition } from "@/components/hooks/useContract";
 import {
-  ethPriceQuery,
-  btcPriceQuery,
-  linkPriceQuery,
-  truncate,
-  maticPriceQuery,
-  uniPriceQuery,
+  btcPriceQuery, client2, ethPriceQuery, linkPriceQuery, maticPriceQuery, truncate, uniPriceQuery
 } from "@/components/utils";
 import { commify } from "ethers/lib/utils";
-import { client2 } from "@/components/utils";
-import useContract from "@/components/hooks/useContract";
 
 const OpenComp = () => {
   const labelStyles = {
@@ -63,7 +51,7 @@ const OpenComp = () => {
     "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
   ];
 
-  const { data, isLoading, isSuccess, write } = useContract(args);
+  const { data, isLoading, isSuccess, write } = useWriteOpenPosition(args);
 
   const sameToken = longToken === shortToken;
 
