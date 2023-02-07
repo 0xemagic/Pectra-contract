@@ -47,6 +47,9 @@ const OpenComp = () => {
   const [uniPrice, setUniPrice] = useState(0);
   const [maticPrice, setMaticPrice] = useState(0);
 
+  const [error, setError] = useState(false);
+  const [noAmount, setNoAmount] = useState(false);
+
   const args = [
     ["0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"],
     "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
@@ -61,7 +64,11 @@ const OpenComp = () => {
 
   const { data, isLoading, isSuccess, write } = useWriteOpenPosition(args);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isOpen: isErrorOpen, onOpen: onErrorOpen, onClose: onErrorClose } = useDisclosure();
+  const {
+    isOpen: isErrorOpen,
+    onOpen: onErrorOpen,
+    onClose: onErrorClose,
+  } = useDisclosure();
 
   const sameToken = longToken === shortToken;
 
@@ -74,8 +81,23 @@ const OpenComp = () => {
   ];
 
   useEffect(() => {
-    console.log("data", data);
-  }, [data]);
+    if (longToken === shortToken) {
+      setError(true);
+      onErrorOpen();
+    } else {
+      setError(false);
+    }
+  }, [longToken, shortToken]);
+
+  useEffect(() => {
+    if (noAmount && amount === "0") {
+      onErrorOpen();
+    }
+
+    if (amount !== "0") {
+      setNoAmount(false);
+    } 
+  }, [error, noAmount, amount]);
 
   async function fetchETHPrice() {
     const data = await client2.query(ethPriceQuery, {}).toPromise();
@@ -242,7 +264,7 @@ const OpenComp = () => {
                 inputMode="numeric"
                 bg="#171717"
                 w="full"
-                borderColor="rgba(255, 255, 255, 0.2)"
+                borderColor={noAmount || error ? "red" : "rgba(255, 255, 255, 0.2)"}
                 borderWidth="2px"
                 borderRadius="7px"
                 py="0.875rem"
@@ -372,10 +394,11 @@ const OpenComp = () => {
             <Text>0.02 ETH</Text>
           </Flex>
         </VStack>
-        <Button 
-        disabled={!write} 
-        onClick={amount !== "0" ? () => onOpen() : () => onErrorOpen()}
-          variant="tertiary">
+        <Button
+          disabled={!write}
+          onClick={amount !== "0" ? () => onOpen() : () => setNoAmount(true)}
+          variant="tertiary"
+        >
           Open Position
         </Button>
       </VStack>
@@ -391,11 +414,15 @@ const OpenComp = () => {
         leverage={leverage}
       />
 
-      <ErrorModal 
-      error={"Invalid amount"} 
-      message={"You cannot open a position without funds."}  
-      isOpen={isErrorOpen}
-      onClose={onErrorClose}
+      <ErrorModal
+        error={error ? "Tokens are the same" : "Invalid amount"}
+        message={
+          error
+            ? "Cannot choose the same token for LONG and SHORT"
+            : "You cannot open a position without funds."
+        }
+        isOpen={isErrorOpen}
+        onClose={onErrorClose}
       />
     </>
   );
