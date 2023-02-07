@@ -17,7 +17,7 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/react";
 
 import {
@@ -32,6 +32,7 @@ import { commify } from "ethers/lib/utils";
 import { client2 } from "@/components/utils";
 import useContract from "@/components/hooks/useContract";
 import OpenPositionModal from "@/components/modals/openPositionModal";
+import ErrorModal from "@/components/modals/errorModal";
 
 const OpenComp = () => {
   const labelStyles = {
@@ -65,6 +66,7 @@ const OpenComp = () => {
 
   const { data, isLoading, isSuccess, write } = useContract(args);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isErrorOpen, onOpen: onErrorOpen, onClose: onErrorClose } = useDisclosure();
 
   const sameToken = longToken === shortToken;
 
@@ -78,8 +80,8 @@ const OpenComp = () => {
 
   useEffect(() => {
     console.log("data", data);
-  }, [data])
-  
+  }, [data]);
+
   async function fetchETHPrice() {
     const data = await client2.query(ethPriceQuery, {}).toPromise();
     setEthPrice(data.data.bundle.ethPriceUSD);
@@ -293,22 +295,22 @@ const OpenComp = () => {
           </Text>
         </Flex>
         <Slider
-          min={0}
-          max={2}
+          min={1}
+          max={3}
           step={1}
           aria-label="slider-ex-2"
           colorScheme="#3F3F3F"
           defaultValue={1}
           onChange={(val) => setLeverage(val)}
         >
-          <SliderMark value={0} {...labelStyles}>
-            <Text variant="paragraph">0x</Text>
-          </SliderMark>
           <SliderMark value={1} {...labelStyles}>
             <Text variant="paragraph">1x</Text>
           </SliderMark>
           <SliderMark value={2} {...labelStyles}>
             <Text variant="paragraph">2x</Text>
+          </SliderMark>
+          <SliderMark value={3} {...labelStyles}>
+            <Text variant="paragraph">3x</Text>
           </SliderMark>
           <SliderMark
             value={leverage}
@@ -375,13 +377,31 @@ const OpenComp = () => {
             <Text>0.02 ETH</Text>
           </Flex>
         </VStack>
-        <Button disabled={!write} onClick={() => onOpen()} variant="tertiary">
+        <Button 
+        disabled={!write} 
+        onClick={amount !== "0" ? () => onOpen() : () => onErrorOpen()}
+          variant="tertiary">
           Open Position
         </Button>
       </VStack>
 
-      <OpenPositionModal write={write!} isOpen={isOpen} onClose={onClose} onOpen={onOpen} longPrice={longPrice!} shortPrice={shortPrice!} amount={amount} leverage={leverage} />
+      <OpenPositionModal
+        write={write!}
+        isOpen={isOpen}
+        onClose={onClose}
+        onOpen={onOpen}
+        longPrice={longPrice!}
+        shortPrice={shortPrice!}
+        amount={amount}
+        leverage={leverage}
+      />
 
+      <ErrorModal 
+      error={"Invalid amount"} 
+      message={"You cannot open a position without funds."}  
+      isOpen={isErrorOpen}
+      onClose={onErrorClose}
+      />
     </>
   );
 };

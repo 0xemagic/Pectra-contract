@@ -105,11 +105,11 @@ const OpenPositionModal = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent bg="#353535" border="solid 1px rgba(255, 255, 255, 0.2)">
+      <ModalContent bg="#202020" border="solid 1px rgba(255, 255, 255, 0.2)">
         <ModalHeader>Confirm Position</ModalHeader>
         <ModalCloseButton />
         <ModalBody w="full">
-          <Flex as={Flex} direction="column" px="1.5rem" alignItems="center">
+          <Flex as={Flex} direction="column" px="1.5rem" py="1rem" alignItems="center">
             <Boxes
               bg="transparent"
               border="1px solid #505050"
@@ -117,34 +117,35 @@ const OpenPositionModal = ({
               token="USDC"
               title="Pay"
             />
+            
             <BiDownArrowAlt size="2rem" />
 
             <Boxes
               bg="#404040"
               border="none"
-              value={truncate((+amount / longPrice.price).toString(), 5)}
+              value={truncate(((+amount / longPrice.price) / 2 * leverage).toString(), 5)}
               token={longPrice.name}
               title="Long"
             />
             <Boxes
               bg="#404040"
               border="none"
-              value={truncate((+amount / shortPrice.price).toString(), 5)}
+              value={truncate(((+amount / shortPrice.price ) / 2 * leverage).toString(), 5)}
               token={shortPrice.name}
               title="Short"
             />
 
             <Flex mt="1rem" mb="1rem" direction="column" w="full">
               <Values title="Collateral Token" value="ETH" />
-              <Values title="Collateral Value" value={amount} />
+              <Values title="Collateral Value" value={`$${amount}`} />
               <Values title="Leverage" value={`${leverage}x`} />
-              <Values title="Position Value" value={+amount * leverage} />
+              <Values title="Position Value" value={`$${+amount * leverage}`} />
               <Values
                 title="Liquidation Price"
-                value={truncate(
+                value={`$${truncate(
                   (longPrice.price / shortPrice.price).toString(),
                   5
-                )}
+                )}`}
               />
               <Values title="Fees" value="0.3$" />
             </Flex>
