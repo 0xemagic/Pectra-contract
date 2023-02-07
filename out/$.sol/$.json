@@ -1,0 +1,261 @@
+{
+  "abi": [
+    {
+      "inputs": [],
+      "name": "USDC",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "WETH",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x60c8610039600b82828239805160001a60731461002c57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe7300000000000000000000000000000000000000003014608060405260043610603d5760003560e01c806389a30271146042578063ad5c4648146078575b600080fd5b605c73ff970a61a04b1ca14834a43f5de4533ebddb5cc881565b6040516001600160a01b03909116815260200160405180910390f35b605c7382af49447d8a07e3bd95bd0d56f35241523fbab18156fea26469706673582212206bb260629d7a914ec449d74c55f36ac2c1387a884973dc7ca31ebe8b9c4102bb64736f6c63430008110033",
+    "sourceMap": "61:174:44:-:0;;;;;;;;;;;;;;;-1:-1:-1;;;61:174:44;;;;;;;;;;;;;;;;;",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x7300000000000000000000000000000000000000003014608060405260043610603d5760003560e01c806389a30271146042578063ad5c4648146078575b600080fd5b605c73ff970a61a04b1ca14834a43f5de4533ebddb5cc881565b6040516001600160a01b03909116815260200160405180910390f35b605c7382af49447d8a07e3bd95bd0d56f35241523fbab18156fea26469706673582212206bb260629d7a914ec449d74c55f36ac2c1387a884973dc7ca31ebe8b9c4102bb64736f6c63430008110033",
+    "sourceMap": "61:174:44:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;78:73;;109:42;78:73;;;;;-1:-1:-1;;;;;186:32:47;;;168:51;;156:2;141:18;78:73:44;;;;;;;158;;189:42;158:73;",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "USDC()": "89a30271",
+    "WETH()": "ad5c4648"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"USDC\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"WETH\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/library/$.sol\":\"$\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@openzeppelin-upgradeable/=lib/openzeppelin-contracts-upgradeable/\",\":@openzeppelin/=lib/openzeppelin-contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":gmx-contracts/=lib/gmx-contracts/contracts/\"]},\"sources\":{\"src/library/$.sol\":{\"keccak256\":\"0xea48fc5ce1ff0894ccb46bf15719bb605bbbf7f6d50ef7a991fe63ba6e9f7d4e\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://615c7ebb984354174b0ee9eeb469dbe0b640314ebab6accfcdd9c805599a1f44\",\"dweb:/ipfs/QmNzwAs2DC5tzt2HL6SQfU1kScqzG3fYCfTFbTuP7bDRxP\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.8.17+commit.8df45f5f"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "USDC",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "WETH",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ]
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {},
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {},
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":@openzeppelin-upgradeable/=lib/openzeppelin-contracts-upgradeable/",
+        ":@openzeppelin/=lib/openzeppelin-contracts/",
+        ":ds-test/=lib/forge-std/lib/ds-test/src/",
+        ":forge-std/=lib/forge-std/src/",
+        ":gmx-contracts/=lib/gmx-contracts/contracts/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "src/library/$.sol": "$"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "src/library/$.sol": {
+        "keccak256": "0xea48fc5ce1ff0894ccb46bf15719bb605bbbf7f6d50ef7a991fe63ba6e9f7d4e",
+        "urls": [
+          "bzz-raw://615c7ebb984354174b0ee9eeb469dbe0b640314ebab6accfcdd9c805599a1f44",
+          "dweb:/ipfs/QmNzwAs2DC5tzt2HL6SQfU1kScqzG3fYCfTFbTuP7bDRxP"
+        ],
+        "license": "MIT"
+      }
+    },
+    "version": 1
+  },
+  "ast": {
+    "absolutePath": "src/library/$.sol",
+    "id": 30120,
+    "exportedSymbols": {
+      "$": [
+        30119
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "33:204:44",
+    "nodes": [
+      {
+        "id": 30112,
+        "nodeType": "PragmaDirective",
+        "src": "33:24:44",
+        "nodes": [],
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".13"
+        ]
+      },
+      {
+        "id": 30119,
+        "nodeType": "ContractDefinition",
+        "src": "61:174:44",
+        "nodes": [
+          {
+            "id": 30115,
+            "nodeType": "VariableDeclaration",
+            "src": "78:73:44",
+            "nodes": [],
+            "constant": true,
+            "functionSelector": "89a30271",
+            "mutability": "constant",
+            "name": "USDC",
+            "nameLocation": "102:4:44",
+            "scope": 30119,
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_address",
+              "typeString": "address"
+            },
+            "typeName": {
+              "id": 30113,
+              "name": "address",
+              "nodeType": "ElementaryTypeName",
+              "src": "78:7:44",
+              "stateMutability": "nonpayable",
+              "typeDescriptions": {
+                "typeIdentifier": "t_address",
+                "typeString": "address"
+              }
+            },
+            "value": {
+              "hexValue": "307846463937304136314130346231634131343833344134336635644534353333654244444235434338",
+              "id": 30114,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "109:42:44",
+              "typeDescriptions": {
+                "typeIdentifier": "t_address",
+                "typeString": "address"
+              },
+              "value": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8"
+            },
+            "visibility": "public"
+          },
+          {
+            "id": 30118,
+            "nodeType": "VariableDeclaration",
+            "src": "158:73:44",
+            "nodes": [],
+            "constant": true,
+            "functionSelector": "ad5c4648",
+            "mutability": "constant",
+            "name": "WETH",
+            "nameLocation": "182:4:44",
+            "scope": 30119,
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_address",
+              "typeString": "address"
+            },
+            "typeName": {
+              "id": 30116,
+              "name": "address",
+              "nodeType": "ElementaryTypeName",
+              "src": "158:7:44",
+              "stateMutability": "nonpayable",
+              "typeDescriptions": {
+                "typeIdentifier": "t_address",
+                "typeString": "address"
+              }
+            },
+            "value": {
+              "hexValue": "307838326146343934343744386130376533626439354244306435366633353234313532336642616231",
+              "id": 30117,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "189:42:44",
+              "typeDescriptions": {
+                "typeIdentifier": "t_address",
+                "typeString": "address"
+              },
+              "value": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1"
+            },
+            "visibility": "public"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "$",
+        "contractDependencies": [],
+        "contractKind": "library",
+        "fullyImplemented": true,
+        "linearizedBaseContracts": [
+          30119
+        ],
+        "name": "$",
+        "nameLocation": "69:1:44",
+        "scope": 30120,
+        "usedErrors": []
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 44
+}

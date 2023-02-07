@@ -1,0 +1,528 @@
+{
+  "abi": [
+    {
+      "inputs": [],
+      "name": "decreasePositionRequestKeysStart",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_count",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address payable",
+          "name": "_executionFeeReceiver",
+          "type": "address"
+        }
+      ],
+      "name": "executeDecreasePositions",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_count",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address payable",
+          "name": "_executionFeeReceiver",
+          "type": "address"
+        }
+      ],
+      "name": "executeIncreasePositions",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "increasePositionRequestKeysStart",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "decreasePositionRequestKeysStart()": "1bca8cf0",
+    "executeDecreasePositions(uint256,address)": "f3883d8b",
+    "executeIncreasePositions(uint256,address)": "9a208100",
+    "increasePositionRequestKeysStart()": "9b578620"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.6.12+commit.27d51765\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"decreasePositionRequestKeysStart\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_count\",\"type\":\"uint256\"},{\"internalType\":\"address payable\",\"name\":\"_executionFeeReceiver\",\"type\":\"address\"}],\"name\":\"executeDecreasePositions\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_count\",\"type\":\"uint256\"},{\"internalType\":\"address payable\",\"name\":\"_executionFeeReceiver\",\"type\":\"address\"}],\"name\":\"executeIncreasePositions\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"increasePositionRequestKeysStart\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"lib/gmx-contracts/contracts/core/interfaces/IPositionRouter.sol\":\"IPositionRouter\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@openzeppelin-upgradeable/=lib/openzeppelin-contracts-upgradeable/\",\":@openzeppelin/=lib/openzeppelin-contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":gmx-contracts/=lib/gmx-contracts/contracts/\"]},\"sources\":{\"lib/gmx-contracts/contracts/core/interfaces/IPositionRouter.sol\":{\"keccak256\":\"0x1cf1b530120091aaf1918200078ddb479236cd9a03cddb4aa809471fa117425f\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://cc64215231e3ddc3345acf37f0f969d38e34d4be9d89bab5213a2f7e8d53b9fc\",\"dweb:/ipfs/QmNVnAMMMamUXYtygCqmz8CU4ehLJiEpjreryDbsXtZ7QL\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.6.12+commit.27d51765"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "decreasePositionRequestKeysStart",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_count",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address payable",
+              "name": "_executionFeeReceiver",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "executeDecreasePositions"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_count",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address payable",
+              "name": "_executionFeeReceiver",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "executeIncreasePositions"
+        },
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "increasePositionRequestKeysStart",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ]
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {},
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {},
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":@openzeppelin-upgradeable/=lib/openzeppelin-contracts-upgradeable/",
+        ":@openzeppelin/=lib/openzeppelin-contracts/",
+        ":ds-test/=lib/forge-std/lib/ds-test/src/",
+        ":forge-std/=lib/forge-std/src/",
+        ":gmx-contracts/=lib/gmx-contracts/contracts/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "lib/gmx-contracts/contracts/core/interfaces/IPositionRouter.sol": "IPositionRouter"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "lib/gmx-contracts/contracts/core/interfaces/IPositionRouter.sol": {
+        "keccak256": "0x1cf1b530120091aaf1918200078ddb479236cd9a03cddb4aa809471fa117425f",
+        "urls": [
+          "bzz-raw://cc64215231e3ddc3345acf37f0f969d38e34d4be9d89bab5213a2f7e8d53b9fc",
+          "dweb:/ipfs/QmNVnAMMMamUXYtygCqmz8CU4ehLJiEpjreryDbsXtZ7QL"
+        ],
+        "license": "MIT"
+      }
+    },
+    "version": 1
+  },
+  "ast": {
+    "absolutePath": "lib/gmx-contracts/contracts/core/interfaces/IPositionRouter.sol",
+    "id": 3453,
+    "exportedSymbols": {
+      "IPositionRouter": [
+        3452
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "35:421:5",
+    "nodes": [
+      {
+        "id": 3427,
+        "nodeType": "PragmaDirective",
+        "src": "35:23:5",
+        "nodes": [],
+        "literals": [
+          "solidity",
+          "0.6",
+          ".12"
+        ]
+      },
+      {
+        "id": 3452,
+        "nodeType": "ContractDefinition",
+        "src": "62:392:5",
+        "nodes": [
+          {
+            "id": 3432,
+            "nodeType": "FunctionDefinition",
+            "src": "95:71:5",
+            "nodes": [],
+            "documentation": null,
+            "functionSelector": "9b578620",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "increasePositionRequestKeysStart",
+            "overrides": null,
+            "parameters": {
+              "id": 3428,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "136:2:5"
+            },
+            "returnParameters": {
+              "id": 3431,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3430,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 3432,
+                  "src": "157:7:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3429,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "157:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "156:9:5"
+            },
+            "scope": 3452,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 3437,
+            "nodeType": "FunctionDefinition",
+            "src": "172:71:5",
+            "nodes": [],
+            "documentation": null,
+            "functionSelector": "1bca8cf0",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "decreasePositionRequestKeysStart",
+            "overrides": null,
+            "parameters": {
+              "id": 3433,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "213:2:5"
+            },
+            "returnParameters": {
+              "id": 3436,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3435,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 3437,
+                  "src": "234:7:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3434,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "234:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "233:9:5"
+            },
+            "scope": 3452,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 3444,
+            "nodeType": "FunctionDefinition",
+            "src": "249:98:5",
+            "nodes": [],
+            "documentation": null,
+            "functionSelector": "9a208100",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "executeIncreasePositions",
+            "overrides": null,
+            "parameters": {
+              "id": 3442,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3439,
+                  "mutability": "mutable",
+                  "name": "_count",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 3444,
+                  "src": "283:14:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3438,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "283:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3441,
+                  "mutability": "mutable",
+                  "name": "_executionFeeReceiver",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 3444,
+                  "src": "299:37:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address_payable",
+                    "typeString": "address payable"
+                  },
+                  "typeName": {
+                    "id": 3440,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "299:15:5",
+                    "stateMutability": "payable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address_payable",
+                      "typeString": "address payable"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "282:55:5"
+            },
+            "returnParameters": {
+              "id": 3443,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "346:0:5"
+            },
+            "scope": 3452,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 3451,
+            "nodeType": "FunctionDefinition",
+            "src": "353:98:5",
+            "nodes": [],
+            "documentation": null,
+            "functionSelector": "f3883d8b",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "executeDecreasePositions",
+            "overrides": null,
+            "parameters": {
+              "id": 3449,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3446,
+                  "mutability": "mutable",
+                  "name": "_count",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 3451,
+                  "src": "387:14:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3445,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "387:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3448,
+                  "mutability": "mutable",
+                  "name": "_executionFeeReceiver",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 3451,
+                  "src": "403:37:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address_payable",
+                    "typeString": "address payable"
+                  },
+                  "typeName": {
+                    "id": 3447,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "403:15:5",
+                    "stateMutability": "payable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address_payable",
+                      "typeString": "address payable"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "386:55:5"
+            },
+            "returnParameters": {
+              "id": 3450,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "450:0:5"
+            },
+            "scope": 3452,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "linearizedBaseContracts": [
+          3452
+        ],
+        "name": "IPositionRouter",
+        "scope": 3453
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 5
+}

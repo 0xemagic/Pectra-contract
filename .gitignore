@@ -1,6 +1,5 @@
 # Compiler files
 cache/
-out/
 
 # Ignores development broadcast logs
 !/broadcast
@@ -22,7 +21,6 @@ out/
 
 # next.js
 /.next/
-/out/
 
 # production
 /build
