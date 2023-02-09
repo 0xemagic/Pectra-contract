@@ -4,8 +4,7 @@ import {
   Box,
   Button,
   Flex,
-  
-   Select,
+  Select,
   Slider,
   SliderFilledTrack,
   SliderMark,
@@ -23,11 +22,19 @@ import {
 
 import { useWriteOpenPosition } from "@/components/hooks/useContract";
 import {
-  btcPriceQuery, client2, ethPriceQuery, linkPriceQuery, maticPriceQuery, truncate, uniPriceQuery
+  btcPriceQuery,
+  client2,
+  ethPriceQuery,
+  linkPriceQuery,
+  maticPriceQuery,
+  truncate,
+  uniPriceQuery,
 } from "@/components/utils";
 import { commify } from "ethers/lib/utils";
 import OpenPositionModal from "@/components/modals/openPositionModal";
 import ErrorModal from "@/components/modals/errorModal";
+
+import { useBalance, useAccount } from "wagmi";
 
 const OpenComp = () => {
   const labelStyles = {
@@ -49,6 +56,7 @@ const OpenComp = () => {
 
   const [error, setError] = useState(false);
   const [noAmount, setNoAmount] = useState(false);
+  const sameToken = longToken === shortToken;
 
   const args = [
     ["0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"],
@@ -62,7 +70,20 @@ const OpenComp = () => {
     "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
   ];
 
+  // smart contract / wagmi STUFF
   const { data, isLoading, isSuccess, write } = useWriteOpenPosition(args);
+  const { address, isConnecting, isDisconnected } = useAccount();
+  const {
+    data: tokenBalance,
+    isError,
+    isLoading: balanceLoading,
+  } = useBalance({
+    address: address,
+    token: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+  });
+
+  console.log(tokenBalance);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isErrorOpen,
@@ -70,18 +91,16 @@ const OpenComp = () => {
     onClose: onErrorClose,
   } = useDisclosure();
 
-  const sameToken = longToken === shortToken;
-
   const tokens = [
     { name: "ETH", price: ethPrice },
     { name: "BTC", price: btcPrice },
-    { name: "MATIC", price: maticPrice },
-    { name: "LINK", price: linkPrice },
-    { name: "UNI", price: uniPrice },
+    // { name: "MATIC", price: maticPrice },
+    // { name: "LINK", price: linkPrice },
+    // { name: "UNI", price: uniPrice },
   ];
 
   useEffect(() => {
-    if (longToken === shortToken) {
+    if (sameToken) {
       setError(true);
       onErrorOpen();
     } else {
@@ -91,12 +110,13 @@ const OpenComp = () => {
 
   useEffect(() => {
     if (noAmount && amount === "0") {
+      setError(true);
       onErrorOpen();
     }
 
     if (amount !== "0") {
       setNoAmount(false);
-    } 
+    }
   }, [error, noAmount, amount]);
 
   async function fetchETHPrice() {
@@ -109,20 +129,20 @@ const OpenComp = () => {
     setBtcPrice(data.data.pool.token1Price * data.data.bundle.ethPriceUSD);
   }
 
-  async function fetchLinkPrice() {
-    const data = await client2.query(linkPriceQuery, {}).toPromise();
-    setLinkPrice(data.data.pool.token1Price * data.data.bundle.ethPriceUSD);
-  }
+  // async function fetchLinkPrice() {
+  //   const data = await client2.query(linkPriceQuery, {}).toPromise();
+  //   setLinkPrice(data.data.pool.token1Price * data.data.bundle.ethPriceUSD);
+  // }
 
-  async function fetchUniPrice() {
-    const data = await client2.query(uniPriceQuery, {}).toPromise();
-    setUniPrice(data.data.pool.token1Price * data.data.bundle.ethPriceUSD);
-  }
+  // async function fetchUniPrice() {
+  //   const data = await client2.query(uniPriceQuery, {}).toPromise();
+  //   setUniPrice(data.data.pool.token1Price * data.data.bundle.ethPriceUSD);
+  // }
 
-  async function fetchMaticrice() {
-    const data = await client2.query(maticPriceQuery, {}).toPromise();
-    setMaticPrice(data.data.pool.token1Price * data.data.bundle.ethPriceUSD);
-  }
+  // async function fetchMaticrice() {
+  //   const data = await client2.query(maticPriceQuery, {}).toPromise();
+  //   setMaticPrice(data.data.pool.token1Price * data.data.bundle.ethPriceUSD);
+  // }
 
   const shortPrice = tokens.find(({ name }) => name === shortToken);
   const longPrice = tokens.find(({ name }) => name === longToken);
@@ -131,9 +151,9 @@ const OpenComp = () => {
     const getTokensPrice = async () => {
       fetchETHPrice();
       fetchBTCPrice();
-      fetchLinkPrice();
-      fetchUniPrice();
-      fetchMaticrice();
+      // fetchLinkPrice();
+      // fetchUniPrice();
+      // fetchMaticrice();
     };
     getTokensPrice();
   });
@@ -247,11 +267,16 @@ const OpenComp = () => {
         <Box>
           <Flex
             fontFamily="body"
-            justify="space-between"
+            direction="column"
             alignItems="center"
             w="full"
           >
-            <Flex gap="0.75rem" flexDir="column" justifyContent="flex-end">
+            <Flex
+              gap="0.75rem"
+              flexDir="column"
+              justifyContent="flex-end"
+              mb="0.25rem"
+            >
               <NumberInput
                 as={Flex}
                 placeholder={"0.0"}
@@ -264,7 +289,9 @@ const OpenComp = () => {
                 inputMode="numeric"
                 bg="#171717"
                 w="full"
-                borderColor={noAmount || error ? "red" : "rgba(255, 255, 255, 0.2)"}
+                borderColor={
+                  noAmount || error ? "red" : "rgba(255, 255, 255, 0.2)"
+                }
                 borderWidth="2px"
                 borderRadius="7px"
                 py="0.875rem"
@@ -290,6 +317,10 @@ const OpenComp = () => {
                 </NumberInputStepper>
               </NumberInput>
             </Flex>
+            <Text variant="paragraph" fontSize="0.85rem" alignSelf="end" mr="1.25rem" color="#FFFFFF" opacity="0.7">
+              Wallet Balance: <b>{tokenBalance ? truncate(tokenBalance!.formatted!.toString(), 2) : 0}</b>{" "}
+              USDC
+            </Text>
           </Flex>
         </Box>
         <Flex
@@ -395,7 +426,7 @@ const OpenComp = () => {
           </Flex>
         </VStack>
         <Button
-          disabled={!write}
+          // disabled={!write}
           onClick={amount !== "0" ? () => onOpen() : () => setNoAmount(true)}
           variant="tertiary"
         >
@@ -414,16 +445,18 @@ const OpenComp = () => {
         leverage={leverage}
       />
 
-      <ErrorModal
-        error={error ? "Tokens are the same" : "Invalid amount"}
-        message={
-          error
-            ? "Cannot choose the same token for LONG and SHORT"
-            : "You cannot open a position without funds."
-        }
-        isOpen={isErrorOpen}
-        onClose={onErrorClose}
-      />
+      {error && (
+        <ErrorModal
+          error={sameToken ? "Tokens are the same" : "Invalid amount"}
+          message={
+            sameToken
+              ? "Cannot choose the same token for LONG and SHORT"
+              : "You cannot open a position without funds."
+          }
+          isOpen={isErrorOpen}
+          onClose={onErrorClose}
+        />
+      )}
     </>
   );
 };

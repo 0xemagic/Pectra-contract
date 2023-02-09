@@ -117,7 +117,7 @@ const OpenPositionModal = ({
               token="USDC"
               title="Pay"
             />
-            
+
             <BiDownArrowAlt size="2rem" />
 
             <Boxes
@@ -136,7 +136,7 @@ const OpenPositionModal = ({
             />
 
             <Flex mt="1rem" mb="1rem" direction="column" w="full">
-              <Values title="Collateral Token" value="ETH" />
+              <Values title="Collateral Token" value="USDC" />
               <Values title="Collateral Value" value={`$${amount}`} />
               <Values title="Leverage" value={`${leverage}x`} />
               <Values title="Position Value" value={`$${+amount * leverage}`} />

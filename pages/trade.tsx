@@ -20,18 +20,18 @@ const Trade = () => {
       label: "BTC/ETH",
       symbol: "BINANCE:ETHBTC",
     },
-    {
-      label: "BTC/UNI",
-      symbol: "BINANCE:UNIBTC",
-    },
-    {
-      label: "BTC/LINK",
-      symbol: "BINANCE:LINKBTC",
-    },
-    {
-      label: "BTC/MATIC",
-      symbol: "BINANCE:MATICBTC",
-    },
+    // {
+    //   label: "BTC/UNI",
+    //   symbol: "BINANCE:UNIBTC",
+    // },
+    // {
+    //   label: "BTC/LINK",
+    //   symbol: "BINANCE:LINKBTC",
+    // },
+    // {
+    //   label: "BTC/MATIC",
+    //   symbol: "BINANCE:MATICBTC",
+    // },
   ]
 
   const [symbol, setSymbol] = useState<SymbolProps>(symbols[1]);

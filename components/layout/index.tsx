@@ -92,6 +92,21 @@ export default function Layout({ chains, children }: LayoutProps) {
     },
   ];
 
+  const pages = [
+    {
+      href: "/trade",
+      title: "Home",
+    },
+    {
+      href: "/overview",
+      title: "Overview",
+    },
+    {
+      href: "/faq",
+      title: "FAQ",
+    },
+  ]
+
   const isIndex = router.pathname === "/";
 
   return (
@@ -142,9 +157,29 @@ export default function Layout({ chains, children }: LayoutProps) {
             </Heading>
           </Flex>
 
+          <Flex 
+          display={isIndex ? "none" : "flex"}
+          direction="row"
+          justify="space-between"
+          w="20%"
+          >
+            {pages.map((page, index) => (              
+            <Link 
+            key={index}
+            href={page.href}
+            _hover={{ textDecorationColor: "#ACE075"}}
+            >
+              {page.title}
+            </Link>))}
+          </Flex>
+          <Flex 
+          w="50%"
+          justifyContent={isIndex ? "space-between" : "flex-end"}
+          >
           <Flex
             display={{ base: "none", md: "flex" }}
-            justifySelf={isIndex ? "center" : "left"}
+            justifySelf={isIndex ? "center" : "end"}
+            mr="1rem"
           >
             {links.map((link) => {
               return (
@@ -207,6 +242,8 @@ export default function Layout({ chains, children }: LayoutProps) {
               />
             )}
           </Flex>
+          </Flex>
+    
         </Flex>
         <Box
           maxW="100vw"
