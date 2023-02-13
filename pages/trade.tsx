@@ -102,7 +102,7 @@ const Trade = () => {
             <Select
                 variant="outline"
                 onChange={(e) => handleChange(e.target.value)}
-                value={symbol!.label}
+                value={symbol?.label}
               >
                 {symbols.map((symb, index) => {
                   return <option key={index}>{symb.label}</option>;
@@ -120,7 +120,7 @@ const Trade = () => {
             background="#202020"
             mb="1rem"
           >
-            <Charts symb={symbol.symbol} />
+            <Charts symb={symbol?.symbol} />
           </Box>
           <OpenPositions />
         </Flex>
