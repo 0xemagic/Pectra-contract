@@ -1,4 +1,4 @@
-import ShortLongComp from "@/components/trade/ShortLongComp";
+import ModeComp from "@/components/trade/ModeComp";
 import { Box, Flex, Select } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
@@ -11,10 +11,9 @@ import { NextSeo } from "next-seo";
 type SymbolProps = {
   label: string;
   symbol: string;
-}
+};
 
 const Trade = () => {
-
   const symbols = [
     {
       label: "BTC/ETH",
@@ -32,14 +31,20 @@ const Trade = () => {
     //   label: "BTC/MATIC",
     //   symbol: "BINANCE:MATICBTC",
     // },
-  ]
+  ];
 
   const [symbol, setSymbol] = useState<SymbolProps>(symbols[1]);
 
   const handleChange = (selectedValue: string) => {
-    const selectedObject = symbols.find(symb => symb.label === selectedValue);
+    const selectedObject = symbols.find((symb) => symb.label === selectedValue);
     setSymbol(selectedObject!);
-  }
+  };
+
+  const [tabIndex, setTabIndex] = useState(0);
+
+  const handleTabsChange = (index: number) => {
+    setTabIndex(index);
+  };
 
   return (
     <>
@@ -60,10 +65,14 @@ const Trade = () => {
         }}
       />
       <Flex w="full" fontFamily={"heading"} direction="row" px="4.25rem">
-        <Flex w="27.625rem" direction={{ base: "row", md: "column" }} mr="1rem">
+        <Flex
+          w={tabIndex === 0 ? "27.625rem" : "full"}
+          direction={{ base: "row", md: "column" }}
+          mr="1rem"
+        >
           <Box
             h="fit-content"
-            w="full"
+            w={tabIndex === 0 ? "full" : "25%"}
             borderRadius={"0.5rem"}
             background="#202020"
             border="2px solid #404040"
@@ -73,7 +82,7 @@ const Trade = () => {
             fontSize="1.25rem"
             mb="1rem"
           >
-            TRADE
+            {tabIndex === 0 ? "TRADE" : "POSITIONS"}
           </Box>
           <Box
             w="full"
@@ -83,11 +92,11 @@ const Trade = () => {
             px="1.68rem"
             py="1.25rem"
           >
-            <ShortLongComp />
+            <ModeComp handleTabsChange={handleTabsChange} tabIndex={tabIndex} />
           </Box>
         </Flex>
 
-        <Flex flex={1} direction="column">
+        <Flex w="full" flex={1} direction="column">
           <Box
             h="fit-content"
             w="full"
@@ -99,7 +108,8 @@ const Trade = () => {
             fontSize="1.25rem"
             mb="1rem"
           >
-            <Select
+            {tabIndex === 0 ? (
+              <Select
                 variant="outline"
                 onChange={(e) => handleChange(e.target.value)}
                 value={symbol?.label}
@@ -108,9 +118,13 @@ const Trade = () => {
                   return <option key={index}>{symb.label}</option>;
                 })}
               </Select>
+            ) : (
+              "Open Positions"
+            )}
           </Box>
 
           <Box
+            display={tabIndex === 0 ? "block" : "none"}
             w="full"
             minH="50vh"
             px="1.68rem"
@@ -122,7 +136,19 @@ const Trade = () => {
           >
             <Charts symb={symbol?.symbol} />
           </Box>
-          <OpenPositions />
+          <Box
+            display={tabIndex === 0 ? "block" : "none"}
+            w="full"
+            minH="50vh"
+            px="1.68rem"
+            py="1.15rem"
+            fontSize="1.25rem"
+            borderRadius={"0.5rem"}
+            background="#202020"
+            mb="1rem"
+          >
+            <OpenPositions />
+          </Box>
         </Flex>
       </Flex>
     </>

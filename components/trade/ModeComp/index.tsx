@@ -5,16 +5,21 @@ import {
   TabPanels,
   Tabs
 } from "@chakra-ui/react";
-import CloseComp from "../CloseComp";
 import OpenComp from "../OpenComp";
+import OpenPositions from "../PositionsTable";
 
-const ShortLongComp = () => {
+type ModeCompProps = {
+  handleTabsChange: (index: number) => void;
+  tabIndex: number;
+}
+
+const ModeComp = ({handleTabsChange, tabIndex}: ModeCompProps) => {
 
 
   return (
     <>
-      <Tabs borderRadius="2xl" isFitted variant="unstyled">
-        <TabList borderRadius="7px" bg="#303030">
+      <Tabs borderRadius="2xl" isFitted variant="unstyled" index={tabIndex} onChange={handleTabsChange} >
+        <TabList borderRadius="7px" bg="#303030" w={tabIndex === 0 ? "100%" : "25%" }>
           <Tab
             _selected={{
               bg: "#444444",
@@ -28,7 +33,7 @@ const ShortLongComp = () => {
             borderRight="none"
             borderLeftRadius="7px"
           >
-            Open
+            TRADE
           </Tab>
           <Tab
             _selected={{
@@ -43,7 +48,7 @@ const ShortLongComp = () => {
             borderLeft="none"
             borderRightRadius="7px"
           >
-            Close
+            POSITIONS
           </Tab>
         </TabList>
         <TabPanels>
@@ -51,7 +56,7 @@ const ShortLongComp = () => {
             <OpenComp />
           </TabPanel>
           <TabPanel>
-            <CloseComp />
+            <OpenPositions />
           </TabPanel>
         </TabPanels>
       </Tabs>
@@ -59,4 +64,4 @@ const ShortLongComp = () => {
   );
 };
 
-export default ShortLongComp;
+export default ModeComp;
