@@ -73,6 +73,7 @@ const Trade = () => {
           <Box
             h="fit-content"
             w={tabIndex === 0 ? "full" : "25%"}
+            display={tabIndex === 0 ? "block" : "none"}
             borderRadius={"0.5rem"}
             background="#202020"
             border="2px solid #404040"
@@ -82,9 +83,9 @@ const Trade = () => {
             fontSize="1.25rem"
             mb="1rem"
           >
-            {tabIndex === 0 ? "TRADE" : "POSITIONS"}
+            TRADE
           </Box>
-          <Box
+          <Flex
             w="full"
             borderRadius={"0.5rem"}
             background="#202020"
@@ -92,8 +93,19 @@ const Trade = () => {
             px="1.68rem"
             py="1.25rem"
           >
-            <ModeComp handleTabsChange={handleTabsChange} tabIndex={tabIndex} />
-          </Box>
+              <ModeComp handleTabsChange={handleTabsChange} tabIndex={tabIndex} />
+              {/* <Box
+                h="fit-content"
+                display={tabIndex === 0 ? "none" : "block"}
+                borderRadius={"0.5rem"}
+                background="#202020"
+                border="2px solid #404040"
+                px="1.68rem"
+                py="1.15rem"
+                fontSize="1.25rem"
+                mb="1rem"
+              >Position List</Box> */}
+          </Flex>
         </Flex>
 
         <Flex w="full" flex={1} direction="column">
@@ -108,7 +120,7 @@ const Trade = () => {
             fontSize="1.25rem"
             mb="1rem"
           >
-            {tabIndex === 0 ? (
+            {tabIndex === 0 && (
               <Select
                 variant="outline"
                 onChange={(e) => handleChange(e.target.value)}
@@ -118,8 +130,6 @@ const Trade = () => {
                   return <option key={index}>{symb.label}</option>;
                 })}
               </Select>
-            ) : (
-              "Open Positions"
             )}
           </Box>
 

@@ -19,7 +19,7 @@ const ModeComp = ({handleTabsChange, tabIndex}: ModeCompProps) => {
   return (
     <>
       <Tabs borderRadius="2xl" isFitted variant="unstyled" index={tabIndex} onChange={handleTabsChange} >
-        <TabList borderRadius="7px" bg="#303030" w={tabIndex === 0 ? "100%" : "25%" }>
+        <TabList borderRadius="7px" bg="#303030" w={tabIndex === 0 ? "100%" : "400px" }>
           <Tab
             _selected={{
               bg: "#444444",

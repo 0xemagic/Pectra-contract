@@ -13,33 +13,46 @@ import CircleIcon from "../../UI/CircleIcon";
 const OpenPositions = () => {
   const marketPositions = [
     {
-      market: "ETH",
-      side: "Long",
-      size: "2.123",
+      collateral: "ETH",
+      tokens: "ETH / BTC",
+      entrysize: "2.123",
       leverage: "2x",
-      entry: "1,300",
-      liquidation: "800",
-      collateral: "700",
+      entryprice: "1,300",
+      currentprice: "800",
+      pnl: "700",
+      netvalue: "2400"
     },
     {
-      market: "ETH",
-      side: "Short",
-      size: "2.123",
+      collateral: "ETH",
+      tokens: "ETH / BTC",
+      entrysize: "2.123",
       leverage: "2x",
-      entry: "1,600",
-      liquidation: "1,800",
-      collateral: "200",
+      entryprice: "1,300",
+      currentprice: "800",
+      pnl: "700",
+      netvalue: "2400"
     },
     {
-      market: "ETH",
-      side: "Short",
-      size: "2.123",
+      collateral: "ETH",
+      tokens: "ETH / BTC",
+      entrysize: "2.123",
       leverage: "2x",
-      entry: "1,200",
-      liquidation: "1,700",
-      collateral: "1,500",
+      entryprice: "1,300",
+      currentprice: "800",
+      pnl: "700",
+      netvalue: "2400"
     },
   ];
+
+  const TokensBox = ({ tokens, children }: { tokens: string, children: any }) => (
+<Box
+                    px={2}
+                    py={1}
+                    borderRadius="7px"
+                    w="fit-content"
+                  >{children}</Box>
+  )
+
   return (
     <Flex bg="#202020" p="1.75rem" direction="column" borderRadius="12px">
       <Text fontFamily="body" fontWeight={600} fontSize="1.1rem">
@@ -49,13 +62,14 @@ const OpenPositions = () => {
         <Table variant="simple">
           <Thead fontSize="1.1rem" fontFamily="body">
             <Tr>
-              <Th>Market</Th>
-              <Th>Side</Th>
-              <Th >Size</Th>
+              <Th>Collateral</Th>
+              <Th>Tokens</Th>
+              <Th >Entry Size</Th>
               <Th>Leverage</Th>
               <Th>Entry Price</Th>
-              <Th>Liq. Price</Th>
-              <Th>Collateral</Th>
+              <Th>Current Price</Th>
+              <Th>PnL</Th>
+              <Th>Net Value</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -64,30 +78,19 @@ const OpenPositions = () => {
                 <Td>
                   <Flex alignItems="center" gap={2}>
                     <CircleIcon />
-                    {position.market}
+                    {position.collateral}
                   </Flex>
                 </Td>
                 <Td>
-                  <Box
-                    bg={
-                      position.side === "Long"
-                        ? "rgba(172, 224, 117, 0.2)"
-                        : "#4D3030"
-                    }
-                    px={2}
-                    py={1}
-                    borderRadius="7px"
-                    w="fit-content"
-                    color={position.side === "Long" ? "brand" : "#FF7272"}
-                  >
-                    {position.side}
-                  </Box>
+                  
+                    {position.tokens}
                 </Td>
-                <Td>{position.size}</Td>
+                <Td>{position.entrysize}</Td>
                 <Td>{position.leverage}</Td>
-                <Td>{position.entry}</Td>
-                <Td>{position.liquidation}</Td>
-                <Td>{position.collateral}</Td>
+                <Td>{position.entryprice}</Td>
+                <Td>{position.currentprice}</Td>
+                <Td>{position.pnl}</Td>
+                <Td>{position.netvalue}</Td>
               </Tr>
             ))}
           </Tbody>
