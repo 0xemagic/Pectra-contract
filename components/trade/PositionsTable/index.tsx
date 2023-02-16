@@ -10,11 +10,16 @@ import {
 } from "@chakra-ui/react";
 import CircleIcon from "../../UI/CircleIcon";
 
+type TokenProps = {
+  long: string;
+  short: string;
+}
+
 const OpenPositions = () => {
   const marketPositions = [
     {
-      collateral: "ETH",
-      tokens: "ETH / BTC",
+      collateral: "0.8 ETH",
+      tokens: {long: "ETH", short: "BTC"},
       entrysize: "2.123",
       leverage: "2x",
       entryprice: "1,300",
@@ -23,8 +28,8 @@ const OpenPositions = () => {
       netvalue: "2400"
     },
     {
-      collateral: "ETH",
-      tokens: "ETH / BTC",
+      collateral: "200 USDC",
+      tokens: {long: "ETH", short: "BTC"},
       entrysize: "2.123",
       leverage: "2x",
       entryprice: "1,300",
@@ -33,8 +38,8 @@ const OpenPositions = () => {
       netvalue: "2400"
     },
     {
-      collateral: "ETH",
-      tokens: "ETH / BTC",
+      collateral: "100 MATIC",
+      tokens: {long: "ETH", short: "BTC"},
       entrysize: "2.123",
       leverage: "2x",
       entryprice: "1,300",
@@ -44,13 +49,27 @@ const OpenPositions = () => {
     },
   ];
 
-  const TokensBox = ({ tokens, children }: { tokens: string, children: any }) => (
-<Box
-                    px={2}
-                    py={1}
-                    borderRadius="7px"
-                    w="fit-content"
-                  >{children}</Box>
+  const TokensBox = ({ short, long }: TokenProps) => (
+    <Flex
+      alignItems="center"
+    >
+       <Box
+      px={2}
+      py={1}
+      borderLeftRadius="7px"
+      w="fit-content"
+      bg="#404A35"
+      color="#ACE075"
+    >{long}</Box>
+ <Box
+      px={2}
+      py={1}
+      borderRightRadius="7px"
+      w="fit-content"
+      bg="#4D3030"
+      color="#FF7272"
+    >{short}</Box>
+    </Flex>
   )
 
   return (
@@ -82,8 +101,10 @@ const OpenPositions = () => {
                   </Flex>
                 </Td>
                 <Td>
-                  
-                    {position.tokens}
+                  <TokensBox
+                    long={position.tokens.long}
+                    short={position.tokens.short}
+                  />  
                 </Td>
                 <Td>{position.entrysize}</Td>
                 <Td>{position.leverage}</Td>
