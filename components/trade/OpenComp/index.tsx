@@ -182,7 +182,7 @@ const OpenComp = () => {
           <Flex
             fontFamily="body"
             justify="space-between"
-            alignItems="center"
+            // alignItems="center"
             w="full"
           >
             <Text fontWeight={600} fontFamily="heading" fontSize="0.9rem">
@@ -206,7 +206,11 @@ const OpenComp = () => {
                   return <option key={index}>{token.name}</option>;
                 })}
               </Select>
-              <Flex ml="auto" mr={0} fontSize="0.875rem">
+              
+            </Flex>
+            
+          </Flex>
+          <Flex w='full' mr={0}justify='space-between' fontSize="0.875rem">
                 <Text mr={2} fontWeight={300}>
                   current price:
                 </Text>
@@ -214,8 +218,6 @@ const OpenComp = () => {
                   ${truncate(commify(longPrice!.price.toString()), 2)}
                 </Text>
               </Flex>
-            </Flex>
-          </Flex>
         </Box>
         <Box
           bg="rgba(255, 114, 114, 0.2)"
@@ -229,7 +231,7 @@ const OpenComp = () => {
           <Flex
             fontFamily="body"
             justify="space-between"
-            alignItems="center"
+            // alignItems="center"
             w="full"
           >
             <Text fontWeight={600} fontFamily="heading" fontSize="0.9rem">
@@ -253,7 +255,10 @@ const OpenComp = () => {
                   return <option key={index}>{token.name}</option>;
                 })}
               </Select>
-              <Flex ml="auto" mr={0} fontSize="0.875rem">
+              
+            </Flex>
+          </Flex>
+          <Flex ml="auto" mr={0} fontSize="0.875rem">
                 <Text mr={2} fontWeight={300}>
                   current price:
                 </Text>
@@ -261,8 +266,6 @@ const OpenComp = () => {
                   ${truncate(commify(shortPrice!.price.toString()), 2)}
                 </Text>
               </Flex>
-            </Flex>
-          </Flex>
         </Box>
         <Box>
           <Flex
