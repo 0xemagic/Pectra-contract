@@ -206,20 +206,18 @@ const OpenComp = () => {
                   return <option key={index}>{token.name}</option>;
                 })}
               </Select>
-              
             </Flex>
-            
           </Flex>
-          <Flex w='full' mr={0}justify='space-between' fontSize="0.875rem">
-                <Text mr={2} fontWeight={300}>
-                  current price:
-                </Text>
-                <Text fontWeight={600}>
-                  ${truncate(commify(longPrice!.price.toString()), 2)}
-                </Text>
-              </Flex>
+          <Flex w="full" mr={0} justify="end" fontSize="0.875rem">
+            <Text variant="paragraph" mr={2} fontWeight={300}>
+              current price:
+            </Text>
+            <Text variant="paragraph" fontWeight={600}>
+              ${truncate(commify(longPrice!.price.toString()), 2)}
+            </Text>
+          </Flex>
         </Box>
-        <Box
+        <Flex
           bg="rgba(255, 114, 114, 0.2)"
           w="full"
           borderColor="#FF7272"
@@ -227,6 +225,8 @@ const OpenComp = () => {
           borderRadius="7px"
           py="0.5rem"
           px="1.25rem"
+          alignContent="center"
+          direction="column"
         >
           <Flex
             fontFamily="body"
@@ -234,10 +234,9 @@ const OpenComp = () => {
             // alignItems="center"
             w="full"
           >
-            <Text fontWeight={600} fontFamily="heading" fontSize="0.9rem">
+            <Text fontWeight={600} fontFamily="heading" fontSize="0.9rem" justifySelf="center">
               Short
             </Text>
-            <Flex flexDir="column">
               <Select
                 fontWeight={600}
                 fontSize="1.01rem"
@@ -255,18 +254,16 @@ const OpenComp = () => {
                   return <option key={index}>{token.name}</option>;
                 })}
               </Select>
-              
-            </Flex>
           </Flex>
-          <Flex ml="auto" mr={0} fontSize="0.875rem">
-                <Text mr={2} fontWeight={300}>
-                  current price:
-                </Text>
-                <Text fontWeight={600}>
-                  ${truncate(commify(shortPrice!.price.toString()), 2)}
-                </Text>
-              </Flex>
-        </Box>
+          <Flex ml="auto" justify="end" mr={0} fontSize="0.875rem">
+            <Text variant="paragraph" mr={2} fontWeight={300}>
+              current price:
+            </Text>
+            <Text variant="paragraph" fontWeight={600}>
+              ${truncate(commify(shortPrice!.price.toString()), 2)}
+            </Text>
+          </Flex>
+        </Flex>
         <Box>
           <Flex
             fontFamily="body"
@@ -320,8 +317,20 @@ const OpenComp = () => {
                 </NumberInputStepper>
               </NumberInput>
             </Flex>
-            <Text variant="paragraph" fontSize="0.85rem" alignSelf="end" mr="1.25rem" color="#FFFFFF" opacity="0.7">
-              Wallet Balance: <b>{tokenBalance ? truncate(tokenBalance!.formatted!.toString(), 2) : 0}</b>{" "}
+            <Text
+              variant="paragraph"
+              fontSize="0.85rem"
+              alignSelf="end"
+              mr="1.25rem"
+              color="#FFFFFF"
+              opacity="0.7"
+            >
+              Wallet Balance:{" "}
+              <b>
+                {tokenBalance
+                  ? truncate(tokenBalance!.formatted!.toString(), 2)
+                  : 0}
+              </b>{" "}
               USDC
             </Text>
           </Flex>

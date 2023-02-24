@@ -86,7 +86,7 @@ const Trade = () => {
             TRADE
           </Box>
           <Flex
-            w="full"
+            w="100%"
             borderRadius={"0.5rem"}
             background="#202020"
             fontStyle="body"

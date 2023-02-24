@@ -1,94 +1,74 @@
 import {
   Box,
   Flex,
-  Table, TableContainer,
+  Table,
+  TableContainer,
   Tbody,
   Td,
-  Text, Th,
+  Text,
+  Th,
   Thead,
-  Tr
+  Tr,
 } from "@chakra-ui/react";
 import CircleIcon from "../../UI/CircleIcon";
-
-type TokenProps = {
-  long: string;
-  short: string;
-}
 
 const OpenPositions = () => {
   const marketPositions = [
     {
-      collateral: "0.8 ETH",
-      tokens: {long: "ETH", short: "BTC"},
-      entrysize: "2.123",
+      market: "ETH",
+      side: "Long",
+      size: "2.123",
       leverage: "2x",
-      entryprice: "1,300",
-      currentprice: "800",
-      pnl: "700",
-      netvalue: "2400"
+      entry: "1,300",
+      liquidation: "800",
+      collateral: "700",
     },
     {
-      collateral: "200 USDC",
-      tokens: {long: "ETH", short: "BTC"},
-      entrysize: "2.123",
+      market: "ETH",
+      side: "Short",
+      size: "2.123",
       leverage: "2x",
-      entryprice: "1,300",
-      currentprice: "800",
-      pnl: "700",
-      netvalue: "2400"
+      entry: "1,600",
+      liquidation: "1,800",
+      collateral: "200",
     },
     {
-      collateral: "100 MATIC",
-      tokens: {long: "ETH", short: "BTC"},
-      entrysize: "2.123",
+      market: "ETH",
+      side: "Short",
+      size: "2.123",
       leverage: "2x",
-      entryprice: "1,300",
-      currentprice: "800",
-      pnl: "700",
-      netvalue: "2400"
+      entry: "1,200",
+      liquidation: "1,700",
+      collateral: "1,500",
     },
   ];
-
-  const TokensBox = ({ short, long }: TokenProps) => (
-    <Flex
-      alignItems="center"
-    >
-       <Box
-      px={2}
-      py={1}
-      borderLeftRadius="7px"
-      w="fit-content"
-      bg="#404A35"
-      color="#ACE075"
-    >{long}</Box>
- <Box
-      px={2}
-      py={1}
-      borderRightRadius="7px"
-      w="fit-content"
-      bg="#4D3030"
-      color="#FF7272"
-    >{short}</Box>
-    </Flex>
-  )
-
   return (
-    <Flex bg="#202020" p="1.75rem" direction="column" borderRadius="12px">
+    <Flex
+      bg="#202020"
+      p="1.75rem"
+      direction="column"
+      borderRadius="12px"
+      w="100%"
+    >
       <Text fontFamily="body" fontWeight={600} fontSize="1.1rem">
         Open Positions
       </Text>
-      <TableContainer fontFamily="body" fontWeight={600} fontSize="0.875rem">
+      <TableContainer
+        fontFamily="body"
+        fontWeight={600}
+        fontSize="0.875rem"
+        w="100%"
+      >
         <Table variant="simple">
           <Thead fontSize="1.1rem" fontFamily="body">
             <Tr>
-              <Th>Collateral</Th>
-              <Th>Tokens</Th>
-              <Th >Entry Size</Th>
+              <Th>Market</Th>
+              <Th>Side</Th>
+              <Th>Size</Th>
               <Th>Leverage</Th>
               <Th>Entry Price</Th>
-              <Th>Current Price</Th>
-              <Th>PnL</Th>
-              <Th>Net Value</Th>
+              <Th>Liq. Price</Th>
+              <Th>Collateral</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -97,21 +77,30 @@ const OpenPositions = () => {
                 <Td>
                   <Flex alignItems="center" gap={2}>
                     <CircleIcon />
-                    {position.collateral}
+                    {position.market}
                   </Flex>
                 </Td>
                 <Td>
-                  <TokensBox
-                    long={position.tokens.long}
-                    short={position.tokens.short}
-                  />  
+                  <Box
+                    bg={
+                      position.side === "Long"
+                        ? "rgba(172, 224, 117, 0.2)"
+                        : "#4D3030"
+                    }
+                    px={2}
+                    py={1}
+                    borderRadius="7px"
+                    w="fit-content"
+                    color={position.side === "Long" ? "brand" : "#FF7272"}
+                  >
+                    {position.side}
+                  </Box>
                 </Td>
-                <Td>{position.entrysize}</Td>
+                <Td>{position.size}</Td>
                 <Td>{position.leverage}</Td>
-                <Td>{position.entryprice}</Td>
-                <Td>{position.currentprice}</Td>
-                <Td>{position.pnl}</Td>
-                <Td>{position.netvalue}</Td>
+                <Td>{position.entry}</Td>
+                <Td>{position.liquidation}</Td>
+                <Td>{position.collateral}</Td>
               </Tr>
             ))}
           </Tbody>
