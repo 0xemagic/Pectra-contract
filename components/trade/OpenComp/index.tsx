@@ -151,15 +151,16 @@ const OpenComp = () => {
   const longPrice = tokens.find(({ name }) => name === longToken);
 
   useEffect(() => {
-    const getTokensPrice = async () => {
+    const interval = setInterval(() => {
       fetchETHPrice();
       fetchBTCPrice();
-      // fetchLinkPrice();
+        // fetchLinkPrice();
       // fetchUniPrice();
       // fetchMaticrice();
-    };
-    getTokensPrice();
-  });
+    }, 2000);
+  
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <>

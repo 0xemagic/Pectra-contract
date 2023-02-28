@@ -7,6 +7,7 @@ import {
   Td,
   Text,
   Th,
+  Grid,
   Thead,
   Tr,
 } from "@chakra-ui/react";
@@ -62,13 +63,26 @@ const OpenPositions = () => {
         <Table variant="simple">
           <Thead fontSize="1.1rem" fontFamily="body">
             <Tr>
-              <Th>Market</Th>
-              <Th>Side</Th>
-              <Th>Size</Th>
-              <Th>Leverage</Th>
-              <Th>Entry Price</Th>
-              <Th>Liq. Price</Th>
-              <Th>Collateral</Th>
+              <Td>
+                <Text variant="paragraph">Collateral</Text>
+              </Td>
+              <Td>              <Text variant="paragraph">Tokens</Text>
+              </Td>
+              <Td>              <Text variant="paragraph">Entry Size</Text>
+              </Td>
+              <Td>              <Text variant="paragraph">Leverage</Text>
+              </Td>
+              <Td>              <Text variant="paragraph">Entry Price</Text>
+              </Td>
+              <Td>              <Text variant="paragraph">Current Price</Text>
+              </Td>
+              <Td>              <Text variant="paragraph">PnL</Text>
+              </Td>
+              <Td>              <Text variant="paragraph">Net Value</Text>
+              </Td>
+    <Td>
+    Actions
+    </Td>
             </Tr>
           </Thead>
           <Tbody>

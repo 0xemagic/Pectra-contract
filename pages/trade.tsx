@@ -69,43 +69,11 @@ const Trade = () => {
           w={tabIndex === 0 ? "27.625rem" : "full"}
           direction={{ base: "row", md: "column" }}
           mr="1rem"
+          background="#202020"
+          px="1.68rem"
+          py="1.25rem"
         >
-          <Box
-            h="fit-content"
-            w={tabIndex === 0 ? "full" : "25%"}
-            display={tabIndex === 0 ? "block" : "none"}
-            borderRadius={"0.5rem"}
-            background="#202020"
-            border="2px solid #404040"
-            fontWeight="bold"
-            px="1.68rem"
-            py="1.5rem"
-            fontSize="1.25rem"
-            mb="1rem"
-          >
-            TRADE
-          </Box>
-          <Flex
-            w="100%"
-            borderRadius={"0.5rem"}
-            background="#202020"
-            fontStyle="body"
-            px="1.68rem"
-            py="1.25rem"
-          >
-              <ModeComp handleTabsChange={handleTabsChange} tabIndex={tabIndex} />
-              {/* <Box
-                h="fit-content"
-                display={tabIndex === 0 ? "none" : "block"}
-                borderRadius={"0.5rem"}
-                background="#202020"
-                border="2px solid #404040"
-                px="1.68rem"
-                py="1.15rem"
-                fontSize="1.25rem"
-                mb="1rem"
-              >Position List</Box> */}
-          </Flex>
+          <ModeComp handleTabsChange={handleTabsChange} tabIndex={tabIndex} />
         </Flex>
 
         <Flex w="full" flex={1} direction="column">
@@ -148,7 +116,7 @@ const Trade = () => {
           </Box>
           <Box
             display={tabIndex === 0 ? "block" : "none"}>
-          {/* //   w="full"
+            {/* //   w="full"
           //   minH="50vh"
           //   px="1.68rem"
           //   py="1.15rem"
