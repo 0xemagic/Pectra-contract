@@ -7,7 +7,7 @@ import { SiMedium } from "react-icons/si";
 import { AiFillGithub } from "react-icons/ai";
 
 const Links = () => {
-  const {colorMode} = useColorMode();
+  const { colorMode } = useColorMode();
   const links = [
     // {
     //   label: <Icon as={AiFillInstagram} width="5.625rem" height="5.625rem" />,
@@ -53,23 +53,23 @@ const Links = () => {
         }}
       >
         {links.map((link, index) => (
-                      <Link href={link.link}>
-          <GridItem
-            borderRadius="20px"
-            bg={colorMode === "dark" ? "#272D22" : "#F5F5F5"}
-            h="10rem"
-            w="auto"
-            key={index}
-            colSpan={1}
-            rowSpan={1}
-            p={4}
-            color={colorMode ==="dark" ? "white" : "#757575"}
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
+          <Link href={link.link} key={index}
           >
-            {link.label}
-          </GridItem>
+            <GridItem
+              borderRadius="20px"
+              bg={colorMode === "dark" ? "#272D22" : "#F5F5F5"}
+              h="10rem"
+              w="auto"
+              colSpan={1}
+              rowSpan={1}
+              p={4}
+              color={colorMode === "dark" ? "white" : "#757575"}
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+            >
+              {link.label}
+            </GridItem>
           </Link>
         ))}
       </Grid>

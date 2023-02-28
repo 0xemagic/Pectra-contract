@@ -9,7 +9,7 @@ export default function Hero() {
         <Flex direction="column" mt="6rem" w="full">
           {" "}
           <Heading fontSize={{ base: "2.75rem", md: "6rem" }} variant="hero" >
-            TRADE PAIRS
+            RIDE THE NARRATIVE
           </Heading>
           <Heading
             color="#ACE075"
@@ -26,7 +26,7 @@ export default function Hero() {
             w={{ base: "350px", md: "550px" }}
             fontWeight="500"
           >
-            Introducing one-click decentralized pair trading. Choose one token to long, and one to short - Pectra automates the rest. Now you can simply trade crypto pairs with up to XX leverage.
+            One-click decentralized pair trading. Choose one token to long, and one to short - Pectra automates the rest. Now you can simply trade crypto pairs with up to XX leverage.
           </Text>
         </Flex>
         <Flex
