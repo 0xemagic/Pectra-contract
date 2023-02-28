@@ -1,5 +1,3 @@
-import { Flex, Text } from "@chakra-ui/react";
-
 import { useRef, useEffect } from "react";
 
 let tvScriptLoadingPromise: any;

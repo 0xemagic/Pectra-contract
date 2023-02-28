@@ -91,6 +91,7 @@ const OpenComp = () => {
     onClose: onErrorClose,
   } = useDisclosure();
 
+  //current tokens available with price variables for each
   const tokens = [
     { name: "ETH", price: ethPrice },
     { name: "BTC", price: btcPrice },
@@ -119,6 +120,8 @@ const OpenComp = () => {
     }
   }, [error, noAmount, amount]);
 
+  // functions that fetchETHPrice and fetchBTCPrice are used to get the price of each token asynchronously
+  // should change to fetch price every few seconds instead? put into timer maybe?
   async function fetchETHPrice() {
     const data = await client2.query(ethPriceQuery, {}).toPromise();
     setEthPrice(data.data.bundle.ethPriceUSD);
@@ -182,7 +185,7 @@ const OpenComp = () => {
           <Flex
             fontFamily="body"
             justify="space-between"
-            // alignItems="center"
+            alignItems="center"
             w="full"
           >
             <Text fontWeight={600} fontFamily="heading" fontSize="0.9rem">
@@ -206,8 +209,7 @@ const OpenComp = () => {
                   return <option key={index}>{token.name}</option>;
                 })}
               </Select>
-            </Flex>
-          </Flex>
+
           <Flex w="full" mr={0} justify="end" fontSize="0.875rem">
             <Text variant="paragraph" mr={2} fontWeight={300}>
               current price:
@@ -216,8 +218,10 @@ const OpenComp = () => {
               ${truncate(commify(longPrice!.price.toString()), 2)}
             </Text>
           </Flex>
+          </Flex>
+          </Flex>
         </Box>
-        <Flex
+        <Box
           bg="rgba(255, 114, 114, 0.2)"
           w="full"
           borderColor="#FF7272"
@@ -225,18 +229,17 @@ const OpenComp = () => {
           borderRadius="7px"
           py="0.5rem"
           px="1.25rem"
-          alignContent="center"
-          direction="column"
         >
           <Flex
             fontFamily="body"
             justify="space-between"
-            // alignItems="center"
+            alignItems="center"
             w="full"
           >
             <Text fontWeight={600} fontFamily="heading" fontSize="0.9rem" justifySelf="center">
               Short
             </Text>
+            <Flex flexDir="column">
               <Select
                 fontWeight={600}
                 fontSize="1.01rem"
@@ -254,7 +257,6 @@ const OpenComp = () => {
                   return <option key={index}>{token.name}</option>;
                 })}
               </Select>
-          </Flex>
           <Flex ml="auto" justify="end" mr={0} fontSize="0.875rem">
             <Text variant="paragraph" mr={2} fontWeight={300}>
               current price:
@@ -262,8 +264,10 @@ const OpenComp = () => {
             <Text variant="paragraph" fontWeight={600}>
               ${truncate(commify(shortPrice!.price.toString()), 2)}
             </Text>
+            </Flex>
           </Flex>
         </Flex>
+        </Box>
         <Box>
           <Flex
             fontFamily="body"

@@ -147,16 +147,16 @@ const Trade = () => {
             <Charts symb={symbol?.symbol} />
           </Box>
           <Box
-            display={tabIndex === 0 ? "block" : "none"}
-            w="full"
-            minH="50vh"
-            px="1.68rem"
-            py="1.15rem"
-            fontSize="1.25rem"
-            borderRadius={"0.5rem"}
-            background="#202020"
-            mb="1rem"
-          >
+            display={tabIndex === 0 ? "block" : "none"}>
+          {/* //   w="full"
+          //   minH="50vh"
+          //   px="1.68rem"
+          //   py="1.15rem"
+          //   fontSize="1.25rem"
+          //   borderRadius={"0.5rem"}
+          //   background="#202020"
+          //   mb="1rem"
+          // > */}
             <OpenPositions />
           </Box>
         </Flex>
