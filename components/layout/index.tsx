@@ -36,15 +36,15 @@ export default function Layout({ chains, children }: LayoutProps) {
   const router = useRouter();
 
   const links = [
-    {
-      icon: (
-        <RiInstagramFill
-          color={colorMode === "dark" ? "#FFFFFF" : "222222"}
-          size="32px"
-        />
-      ),
-      href: "https://www.instagram.com/spectraprotocol/",
-    },
+    // {
+    //   icon: (
+    //     <RiInstagramFill
+    //       color={colorMode === "dark" ? "#FFFFFF" : "222222"}
+    //       size="32px"
+    //     />
+    //   ),
+    //   href: "https://www.instagram.com/spectraprotocol/",
+    // },
     {
       icon: (
         <RiTwitterFill
@@ -52,17 +52,17 @@ export default function Layout({ chains, children }: LayoutProps) {
           size="32px"
         />
       ),
-      href: "https://twitter.com/spectraprotocol",
+      href: "https://twitter.com/spectra_protocol",
     },
-    {
-      icon: (
-        <RiTelegramFill
-          color={colorMode === "dark" ? "#FFFFFF" : "222222"}
-          size="32px"
-        />
-      ),
-      href: "https://t.me/spectraprotocol",
-    },
+    // {
+    //   icon: (
+    //     <RiTelegramFill
+    //       color={colorMode === "dark" ? "#FFFFFF" : "222222"}
+    //       size="32px"
+    //     />
+    //   ),
+    //   href: "https://t.me/spectraprotocol",
+    // },
     {
       icon: (
         <SiMedium
@@ -79,7 +79,7 @@ export default function Layout({ chains, children }: LayoutProps) {
           size="32px"
         />
       ),
-      href: "https://discord.gg/2Z8Y4Z4",
+      href: " https://discord.gg/RKNRDVeFwG",
     },
     {
       icon: (

@@ -6,18 +6,21 @@ import {
   Heading,
   Image,
   Text,
+  useColorMode,
 } from "@chakra-ui/react";
 
 const About = () => {
+  const { colorMode } = useColorMode();
   const data = [
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+    "Fast and simple user experience for retail and institutional traders.",
+    "Deep liquidity through our oracle-based partner.",
+    "Fully composable - at the intersection of DeFi and NFTs.",
+    "Completely decentralized, on-chain, and self-custodial."
   ];
   return (
     <Box pt="10rem">
       <Heading fontSize={{ base: "2.1875rem", md: "3.125rem" }} variant="hero">
-        What we do
+     Leveraged Pairs Trading
       </Heading>
       <Text
         w={{ base: "100%", md: "47.6875rem" }}
@@ -27,8 +30,7 @@ const About = () => {
         mt="1.8rem"
         mb="4.125rem"
       >
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus tempor
-        purus aliquet, maximus augue vitae, porta mauris. Aenean id sagittis ex.
+        Trade assets like BTC, ETH against one another in a single trade with up to X3 leverage.
       </Text>
       <Grid
         w="full"
@@ -39,7 +41,7 @@ const About = () => {
           <GridItem
             py="1.3125rem"
             px="1.875rem"
-            bg="#2B3226"
+            bg={colorMode === 'dark' ? "#2B3226" : "#F4F4F4"}
             borderRadius="20px"
             h="13.5rem"
             key={index}

@@ -1,4 +1,4 @@
-import { Box, Grid, GridItem, Link, Icon, Heading } from "@chakra-ui/react";
+import { Box, Grid, GridItem, Link, Icon, Heading, useColorMode } from "@chakra-ui/react";
 import { AiFillInstagram } from "react-icons/ai";
 import { TbBrandTwitter } from "react-icons/tb";
 import { FaDiscord } from "react-icons/fa";
@@ -7,23 +7,24 @@ import { SiMedium } from "react-icons/si";
 import { AiFillGithub } from "react-icons/ai";
 
 const Links = () => {
+  const {colorMode} = useColorMode();
   const links = [
-    {
-      label: <Icon as={AiFillInstagram} width="5.625rem" height="5.625rem" />,
-      link: "https://www.instagram.com/spectra-protocol",
-    },
+    // {
+    //   label: <Icon as={AiFillInstagram} width="5.625rem" height="5.625rem" />,
+    //   link: "https://www.instagram.com/spectra-protocol",
+    // },
     {
       label: <Icon as={TbBrandTwitter} width="5.625rem" height="5.625rem" />,
-      link: "https://www.twitter.com/spectra-protocol",
+      link: "https://www.twitter.com/spectra_protocol",
     },
     {
       label: <Icon as={FaDiscord} width="5.625rem" height="5.625rem" />,
-      link: "https://www.discord.com/spectra-protocol",
+      link: " https://discord.gg/RKNRDVeFwG",
     },
-    {
-      label: <Icon as={ImTelegram} width="5.625rem" height="5.625rem" />,
-      link: "https://www.telegram.com/spectra-protocol",
-    },
+    // {
+    //   label: <Icon as={ImTelegram} width="5.625rem" height="5.625rem" />,
+    //   link: "https://www.telegram.com/spectra-protocol",
+    // },
     {
       label: <Icon as={SiMedium} width="5.625rem" height="5.625rem" />,
       link: "https://www.medium.com/spectra-protocol",
@@ -52,24 +53,24 @@ const Links = () => {
         }}
       >
         {links.map((link, index) => (
+                      <Link href={link.link}>
           <GridItem
             borderRadius="20px"
-            bg="#272D22"
+            bg={colorMode === "dark" ? "#272D22" : "#F5F5F5"}
             h="10rem"
             w="auto"
             key={index}
             colSpan={1}
             rowSpan={1}
             p={4}
-            color="white"
+            color={colorMode ==="dark" ? "white" : "#757575"}
             display="flex"
             justifyContent="center"
             alignItems="center"
           >
-            <Link href={link.link}>
             {link.label}
-            </Link>
           </GridItem>
+          </Link>
         ))}
       </Grid>
     </Box>

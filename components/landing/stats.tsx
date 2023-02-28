@@ -1,6 +1,7 @@
-import { Grid, GridItem, Heading, Image, Text, VStack } from "@chakra-ui/react";
+import { Grid, GridItem, Heading, Image, Text, VStack, useColorMode } from "@chakra-ui/react";
 
 const Stats = () => {
+  const { colorMode } = useColorMode();
   const data = [
     {
       label: "TOTAL TRADING VOLUME",
@@ -46,7 +47,7 @@ const Stats = () => {
             py="2.3125rem"
             position="relative"
             borderRadius="20px"
-            bg="#182310"
+            bg={colorMode === "dark" ? "#182310" : "#FCFCFC"}
             h="12.5rem"
             key={index}
           >
@@ -70,7 +71,7 @@ const Stats = () => {
               </Text>
               <Text
                 lineHeight="22px"
-                color="#DAFFB2"
+                color="brand"
                 fontFamily="heading"
                 fontWeight={500}
                 fontSize="1.375rem"

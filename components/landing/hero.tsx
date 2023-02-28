@@ -26,9 +26,7 @@ export default function Hero() {
             w={{ base: "350px", md: "550px" }}
             fontWeight="500"
           >
-            Pair trading made easy. Choose a token to short, and a token to
-            long. Pectra will automatically set up a pair trade for you. Save gas,
-            time, effort. Just trade your favorite pairs.
+            Introducing one-click decentralized pair trading. Choose one token to long, and one to short - Pectra automates the rest. Now you can simply trade crypto pairs with up to XX leverage.
           </Text>
         </Flex>
         <Flex
@@ -56,7 +54,7 @@ export default function Hero() {
         <Flex direction={{base: "column", md: "row"}} align={{base: "center", md: "start"}} mt={{base: "2.5rem", md: "5rem"}}>
           <Button
             variant="primary"
-            boxShadow="0px -1px 22px #518128"
+            boxShadow={colorMode === "dark" ? "0px -1px 22px #518128" : "none"}
             mr={{base: "none", md: "0.5rem"}}
             mb={{base: "1rem", md: "none"}}
             onClick={() => router.push("/trade")}
@@ -68,21 +66,21 @@ export default function Hero() {
         <Image
           display={{ base: "none", md: "block" }}
           pos="absolute"
-          right="-5rem"
-          top="5%"
-          h={{ base: "0px", md: "500px", xl: "600px" }}
-          minW={{ base: "0px", md: "300px", xl: "600px" }}
-          src="/assets/spectra1.svg"
+          right="0rem"
+          top="2%"
+          h={{ base: "0px", md: "500px", xl: "400px", "2xl": "500px" }}
+          minW={{ base: "0px", md: "300px", xl: "400px", "2xl": "500px" }}
+          src={colorMode === "dark" ? "/assets/spectra1.svg" : "/assets/spectra1-light.svg"}
           alt="spectra-protocol-logo"
         />
         <Image
           display={{ base: "none", md: "block" }}
           pos="absolute"
           right="-4rem"
-          top="5%"
-          h={{ base: "0px", md: "450px", xl: "700px" }}
+          top="2%"
+          h={{ base: "0px", md: "450px", xl: "550px", "2xl": "600px" }}
           minW={{ base: "0px", md: "400px", xl: "800px" }}
-          src="/assets/spectra2.svg"
+          src={colorMode === "dark" ? "/assets/spectra2.svg" : "/assets/spectra2-light.svg"}
           alt="spectra-protocol-logo"
         />
       </Flex>

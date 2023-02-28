@@ -210,11 +210,11 @@ const OpenComp = () => {
                 })}
               </Select>
 
-          <Flex w="full" mr={0} justify="end" fontSize="0.875rem">
-            <Text variant="paragraph" mr={2} fontWeight={300}>
+              <Flex ml="auto" justify="end" mr={0} fontSize="0.875rem">
+          <Text mr={2} fontWeight={300}>
               current price:
             </Text>
-            <Text variant="paragraph" fontWeight={600}>
+            <Text fontWeight={600}>
               ${truncate(commify(longPrice!.price.toString()), 2)}
             </Text>
           </Flex>
@@ -258,10 +258,10 @@ const OpenComp = () => {
                 })}
               </Select>
           <Flex ml="auto" justify="end" mr={0} fontSize="0.875rem">
-            <Text variant="paragraph" mr={2} fontWeight={300}>
+            <Text mr={2} fontWeight={300}>
               current price:
             </Text>
-            <Text variant="paragraph" fontWeight={600}>
+            <Text fontWeight={600}>
               ${truncate(commify(shortPrice!.price.toString()), 2)}
             </Text>
             </Flex>

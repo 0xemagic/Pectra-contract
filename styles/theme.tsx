@@ -85,8 +85,8 @@ export const customTheme = {
     Button: {
       variants: {
         primary: (props: StyleFunctionProps) => ({
-          bgColor: "brand",
-          color: "#182112",
+          bgColor: props.colorMode === "dark" ? "brand" : "#222222",
+          color: props.colorMode === "dark" ? "#242524" : "#FFFFFF",
           _hover: {
             bgColor: props.colorMode === "dark" ? "#3EB751" : "#BBFF81",
           },
