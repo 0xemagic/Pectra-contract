@@ -1,5 +1,5 @@
 import ModeComp from "@/components/trade/ModeComp";
-import { Box, Flex, Select } from "@chakra-ui/react";
+import { Box, Flex, Select, Heading } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
 
@@ -64,12 +64,19 @@ const Trade = () => {
           ],
         }}
       />
+
+      <Heading m="auto" textAlign="center"   padding="20%"
+variant="primary">COMING SOON</Heading>
+{/*       
       <Flex w="full" fontFamily={"heading"} direction="row" px="4.25rem">
         <Flex
           w={tabIndex === 0 ? "27.625rem" : "full"}
           direction={{ base: "row", md: "column" }}
+          h="min-content"
           mr="1rem"
           background="#202020"
+          border="2px solid #404040"
+          borderRadius={"0.5rem"}
           px="1.68rem"
           py="1.25rem"
         >
@@ -110,25 +117,17 @@ const Trade = () => {
             fontSize="1.25rem"
             borderRadius={"0.5rem"}
             background="#202020"
+            border="2px solid #404040"
             mb="1rem"
           >
             <Charts symb={symbol?.symbol} />
           </Box>
           <Box
             display={tabIndex === 0 ? "block" : "none"}>
-            {/* //   w="full"
-          //   minH="50vh"
-          //   px="1.68rem"
-          //   py="1.15rem"
-          //   fontSize="1.25rem"
-          //   borderRadius={"0.5rem"}
-          //   background="#202020"
-          //   mb="1rem"
-          // > */}
             <OpenPositions />
           </Box>
         </Flex>
-      </Flex>
+      </Flex> */}
     </>
   );
 };

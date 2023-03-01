@@ -94,7 +94,7 @@ export default function Layout({ chains, children }: LayoutProps) {
 
   const pages = [
     {
-      href: "/trade",
+      href: "/",
       title: "Home",
     },
     {
@@ -225,8 +225,9 @@ export default function Layout({ chains, children }: LayoutProps) {
               {colorMode === "dark" ? <HiSun /> : <HiMoon />}
             </Button>
             {router.pathname === "/" ? (
-              <Button variant="primary" w={{base: "100px", md: "155px"}} onClick={() => router.push("/trade")}>
-                ENTER
+              <Button variant="primary" w={{base: "100px", md: "155px"}}> 
+              {/* onClick={() => router.push("/trade")}> */}
+                COMING SOON
               </Button>
             ) : (
               <ConnectButton

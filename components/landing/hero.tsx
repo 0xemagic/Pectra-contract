@@ -6,10 +6,10 @@ export default function Hero() {
   const router = useRouter();
   return (
     <Flex direction="column" minH="80vh">
-      <Flex direction="column" mt="6rem" w="full">
+      <Flex direction="column" mt="6rem" w="full" justify={{base: "center", lg: "left"}}>
         {" "}
         <Heading fontSize={{ base: "2.75rem", md: "6rem" }} variant="hero" >
-          LEVERAGED PAIRS
+          RIDE THE<br/> NARRATIVE
         </Heading>
         <Heading
           color="#ACE075"
@@ -26,7 +26,7 @@ export default function Hero() {
           w={{ base: "350px", md: "550px" }}
           fontWeight="500"
         >
-          One-click decentralized pair trading. Choose one token to long, and one to short - Pectra automates the rest. Now you can simply trade crypto pairs with up to XX leverage.
+          The home of one-click decentralized pairs trading. Trade the latest narratives by choosing one token to long and one to short with up to XX leverage.
         </Text>
       </Flex>
       <Flex
@@ -56,10 +56,10 @@ export default function Hero() {
           variant="primary"
           boxShadow={colorMode === "dark" ? "0px -1px 22px #518128" : "none"}
           mr={{ base: "none", md: "0.5rem" }}
-          mb={{ base: "1rem", md: "none" }}
-          onClick={() => router.push("/trade")}
-        >
-          START TRADING
+          mb={{ base: "1rem", md: "none" }}>
+          {/* onClick={() => router.push("/trade")}> */}
+          COMING SOON
+          {/* START TRADING */}
         </Button>
         <Button variant="secondary">JOIN DISCORD</Button>
       </Flex>
@@ -68,7 +68,7 @@ export default function Hero() {
         pos="absolute"
         right="0rem"
         top="2%"
-        h={{ base: "0px", md: "500px", xl: "400px", "2xl": "500px" }}
+        h={{ base: "0px", md: "200px", lg: "300px", xl: "550px", "2xl": "500px" }}
         minW={{ base: "0px", md: "300px", xl: "400px", "2xl": "500px" }}
         src={colorMode === "dark" ? "/assets/spectra1.svg" : "/assets/spectra1-light.svg"}
         alt="spectra-protocol-logo"
@@ -76,9 +76,9 @@ export default function Hero() {
       <Image
         display={{ base: "none", md: "block" }}
         pos="absolute"
-        right="-4rem"
-        top="2%"
-        h={{ base: "0px", md: "450px", xl: "550px", "2xl": "600px" }}
+        right={{lg: "-9rem", "2xl": "-4rem"}}
+        top={{xl: "4%", "2xl": "2%"}}
+        h={{ base: "0px", md: "350px", lg: "450px", xl: "500px", "2xl": "600px" }}
         minW={{ base: "0px", md: "400px", xl: "800px" }}
         src={colorMode === "dark" ? "/assets/spectra2.svg" : "/assets/spectra2-light.svg"}
         alt="spectra-protocol-logo"

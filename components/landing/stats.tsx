@@ -5,17 +5,17 @@ const Stats = () => {
   const data = [
     {
       label: "TOTAL TRADING VOLUME",
-      value: "$70,303,155",
+      value: "COMING SOON",
       time: "Last 24H",
     },
     {
       label: "TRADES",
-      value: "211,122",
+      value: "COMING SOON",
       time: "Last 24H",
     },
     {
       label: "OPEN INTEREST",
-      value: "$70,303,155",
+      value: "COMING SOON",
       time: "Last 24H",
     },
   ];
@@ -35,7 +35,7 @@ const Stats = () => {
         fontFamily="heading"
         fontSize="3.125rem"
       >
-        TRUSTED BY OVER 7000 TRADERs
+        TRUSTED BY LEADING TRADERS
       </Heading>
       <Grid
         w="full"

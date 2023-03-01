@@ -82,8 +82,6 @@ const OpenComp = () => {
     token: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
   });
 
-  console.log(tokenBalance);
-
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isErrorOpen,
@@ -91,7 +89,7 @@ const OpenComp = () => {
     onClose: onErrorClose,
   } = useDisclosure();
 
-  //current tokens available with price variables for each
+   //current tokens available with price variables for each
   const tokens = [
     { name: "ETH", price: ethPrice },
     { name: "BTC", price: btcPrice },
@@ -99,26 +97,6 @@ const OpenComp = () => {
     // { name: "LINK", price: linkPrice },
     // { name: "UNI", price: uniPrice },
   ];
-
-  useEffect(() => {
-    if (sameToken) {
-      setError(true);
-      onErrorOpen();
-    } else {
-      setError(false);
-    }
-  }, [longToken, shortToken]);
-
-  useEffect(() => {
-    if (noAmount && amount === "0") {
-      setError(true);
-      onErrorOpen();
-    }
-
-    if (amount !== "0") {
-      setNoAmount(false);
-    }
-  }, [error, noAmount, amount]);
 
   // functions that fetchETHPrice and fetchBTCPrice are used to get the price of each token asynchronously
   // should change to fetch price every few seconds instead? put into timer maybe?
@@ -151,16 +129,39 @@ const OpenComp = () => {
   const longPrice = tokens.find(({ name }) => name === longToken);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const intervalId = setInterval(() => {
       fetchETHPrice();
       fetchBTCPrice();
-        // fetchLinkPrice();
+      // fetchLinkPrice();
       // fetchUniPrice();
       // fetchMaticrice();
     }, 2000);
-  
-    return () => clearInterval(interval);
+
+    return () => {
+      console.log('Component unmounted');
+      clearInterval(intervalId);
+    };
   }, []);
+
+    useEffect(() => {
+    if (sameToken) {
+      setError(true);
+      onErrorOpen();
+    } else {
+      setError(false);
+    }
+  }, [longToken, shortToken]);
+
+  useEffect(() => {
+    if (noAmount && amount === "0") {
+      setError(true);
+      onErrorOpen();
+    }
+
+    if (amount !== "0") {
+      setNoAmount(false);
+    }
+  }, [error, noAmount, amount]);
 
   return (
     <>

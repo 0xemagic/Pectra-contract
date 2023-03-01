@@ -7,7 +7,7 @@ import {
   Td,
   Text,
   Th,
-  Grid,
+  Button,
   Thead,
   Tr,
 } from "@chakra-ui/react";
@@ -16,33 +16,34 @@ import CircleIcon from "../../UI/CircleIcon";
 const OpenPositions = () => {
   const marketPositions = [
     {
-      market: "ETH",
-      side: "Long",
-      size: "2.123",
+      collateral: "700",
+      long: "ETH",
+      short: "BTC",
+      size: "1400",
       leverage: "2x",
       entry: "1,300",
       liquidation: "800",
-      collateral: "700",
     },
     {
-      market: "ETH",
-      side: "Short",
-      size: "2.123",
+      collateral: "200",
+      long: "BTC",
+      short: "ETH",
+      size: "400",
       leverage: "2x",
       entry: "1,600",
       liquidation: "1,800",
-      collateral: "200",
     },
     {
-      market: "ETH",
-      side: "Short",
-      size: "2.123",
+      collateral: "1,500",
+      long: "ETH",
+      short: "BTC",
+      size: "3,000",
       leverage: "2x",
       entry: "1,200",
       liquidation: "1,700",
-      collateral: "1,500",
     },
   ];
+
   return (
     <Flex
       bg="#202020"
@@ -66,55 +67,82 @@ const OpenPositions = () => {
               <Td>
                 <Text variant="paragraph">Collateral</Text>
               </Td>
-              <Td>              <Text variant="paragraph">Tokens</Text>
+              <Td>
+                {" "}
+                <Text variant="paragraph">Tokens</Text>
               </Td>
-              <Td>              <Text variant="paragraph">Entry Size</Text>
+              <Td>
+                {" "}
+                <Text variant="paragraph">Entry Size</Text>
               </Td>
-              <Td>              <Text variant="paragraph">Leverage</Text>
+              <Td>
+                {" "}
+                <Text variant="paragraph">Leverage</Text>
               </Td>
-              <Td>              <Text variant="paragraph">Entry Price</Text>
+              <Td>
+                {" "}
+                <Text variant="paragraph">Entry Price</Text>
               </Td>
-              <Td>              <Text variant="paragraph">Current Price</Text>
+              <Td>
+                {" "}
+                <Text variant="paragraph">Current Price</Text>
               </Td>
-              <Td>              <Text variant="paragraph">PnL</Text>
+              <Td>
+                {" "}
+                <Text variant="paragraph">PnL</Text>
               </Td>
-              <Td>              <Text variant="paragraph">Net Value</Text>
+              <Td>
+                {" "}
+                <Text variant="paragraph">Net Value</Text>
               </Td>
-    <Td>
-    Actions
-    </Td>
+              <Td><Text variant="paragraph">Actions</Text></Td>
             </Tr>
           </Thead>
           <Tbody>
             {marketPositions.map((position, key) => (
               <Tr key={key} my={2} bg="#252525" borderRadius="7px">
+                <Td>{position.collateral} USDC</Td>
                 <Td>
-                  <Flex alignItems="center" gap={2}>
-                    <CircleIcon />
-                    {position.market}
+                  <Flex>
+                    <Box
+                      bg="rgba(172, 224, 117, 0.2)"
+                      px={2}
+                      py={1}
+                      borderLeftRadius="7px"
+                      w="fit-content"
+                      color="brand"
+                    >
+                      {position.long}
+                    </Box>
+                    <Box
+                      bg="#4D3030"
+                      px={2}
+                      py={1}
+                      borderRightRadius="7px"
+                      w="fit-content"
+                      color="#FF7272"
+                    >
+                      {position.short}
+                    </Box>
                   </Flex>
-                </Td>
-                <Td>
-                  <Box
-                    bg={
-                      position.side === "Long"
-                        ? "rgba(172, 224, 117, 0.2)"
-                        : "#4D3030"
-                    }
-                    px={2}
-                    py={1}
-                    borderRadius="7px"
-                    w="fit-content"
-                    color={position.side === "Long" ? "brand" : "#FF7272"}
-                  >
-                    {position.side}
-                  </Box>
                 </Td>
                 <Td>{position.size}</Td>
                 <Td>{position.leverage}</Td>
                 <Td>{position.entry}</Td>
                 <Td>{position.liquidation}</Td>
-                <Td>{position.collateral}</Td>
+                <Td></Td>
+                <Td></Td>
+                <Td>
+                  <Flex align="center" gap="0.5rem">
+                    <Button variant="tertiary" width="5rem" height="1.5rem" fontSize="1rem"
+                           borderColor="#B8B8B8"
+                           borderWidth="1px"
+                    >
+                      Close
+                    </Button>
+                    <Button variant="function">Share</Button>
+                  </Flex>
+                </Td>
               </Tr>
             ))}
           </Tbody>
