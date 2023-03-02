@@ -1,5 +1,3 @@
-import { Flex, Text } from "@chakra-ui/react";
-
 import { useRef, useEffect } from "react";
 
 let tvScriptLoadingPromise: any;
@@ -37,7 +35,7 @@ export default function Charts(symb: any) {
         new (window.TradingView as any).widget({
           container_id: "basic-area-chart-demo",
           "autosize": true,
-          "symbol": symb.symb,
+          "symbol": symb.symb !== undefined ? symb.symb : "BINANCE:ETHBTC",
           "interval": "D",
           "timezone": "Etc/UTC",
           "theme": "dark",

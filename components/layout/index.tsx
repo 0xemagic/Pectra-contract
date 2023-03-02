@@ -36,15 +36,15 @@ export default function Layout({ chains, children }: LayoutProps) {
   const router = useRouter();
 
   const links = [
-    {
-      icon: (
-        <RiInstagramFill
-          color={colorMode === "dark" ? "#FFFFFF" : "222222"}
-          size="32px"
-        />
-      ),
-      href: "https://www.instagram.com/spectraprotocol/",
-    },
+    // {
+    //   icon: (
+    //     <RiInstagramFill
+    //       color={colorMode === "dark" ? "#FFFFFF" : "222222"}
+    //       size="32px"
+    //     />
+    //   ),
+    //   href: "https://www.instagram.com/spectraprotocol/",
+    // },
     {
       icon: (
         <RiTwitterFill
@@ -52,17 +52,17 @@ export default function Layout({ chains, children }: LayoutProps) {
           size="32px"
         />
       ),
-      href: "https://twitter.com/spectraprotocol",
+      href: "https://twitter.com/spectra_protocol",
     },
-    {
-      icon: (
-        <RiTelegramFill
-          color={colorMode === "dark" ? "#FFFFFF" : "222222"}
-          size="32px"
-        />
-      ),
-      href: "https://t.me/spectraprotocol",
-    },
+    // {
+    //   icon: (
+    //     <RiTelegramFill
+    //       color={colorMode === "dark" ? "#FFFFFF" : "222222"}
+    //       size="32px"
+    //     />
+    //   ),
+    //   href: "https://t.me/spectraprotocol",
+    // },
     {
       icon: (
         <SiMedium
@@ -70,7 +70,7 @@ export default function Layout({ chains, children }: LayoutProps) {
           size="32px"
         />
       ),
-      href: "https://medium.com/spectra-protocol",
+      href: "https://medium.com/@spectra_protocol",
     },
     {
       icon: (
@@ -79,7 +79,7 @@ export default function Layout({ chains, children }: LayoutProps) {
           size="32px"
         />
       ),
-      href: "https://discord.gg/2Z8Y4Z4",
+      href: " https://discord.gg/RKNRDVeFwG",
     },
     {
       icon: (
@@ -94,7 +94,7 @@ export default function Layout({ chains, children }: LayoutProps) {
 
   const pages = [
     {
-      href: "/trade",
+      href: "/",
       title: "Home",
     },
     {
@@ -161,7 +161,7 @@ export default function Layout({ chains, children }: LayoutProps) {
           display={isIndex ? "none" : "flex"}
           direction="row"
           justify="space-between"
-          w="20%"
+          // w={{base: "20%", md: "10%"}}
           >
             {pages.map((page, index) => (              
             <Link 
@@ -173,12 +173,14 @@ export default function Layout({ chains, children }: LayoutProps) {
             </Link>))}
           </Flex>
           <Flex 
-          w="50%"
+          w="fit-content"
           justifyContent={isIndex ? "space-between" : "flex-end"}
           >
           <Flex
             display={{ base: "none", md: "flex" }}
             justifySelf={isIndex ? "center" : "end"}
+            justify="center"
+            m="auto"
             mr="1rem"
           >
             {links.map((link) => {
@@ -225,8 +227,9 @@ export default function Layout({ chains, children }: LayoutProps) {
               {colorMode === "dark" ? <HiSun /> : <HiMoon />}
             </Button>
             {router.pathname === "/" ? (
-              <Button variant="primary" w={{base: "100px", md: "155px"}} onClick={() => router.push("/trade")}>
-                ENTER
+              <Button variant="primary" w={{base: "100px", md: "155px"}} fontSize={{base: "0.75rem", md: "1.25rem"}}> 
+              {/* onClick={() => router.push("/trade")}> */}
+                COMING SOON
               </Button>
             ) : (
               <ConnectButton
@@ -253,7 +256,8 @@ export default function Layout({ chains, children }: LayoutProps) {
         >
           {children}
         </Box>
-        <Flex
+        {!isIndex && (
+          <Flex
           display={{ base: "flex", md: "none" }}
           gap="0.5rem"
           alignSelf="start"
@@ -291,6 +295,8 @@ export default function Layout({ chains, children }: LayoutProps) {
             );
           })}
         </Flex>
+        )}
+        
         {/* <Flex
           py="3rem"
           px={{ base: "2rem", md: "4rem" }}

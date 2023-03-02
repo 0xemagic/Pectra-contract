@@ -1,20 +1,21 @@
-import { Grid, GridItem, Heading, Image, Text, VStack } from "@chakra-ui/react";
+import { Grid, GridItem, Heading, Image, Text, VStack, useColorMode } from "@chakra-ui/react";
 
 const Stats = () => {
+  const { colorMode } = useColorMode();
   const data = [
     {
       label: "TOTAL TRADING VOLUME",
-      value: "$70,303,155",
+      value: "COMING SOON",
       time: "Last 24H",
     },
     {
       label: "TRADES",
-      value: "211,122",
+      value: "COMING SOON",
       time: "Last 24H",
     },
     {
       label: "OPEN INTEREST",
-      value: "$70,303,155",
+      value: "COMING SOON",
       time: "Last 24H",
     },
   ];
@@ -33,8 +34,9 @@ const Stats = () => {
         fontWeight={500}
         fontFamily="heading"
         fontSize="3.125rem"
+        textAlign={{ base: "center", lg: "left"}}
       >
-        TRUSTED BY OVER 7000 TRADERs
+        TRUSTED BY LEADING TRADERS
       </Heading>
       <Grid
         w="full"
@@ -46,8 +48,8 @@ const Stats = () => {
             py="2.3125rem"
             position="relative"
             borderRadius="20px"
-            bg="#182310"
-            h="12.5rem"
+            bg={colorMode === "dark" ? "#182310" : "#FCFCFC"}
+            h="17rem"
             key={index}
           >
             <VStack w="full" h="full">
@@ -57,6 +59,7 @@ const Stats = () => {
                 fontFamily="heading"
                 fontWeight={500}
                 fontSize="1.375rem"
+                textAlign={{ base: "center", lg: "left"}}
               >
                 {label}
               </Text>
@@ -64,13 +67,14 @@ const Stats = () => {
                 my="12px"
                 fontFamily="body"
                 fontWeight={500}
-                fontSize="3rem"
+                fontSize={{base: "3rem", md: "2rem"}}
+                textAlign={{ base: "center", lg: "left"}}
               >
                 {value}
               </Text>
               <Text
                 lineHeight="22px"
-                color="#DAFFB2"
+                color="brand"
                 fontFamily="heading"
                 fontWeight={500}
                 fontSize="1.375rem"

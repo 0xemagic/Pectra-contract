@@ -1,5 +1,5 @@
-import ShortLongComp from "@/components/trade/ShortLongComp";
-import { Box, Flex, Select } from "@chakra-ui/react";
+import ModeComp from "@/components/trade/ModeComp";
+import { Box, Flex, Select, Heading } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
 
@@ -11,10 +11,9 @@ import { NextSeo } from "next-seo";
 type SymbolProps = {
   label: string;
   symbol: string;
-}
+};
 
 const Trade = () => {
-
   const symbols = [
     {
       label: "BTC/ETH",
@@ -32,14 +31,20 @@ const Trade = () => {
     //   label: "BTC/MATIC",
     //   symbol: "BINANCE:MATICBTC",
     // },
-  ]
+  ];
 
   const [symbol, setSymbol] = useState<SymbolProps>(symbols[1]);
 
   const handleChange = (selectedValue: string) => {
-    const selectedObject = symbols.find(symb => symb.label === selectedValue);
+    const selectedObject = symbols.find((symb) => symb.label === selectedValue);
     setSymbol(selectedObject!);
-  }
+  };
+
+  const [tabIndex, setTabIndex] = useState(0);
+
+  const handleTabsChange = (index: number) => {
+    setTabIndex(index);
+  };
 
   return (
     <>
@@ -59,35 +64,26 @@ const Trade = () => {
           ],
         }}
       />
+
+      <Heading m="auto" textAlign="center"   padding="20%"
+variant="primary">COMING SOON</Heading>
+{/*       
       <Flex w="full" fontFamily={"heading"} direction="row" px="4.25rem">
-        <Flex w="27.625rem" direction={{ base: "row", md: "column" }} mr="1rem">
-          <Box
-            h="fit-content"
-            w="full"
-            borderRadius={"0.5rem"}
-            background="#202020"
-            border="2px solid #404040"
-            fontWeight="bold"
-            px="1.68rem"
-            py="1.5rem"
-            fontSize="1.25rem"
-            mb="1rem"
-          >
-            TRADE
-          </Box>
-          <Box
-            w="full"
-            borderRadius={"0.5rem"}
-            background="#202020"
-            fontStyle="body"
-            px="1.68rem"
-            py="1.25rem"
-          >
-            <ShortLongComp />
-          </Box>
+        <Flex
+          w={tabIndex === 0 ? "27.625rem" : "full"}
+          direction={{ base: "row", md: "column" }}
+          h="min-content"
+          mr="1rem"
+          background="#202020"
+          border="2px solid #404040"
+          borderRadius={"0.5rem"}
+          px="1.68rem"
+          py="1.25rem"
+        >
+          <ModeComp handleTabsChange={handleTabsChange} tabIndex={tabIndex} />
         </Flex>
 
-        <Flex flex={1} direction="column">
+        <Flex w="full" flex={1} direction="column">
           <Box
             h="fit-content"
             w="full"
@@ -99,7 +95,8 @@ const Trade = () => {
             fontSize="1.25rem"
             mb="1rem"
           >
-            <Select
+            {tabIndex === 0 && (
+              <Select
                 variant="outline"
                 onChange={(e) => handleChange(e.target.value)}
                 value={symbol?.label}
@@ -108,9 +105,11 @@ const Trade = () => {
                   return <option key={index}>{symb.label}</option>;
                 })}
               </Select>
+            )}
           </Box>
 
           <Box
+            display={tabIndex === 0 ? "block" : "none"}
             w="full"
             minH="50vh"
             px="1.68rem"
@@ -118,13 +117,17 @@ const Trade = () => {
             fontSize="1.25rem"
             borderRadius={"0.5rem"}
             background="#202020"
+            border="2px solid #404040"
             mb="1rem"
           >
             <Charts symb={symbol?.symbol} />
           </Box>
-          <OpenPositions />
+          <Box
+            display={tabIndex === 0 ? "block" : "none"}>
+            <OpenPositions />
+          </Box>
         </Flex>
-      </Flex>
+      </Flex> */}
     </>
   );
 };

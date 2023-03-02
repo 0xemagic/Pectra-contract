@@ -82,8 +82,6 @@ const OpenComp = () => {
     token: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
   });
 
-  console.log(tokenBalance);
-
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isErrorOpen,
@@ -91,6 +89,7 @@ const OpenComp = () => {
     onClose: onErrorClose,
   } = useDisclosure();
 
+   //current tokens available with price variables for each
   const tokens = [
     { name: "ETH", price: ethPrice },
     { name: "BTC", price: btcPrice },
@@ -99,26 +98,8 @@ const OpenComp = () => {
     // { name: "UNI", price: uniPrice },
   ];
 
-  useEffect(() => {
-    if (sameToken) {
-      setError(true);
-      onErrorOpen();
-    } else {
-      setError(false);
-    }
-  }, [longToken, shortToken]);
-
-  useEffect(() => {
-    if (noAmount && amount === "0") {
-      setError(true);
-      onErrorOpen();
-    }
-
-    if (amount !== "0") {
-      setNoAmount(false);
-    }
-  }, [error, noAmount, amount]);
-
+  // functions that fetchETHPrice and fetchBTCPrice are used to get the price of each token asynchronously
+  // should change to fetch price every few seconds instead? put into timer maybe?
   async function fetchETHPrice() {
     const data = await client2.query(ethPriceQuery, {}).toPromise();
     setEthPrice(data.data.bundle.ethPriceUSD);
@@ -148,15 +129,39 @@ const OpenComp = () => {
   const longPrice = tokens.find(({ name }) => name === longToken);
 
   useEffect(() => {
-    const getTokensPrice = async () => {
+    const intervalId = setInterval(() => {
       fetchETHPrice();
       fetchBTCPrice();
       // fetchLinkPrice();
       // fetchUniPrice();
       // fetchMaticrice();
+    }, 2000);
+
+    return () => {
+      console.log('Component unmounted');
+      clearInterval(intervalId);
     };
-    getTokensPrice();
-  });
+  }, []);
+
+    useEffect(() => {
+    if (sameToken) {
+      setError(true);
+      onErrorOpen();
+    } else {
+      setError(false);
+    }
+  }, [longToken, shortToken]);
+
+  useEffect(() => {
+    if (noAmount && amount === "0") {
+      setError(true);
+      onErrorOpen();
+    }
+
+    if (amount !== "0") {
+      setNoAmount(false);
+    }
+  }, [error, noAmount, amount]);
 
   return (
     <>
@@ -206,15 +211,16 @@ const OpenComp = () => {
                   return <option key={index}>{token.name}</option>;
                 })}
               </Select>
-              <Flex ml="auto" mr={0} fontSize="0.875rem">
-                <Text mr={2} fontWeight={300}>
-                  current price:
-                </Text>
-                <Text fontWeight={600}>
-                  ${truncate(commify(longPrice!.price.toString()), 2)}
-                </Text>
-              </Flex>
-            </Flex>
+
+              <Flex ml="auto" justify="end" mr={0} fontSize="0.875rem">
+          <Text mr={2} fontWeight={300}>
+              current price:
+            </Text>
+            <Text fontWeight={600}>
+              ${truncate(commify(longPrice!.price.toString()), 2)}
+            </Text>
+          </Flex>
+          </Flex>
           </Flex>
         </Box>
         <Box
@@ -232,7 +238,7 @@ const OpenComp = () => {
             alignItems="center"
             w="full"
           >
-            <Text fontWeight={600} fontFamily="heading" fontSize="0.9rem">
+            <Text fontWeight={600} fontFamily="heading" fontSize="0.9rem" justifySelf="center">
               Short
             </Text>
             <Flex flexDir="column">
@@ -253,16 +259,16 @@ const OpenComp = () => {
                   return <option key={index}>{token.name}</option>;
                 })}
               </Select>
-              <Flex ml="auto" mr={0} fontSize="0.875rem">
-                <Text mr={2} fontWeight={300}>
-                  current price:
-                </Text>
-                <Text fontWeight={600}>
-                  ${truncate(commify(shortPrice!.price.toString()), 2)}
-                </Text>
-              </Flex>
+          <Flex ml="auto" justify="end" mr={0} fontSize="0.875rem">
+            <Text mr={2} fontWeight={300}>
+              current price:
+            </Text>
+            <Text fontWeight={600}>
+              ${truncate(commify(shortPrice!.price.toString()), 2)}
+            </Text>
             </Flex>
           </Flex>
+        </Flex>
         </Box>
         <Box>
           <Flex
@@ -317,8 +323,20 @@ const OpenComp = () => {
                 </NumberInputStepper>
               </NumberInput>
             </Flex>
-            <Text variant="paragraph" fontSize="0.85rem" alignSelf="end" mr="1.25rem" color="#FFFFFF" opacity="0.7">
-              Wallet Balance: <b>{tokenBalance ? truncate(tokenBalance!.formatted!.toString(), 2) : 0}</b>{" "}
+            <Text
+              variant="paragraph"
+              fontSize="0.85rem"
+              alignSelf="end"
+              mr="1.25rem"
+              color="#FFFFFF"
+              opacity="0.7"
+            >
+              Wallet Balance:{" "}
+              <b>
+                {tokenBalance
+                  ? truncate(tokenBalance!.formatted!.toString(), 2)
+                  : 0}
+              </b>{" "}
               USDC
             </Text>
           </Flex>

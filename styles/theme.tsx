@@ -85,8 +85,8 @@ export const customTheme = {
     Button: {
       variants: {
         primary: (props: StyleFunctionProps) => ({
-          bgColor: "brand",
-          color: "#182112",
+          bgColor: props.colorMode === "dark" ? "brand" : "#222222",
+          color: props.colorMode === "dark" ? "#242524" : "#FFFFFF",
           _hover: {
             bgColor: props.colorMode === "dark" ? "#3EB751" : "#BBFF81",
           },
@@ -122,6 +122,22 @@ export const customTheme = {
           fontStyle: "normal",
           width: "full",
           fontSize: "1.25rem",
+        },
+        function: {
+          bgColor: "#252525",
+          borderColor: "#B8B8B8",
+          borderWidth: "1px",
+          color: "#FFFFFF",
+          _hover: {
+            bgColor: "black",
+          },
+          borderRadius: "12px",
+          fontFamily: "Inter",
+          fontWeight: "600",
+          fontStyle: "normal",
+          fontSize: "1rem",
+          width: "5rem",
+          height: "1.5rem",
         },
       },
     },
