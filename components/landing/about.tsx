@@ -45,7 +45,7 @@ const About = () => {
             px="1.875rem"
             bg={colorMode === 'dark' ? "#2B3226" : "#F4F4F4"}
             borderRadius="20px"
-            h={{base: "10rem", xl: "12rem"}}
+            h={{base: "15rem", md: "10rem", lg: "13rem", xl: "12rem"}}
             key={index}
           >
             <Flex justify="space-between" w={"full"} h="full" flexDir="column">

@@ -6,9 +6,9 @@ export default function Hero() {
   const router = useRouter();
   return (
     <Flex direction="column" minH="80vh">
-      <Flex direction="column" mt="6rem" w="full" justify={{base: "center", lg: "left"}}>
+      <Flex direction="column" mt={{base: "6rem", lg: "4rem"}} w="full" justify={{base: "center", lg: "start"}}>
         {" "}
-        <Heading fontSize={{ base: "2.75rem", md: "6rem" }} variant="hero" >
+        <Heading fontSize={{ base: "2.75rem", md: "6rem" }} variant="hero" textAlign={{base: "center", lg: "start"}}>
           RIDE THE<br/> NARRATIVE
         </Heading>
         <Heading
@@ -16,21 +16,21 @@ export default function Hero() {
           fontSize={{ base: "3rem", md: "6rem" }}
           variant="colored"
           mt="-0.5rem"
+          textAlign={{base: "center", lg: "start"}}
         >
           WITH PECTRA
         </Heading>
         <Text
           variant="paragraph"
-          textAlign={"start"}
-          mt={{ base: "2.5rem", md: "2rem" }}
-          w={{ base: "350px", md: "550px" }}
+          textAlign={{base: "center", lg: "start"}}          mt={{ base: "2.5rem", md: "2rem" }}
+          w={{ base: "fit-content", md: "fit-content", lg: "550px" }}
           fontWeight="500"
         >
           The home of one-click decentralized pairs trading. Trade the latest narratives by choosing one token to long and one to short with up to XX leverage.
         </Text>
       </Flex>
       <Flex
-        px="1.75rem"
+        px="1rem"
         py="1rem"
         w="fit-content"
         h="66px"
@@ -39,19 +39,19 @@ export default function Hero() {
         mt="2rem"
         borderRadius={"12px"}
         alignItems="center"
-        justifyItems="center"
+        alignSelf={{base: "center", lg: "start"}}
       >
         <Text
           alignSelf="center"
           mr="0.75rem"
           variant="paragraph"
-          textAlign={"center"}
+          textAlign={{base: "center", lg: "left"}}
         >
           Available on
         </Text>
         <Image ml={colorMode === "dark" ? "-0.25rem" : "-0.75rem"} h="58px" src={colorMode === "dark" ? "/icons/arbitrum-dark.svg" : "/icons/arbitrum-light.svg"} />
       </Flex>
-      <Flex direction={{ base: "column", md: "row" }} align={{ base: "center", md: "start" }} mt={{ base: "2.5rem", md: "5rem" }}>
+      <Flex direction={{ base: "column", md: "row" }} justify={{base: "center", lg: "start"}}align={{ base: "center", md: "start" }} mt={{ base: "2.5rem", md: "5rem" }}>
         <Button
           variant="primary"
           boxShadow={colorMode === "dark" ? "0px -1px 22px #518128" : "none"}
@@ -64,20 +64,20 @@ export default function Hero() {
         <Button variant="secondary">JOIN DISCORD</Button>
       </Flex>
       <Image
-        display={{ base: "none", md: "block" }}
+        display={{ base: "none", lg: "block" }}
         pos="absolute"
-        right="0rem"
-        top="2%"
-        h={{ base: "0px", md: "200px", lg: "300px", xl: "550px", "2xl": "500px" }}
+        right={{lg: "-7rem", xl: "0rem"}}
+        top={{base: "15%", md: "5%", lg: "5%", xl: "2.5%", "2xl": "0%"}}
+        h={{ base: "0px", md: "500px", lg: "400px", xl: "600px", "2xl": "600px" }}
         minW={{ base: "0px", md: "300px", xl: "400px", "2xl": "500px" }}
         src={colorMode === "dark" ? "/assets/spectra1.svg" : "/assets/spectra1-light.svg"}
         alt="spectra-protocol-logo"
       />
       <Image
-        display={{ base: "none", md: "block" }}
+        display={{ base: "none", lg: "block" }}
         pos="absolute"
         right={{lg: "-9rem", "2xl": "-4rem"}}
-        top={{xl: "4%", "2xl": "2%"}}
+        top={{lg: "4%", xl: "6%", "2xl": "2%"}}
         h={{ base: "0px", md: "350px", lg: "450px", xl: "500px", "2xl": "600px" }}
         minW={{ base: "0px", md: "400px", xl: "800px" }}
         src={colorMode === "dark" ? "/assets/spectra2.svg" : "/assets/spectra2-light.svg"}

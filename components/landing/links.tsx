@@ -27,7 +27,7 @@ const Links = () => {
     // },
     {
       label: <Icon as={SiMedium} width="5.625rem" height="5.625rem" />,
-      link: "https://www.medium.com/spectra-protocol",
+      link: "https://medium.com/@spectra_protocol",
     },
     {
       label: <Icon as={AiFillGithub} width="5.625rem" height="5.625rem" />,
@@ -48,9 +48,10 @@ const Links = () => {
         gap="0.75rem"
         templateColumns={{
           base: "repeat(2, 1fr)",
-          md: "repeat(5, 1fr)",
-          lg: "repeat(6, 1fr)",
+          md: "repeat(4, 1fr)",
+          // lg: "repeat(6, 1fr)",
         }}
+
       >
         {links.map((link, index) => (
           <Link href={link.link} key={index}

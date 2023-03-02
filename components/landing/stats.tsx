@@ -34,6 +34,7 @@ const Stats = () => {
         fontWeight={500}
         fontFamily="heading"
         fontSize="3.125rem"
+        textAlign={{ base: "center", lg: "left"}}
       >
         TRUSTED BY LEADING TRADERS
       </Heading>
@@ -48,7 +49,7 @@ const Stats = () => {
             position="relative"
             borderRadius="20px"
             bg={colorMode === "dark" ? "#182310" : "#FCFCFC"}
-            h="12.5rem"
+            h="17rem"
             key={index}
           >
             <VStack w="full" h="full">
@@ -58,6 +59,7 @@ const Stats = () => {
                 fontFamily="heading"
                 fontWeight={500}
                 fontSize="1.375rem"
+                textAlign={{ base: "center", lg: "left"}}
               >
                 {label}
               </Text>
@@ -65,7 +67,8 @@ const Stats = () => {
                 my="12px"
                 fontFamily="body"
                 fontWeight={500}
-                fontSize="3rem"
+                fontSize={{base: "3rem", md: "2rem"}}
+                textAlign={{ base: "center", lg: "left"}}
               >
                 {value}
               </Text>
