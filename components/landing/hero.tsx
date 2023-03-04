@@ -56,10 +56,9 @@ export default function Hero() {
           variant="primary"
           boxShadow={colorMode === "dark" ? "0px -1px 22px #518128" : "none"}
           mr={{ base: "none", md: "0.5rem" }}
-          mb={{ base: "1rem", md: "none" }}>
-          {/* onClick={() => router.push("/trade")}> */}
-          COMING SOON
-          {/* START TRADING */}
+          mb={{ base: "1rem", md: "none" }}
+           onClick={() => router.push("/trade")}> 
+          START TRADING
         </Button>
         <Button variant="secondary">JOIN DISCORD</Button>
       </Flex>

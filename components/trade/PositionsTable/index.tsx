@@ -23,6 +23,8 @@ const OpenPositions = () => {
       leverage: "2x",
       entry: "1,300",
       liquidation: "800",
+      pnl: "-$200",
+      netvalue: "$500",
     },
     {
       collateral: "200",
@@ -32,6 +34,8 @@ const OpenPositions = () => {
       leverage: "2x",
       entry: "1,600",
       liquidation: "1,800",
+      pnl: "+$200",
+      netvalue: "$500",
     },
     {
       collateral: "1,500",
@@ -41,6 +45,8 @@ const OpenPositions = () => {
       leverage: "2x",
       entry: "1,200",
       liquidation: "1,700",
+      pnl: "-$200",
+      netvalue: "$500"
     },
   ];
 
@@ -51,6 +57,8 @@ const OpenPositions = () => {
       direction="column"
       borderRadius="12px"
       w="100%"
+      border="1px solid rgba(255, 255, 255, 0.2)"
+
     >
       <Text fontFamily="body" fontWeight={600} fontSize="1.1rem">
         Open Positions
@@ -130,8 +138,8 @@ const OpenPositions = () => {
                 <Td>{position.leverage}</Td>
                 <Td>{position.entry}</Td>
                 <Td>{position.liquidation}</Td>
-                <Td></Td>
-                <Td></Td>
+                <Td color={position.pnl.includes("-") ? "#FF7272" : "brand"}>{position.pnl}</Td>
+                <Td>{position.netvalue}</Td>
                 <Td>
                   <Flex align="center" gap="0.5rem">
                     <Button variant="tertiary" width="5rem" height="1.5rem" fontSize="1rem"

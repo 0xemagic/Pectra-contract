@@ -1,7 +1,6 @@
 import PositionComp, { PositionCompProps } from "@/components/trade";
 import {
   Box,
-  Heading,
   Flex,
   Grid,
   GridItem,
@@ -86,10 +85,7 @@ const Overview = () => {
   ];
   return (
     <Box px="4.25rem" mt="3.3125rem">
-      
-      <Heading m="auto" textAlign="center"   padding="20%"
-variant="primary">COMING SOON</Heading>
-      {/* <Box
+      <Box
         h="fit-content"
         w="full"
         borderRadius={"0.5rem"}
@@ -176,7 +172,7 @@ variant="primary">COMING SOON</Heading>
           <Text>Net: WW</Text>
           <Text>Net: OO</Text>
         </Flex>
-      </Box> */}
+      </Box>
     </Box>
   );
 };

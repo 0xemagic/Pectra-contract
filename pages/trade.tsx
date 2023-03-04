@@ -1,5 +1,5 @@
 import ModeComp from "@/components/trade/ModeComp";
-import { Box, Flex, Select, Heading } from "@chakra-ui/react";
+import { Box, Flex, Select, Grid, GridItem } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
 
@@ -46,6 +46,18 @@ const Trade = () => {
     setTabIndex(index);
   };
 
+  const optionStyle = {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr 1fr",
+    gridGap: "10px",
+  };
+
+  const valueStyle = {
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  };
+
   return (
     <>
       <NextSeo
@@ -64,19 +76,14 @@ const Trade = () => {
           ],
         }}
       />
-
-      <Heading m="auto" textAlign="center"   padding="20%"
-variant="primary">COMING SOON</Heading>
-{/*       
       <Flex w="full" fontFamily={"heading"} direction="row" px="4.25rem">
         <Flex
           w={tabIndex === 0 ? "27.625rem" : "full"}
+          border="1px solid rgba(255, 255, 255, 0.2)"
+          borderRadius="12px"
           direction={{ base: "row", md: "column" }}
-          h="min-content"
           mr="1rem"
           background="#202020"
-          border="2px solid #404040"
-          borderRadius={"0.5rem"}
           px="1.68rem"
           py="1.25rem"
         >
@@ -101,9 +108,16 @@ variant="primary">COMING SOON</Heading>
                 onChange={(e) => handleChange(e.target.value)}
                 value={symbol?.label}
               >
-                {symbols.map((symb, index) => {
-                  return <option key={index}>{symb.label}</option>;
-                })}
+                  {symbols.map((symb, index) => (
+                       <option style={optionStyle}>
+                        <Flex justifyContent="space-between" justify="space-between">
+                        <span style={valueStyle as any}>{symb.label}</span>
+                       <span style={valueStyle as any}>{symb.label}</span>
+                       <span style={valueStyle as any}>{symb.label}</span>
+                        </Flex>
+                     </option>
+                    )
+                  )}
               </Select>
             )}
           </Box>
@@ -117,17 +131,24 @@ variant="primary">COMING SOON</Heading>
             fontSize="1.25rem"
             borderRadius={"0.5rem"}
             background="#202020"
-            border="2px solid #404040"
             mb="1rem"
           >
             <Charts symb={symbol?.symbol} />
           </Box>
-          <Box
-            display={tabIndex === 0 ? "block" : "none"}>
+          <Box display={tabIndex === 0 ? "block" : "none"}>
+            {/* //   w="full"
+          //   minH="50vh"
+          //   px="1.68rem"
+          //   py="1.15rem"
+          //   fontSize="1.25rem"
+          //   borderRadius={"0.5rem"}
+          //   background="#202020"
+          //   mb="1rem"
+          // > */}
             <OpenPositions />
           </Box>
         </Flex>
-      </Flex> */}
+      </Flex>
     </>
   );
 };
