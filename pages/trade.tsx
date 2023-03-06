@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import OpenPositions from "@/components/trade/PositionsTable";
 import Charts from "@/components/trade/Charts";
+import Tickers from "@/components/trade/tickers";
 
 import { NextSeo } from "next-seo";
 
@@ -76,9 +77,9 @@ const Trade = () => {
           ],
         }}
       />
-      <Flex w="full" fontFamily={"heading"} direction="row" px="4.25rem">
+      <Flex w="full" fontFamily={"heading"} px="4.25rem">
         <Flex
-          w={tabIndex === 0 ? "27.625rem" : "full"}
+          // w={tabIndex === 0 ? "500px" : "full"}
           border="1px solid rgba(255, 255, 255, 0.2)"
           borderRadius="12px"
           direction={{ base: "row", md: "column" }}
@@ -91,7 +92,7 @@ const Trade = () => {
         </Flex>
 
         <Flex w="full" flex={1} direction="column">
-          <Box
+           {/*<Box
             h="fit-content"
             w="full"
             borderRadius={"0.5rem"}
@@ -117,14 +118,14 @@ const Trade = () => {
                         </Flex>
                      </option>
                     )
-                  )}
+                  )} 
               </Select>
             )}
-          </Box>
+          </Box>*/}
 
-          <Box
+          <Flex
             display={tabIndex === 0 ? "block" : "none"}
-            w="full"
+            // w="75%"
             minH="50vh"
             px="1.68rem"
             py="1.15rem"
@@ -132,22 +133,19 @@ const Trade = () => {
             borderRadius={"0.5rem"}
             background="#202020"
             mb="1rem"
+            direction="row"
+            justify="center"
+            border="1px solid rgba(255, 255, 255, 0.2)"
           >
             <Charts symb={symbol?.symbol} />
-          </Box>
-          <Box display={tabIndex === 0 ? "block" : "none"}>
-            {/* //   w="full"
-          //   minH="50vh"
-          //   px="1.68rem"
-          //   py="1.15rem"
-          //   fontSize="1.25rem"
-          //   borderRadius={"0.5rem"}
-          //   background="#202020"
-          //   mb="1rem"
-          // > */}
+          </Flex>
+          <Box w="100%" display={tabIndex === 0 ? "block" : "none"}>
             <OpenPositions />
           </Box>
+
         </Flex>
+        {/* <Tickers /> */}
+
       </Flex>
     </>
   );
