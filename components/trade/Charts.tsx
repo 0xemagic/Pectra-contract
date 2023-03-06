@@ -34,24 +34,26 @@ export default function Charts(symb: any) {
       ) {
         new (window.TradingView as any).widget({
           container_id: "basic-area-chart-demo",
-          autosize: true,
-          symbol: symb.symb !== undefined ? symb.symb : "BINANCE:ETHBTC",
-          interval: "D",
-          timezone: "Etc/UTC",
-          theme: "dark",
-          style: "1",
-          locale: "en",
-          toolbar_bg: "#f1f3f6",
-          enable_publishing: false,
-          hide_side_toolbar: false,
-          allow_symbol_change: true,
-          show_popup_button: true,
-          popup_width: "1600",
-          popup_height: "800",
+          "autosize": true,
+          "symbol": symb.symb !== undefined ? symb.symb : "BINANCE:ETHBTC",
+          "interval": "D",
+          "timezone": "Etc/UTC",
+          "theme": "dark",
+          "style": "1",
+          "locale": "en",
+          "toolbar_bg": "#f1f3f6",
+          "enable_publishing": false,
+          "hide_side_toolbar": false,
+          "allow_symbol_change": true,
+          "show_popup_button": true,
+          "popup_width": "1600",
+          "popup_height": "800",
         });
       }
     }
   }, [symb]);
 
-  return <div id="basic-area-chart-demo" style={{ width: "100%" }} />;
+  return (
+      <div id="basic-area-chart-demo" style={{height: "100%", width: "100%"}} />
+  );
 }
