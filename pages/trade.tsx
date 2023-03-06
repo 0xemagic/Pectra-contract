@@ -78,50 +78,7 @@ const Trade = () => {
         }}
       />
       <Flex w="full" fontFamily={"heading"} px="4.25rem">
-        <Flex w="full" alignItems={"flex-start"}>
-          <Box w="30%">
-            <Flex
-              w="full"
-              alignItems="center"
-              bg="#202020"
-              borderColor={"#404040"}
-              borderWidth="2px"
-              pl="69px"
-              h="75px"
-              borderRadius="12px"
-              fontFamily={"body"}
-            >
-              TRADE
-            </Flex>
-
-
-              <Flex mt="0.75rem" p="1.25rem" w='full'
-                border="1px solid rgba(255, 255, 255, 0.2)"
-                borderRadius="12px"
-                direction={{ base: "row", md: "column" }}
-                mr="1rem"
-                background="#202020"
-                px="1.68rem"
-                py="1.25rem"
-              >
-                <ModeComp
-                  handleTabsChange={handleTabsChange}
-                  tabIndex={tabIndex}
-                />
-              </Flex>
-            </Box>
-
-          <Box w="70%"></Box>
-        </Flex>
-      </Flex>
-    </>
-  );
-};
-
-export default Trade;
-
-{
-  /* <Flex
+        <Flex
           // w={tabIndex === 0 ? "500px" : "full"}
           border="1px solid rgba(255, 255, 255, 0.2)"
           borderRadius="12px"
@@ -135,7 +92,7 @@ export default Trade;
         </Flex>
 
         <Flex w="full" flex={1} direction="column">
-          <Box
+           {/*<Box
             h="fit-content"
             w="full"
             borderRadius={"0.5rem"}
@@ -153,7 +110,7 @@ export default Trade;
                 value={symbol?.label}
               >
                   {symbols.map((symb, index) => (
-                       <option key={index} style={optionStyle}>
+                       <option style={optionStyle}>
                         <Flex justifyContent="space-between" justify="space-between">
                         <span style={valueStyle as any}>{symb.label}</span>
                        <span style={valueStyle as any}>{symb.label}</span>
@@ -164,7 +121,7 @@ export default Trade;
                   )} 
               </Select>
             )}
-          </Box>
+          </Box>*/}
 
           <Flex
             display={tabIndex === 0 ? "block" : "none"}
@@ -185,5 +142,13 @@ export default Trade;
           <Box w="100%" display={tabIndex === 0 ? "block" : "none"}>
             <OpenPositions />
           </Box>
-        </Flex> */
-}
+
+        </Flex>
+        {/* <Tickers /> */}
+
+      </Flex>
+    </>
+  );
+};
+
+export default Trade;

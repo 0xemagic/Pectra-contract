@@ -18,7 +18,6 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   useDisclosure,
-  Input,
 } from "@chakra-ui/react";
 
 import { useWriteOpenPosition } from "@/components/hooks/useContract";
@@ -37,7 +36,7 @@ import ErrorModal from "@/components/modals/errorModal";
 
 import { useBalance, useAccount } from "wagmi";
 
-const CloseComp = () => {
+const OpenComp = () => {
   const labelStyles = {
     mt: "3",
     ml: "-1.5",
@@ -90,7 +89,7 @@ const CloseComp = () => {
     onClose: onErrorClose,
   } = useDisclosure();
 
-  //current tokens available with price variables for each
+   //current tokens available with price variables for each
   const tokens = [
     { name: "ETH", price: ethPrice },
     { name: "BTC", price: btcPrice },
@@ -139,12 +138,12 @@ const CloseComp = () => {
     }, 2000);
 
     return () => {
-      console.log("Component unmounted");
+      console.log('Component unmounted');
       clearInterval(intervalId);
     };
   }, []);
 
-  useEffect(() => {
+    useEffect(() => {
     if (sameToken) {
       setError(true);
       onErrorOpen();
@@ -170,14 +169,108 @@ const CloseComp = () => {
         fontFamily="body"
         color="#ffffff"
         fontSize="1.06rem"
-        mt="2.5rem"
         mb="1.25rem"
         fontWeight="600"
       >
-        Redeem peETH/BTC
+        Pick a pair
       </Text>
-      <VStack w="full" gap="0.825rem">
-        <Box w="full" mb="1.5rem">
+      <VStack gap="0.825rem">
+        <Box
+          bg="rgba(172, 224, 117, 0.2)"
+          w="full"
+          borderColor="#ACE075"
+          borderWidth="2px"
+          borderRadius="7px"
+          py="0.5rem"
+          px="1.25rem"
+        >
+          <Flex
+            fontFamily="body"
+            justify="space-between"
+            alignItems="center"
+            w="full"
+          >
+            <Text fontWeight={600} fontFamily="heading" fontSize="0.9rem">
+              LONG
+            </Text>
+            <Flex flexDir="column">
+              <Select
+                fontWeight={600}
+                fontSize="1.01rem"
+                w="fit-content"
+                m="auto"
+                mr="-1rem"
+                variant="unstyled"
+                iconColor="#ACE075"
+                onChange={(e) => setLongToken(e.target.value)}
+                value={longToken}
+                isInvalid={sameToken}
+                mb="0.25rem"
+              >
+                {tokens.map((token, index) => {
+                  return <option key={index}>{token.name}</option>;
+                })}
+              </Select>
+
+              <Flex ml="auto" justify="end" mr={0} fontSize="0.875rem">
+          <Text mr={2} fontWeight={300}>
+              current price:
+            </Text>
+            <Text fontWeight={600}>
+              ${truncate(commify(longPrice!.price.toString()), 2)}
+            </Text>
+          </Flex>
+          </Flex>
+          </Flex>
+        </Box>
+        <Box
+          bg="rgba(255, 114, 114, 0.2)"
+          w="full"
+          borderColor="#FF7272"
+          borderWidth="2px"
+          borderRadius="7px"
+          py="0.5rem"
+          px="1.25rem"
+        >
+          <Flex
+            fontFamily="body"
+            justify="space-between"
+            alignItems="center"
+            w="full"
+          >
+            <Text fontWeight={600} fontFamily="heading" fontSize="0.9rem" justifySelf="center">
+              Short
+            </Text>
+            <Flex flexDir="column">
+              <Select
+                fontWeight={600}
+                fontSize="1.01rem"
+                w="fit-content"
+                m="auto"
+                mr="-1rem"
+                variant="unstyled"
+                iconColor="#FF7272"
+                onChange={(e) => setShortToken(e.target.value)}
+                value={shortToken}
+                isInvalid={sameToken}
+                mb="0.25rem"
+              >
+                {tokens.map((token, index) => {
+                  return <option key={index}>{token.name}</option>;
+                })}
+              </Select>
+          <Flex ml="auto" justify="end" mr={0} fontSize="0.875rem">
+            <Text mr={2} fontWeight={300}>
+              current price:
+            </Text>
+            <Text fontWeight={600}>
+              ${truncate(commify(shortPrice!.price.toString()), 2)}
+            </Text>
+            </Flex>
+          </Flex>
+        </Flex>
+        </Box>
+        <Box>
           <Flex
             fontFamily="body"
             direction="column"
@@ -185,24 +278,56 @@ const CloseComp = () => {
             w="full"
           >
             <Flex
-              borderRadius="1rem"
-              p="1.625rem"
-              alignItems={"center"}
-              justify="space-between"
+              gap="0.75rem"
+              flexDir="column"
+              justifyContent="flex-end"
               mb="0.25rem"
-              w="full"
-              bg="#171717"
-              height={"3.5rem"}
             >
-              <Box fontWeight={500}>Amount</Box>
-              <Flex alignItems="center" gap={2} fontWeight={500}>
-                <Input w={"2rem"} textAlign='center' p={0.5} value={1} onChange={() => {}} /> peETH/BTC
-              </Flex>
+              <NumberInput
+                as={Flex}
+                placeholder={"0.0"}
+                min={0}
+                step={100}
+                flex={1}
+                value={truncate(amount, 2)}
+                onChange={setAmount}
+                allowMouseWheel
+                inputMode="numeric"
+                bg="#171717"
+                w="full"
+                borderColor={
+                  noAmount || error ? "red" : "rgba(255, 255, 255, 0.2)"
+                }
+                borderWidth="2px"
+                borderRadius="7px"
+                py="0.875rem"
+                px="1.25rem"
+                direction="row"
+                alignItems="center"
+              >
+                <NumberInputField
+                  onChange={(e) => setAmount(e.target.value.toString())}
+                  textAlign="end"
+                  border="none"
+                  fontSize="1.5rem"
+                  _focus={{ boxShadow: "none" }}
+                  color="#FFFFFF"
+                  opacity="0.7"
+                />
+                <Text fontSize="1.5rem" mr="1.5rem">
+                  USDC
+                </Text>
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
             </Flex>
             <Text
-              w="full"
               variant="paragraph"
               fontSize="0.85rem"
+              alignSelf="end"
+              mr="1.25rem"
               color="#FFFFFF"
               opacity="0.7"
             >
@@ -216,20 +341,42 @@ const CloseComp = () => {
             </Text>
           </Flex>
         </Box>
-
+        <Flex
+          w="full"
+          fontWeight={600}
+          fontSize="1.01rem"
+          fontFamily="body"
+          gap={3}
+        >
+          <Text>Leverage</Text>
+          <Text
+            px={3}
+            py={1}
+            fontWeight={500}
+            fontSize="0.9rem"
+            bg="#2F2F2F"
+            borderRadius="7px"
+          >
+            {leverage}x
+          </Text>
+        </Flex>
         <Slider
-          min={0}
-          max={100}
+          min={1}
+          max={3}
+          step={1}
           aria-label="slider-ex-2"
           colorScheme="#3F3F3F"
           defaultValue={1}
           onChange={(val) => setLeverage(val)}
         >
-          <SliderMark value={0} {...labelStyles}>
-            <Text variant="paragraph">0</Text>
+          <SliderMark value={1} {...labelStyles}>
+            <Text variant="paragraph">1x</Text>
           </SliderMark>
-          <SliderMark value={100} {...labelStyles}>
-            <Text variant="paragraph">Max</Text>
+          <SliderMark value={2} {...labelStyles}>
+            <Text variant="paragraph">2x</Text>
+          </SliderMark>
+          <SliderMark value={3} {...labelStyles}>
+            <Text variant="paragraph">3x</Text>
           </SliderMark>
           <SliderMark
             value={leverage}
@@ -251,14 +398,6 @@ const CloseComp = () => {
         </Slider>
 
         <VStack pt={4} w="full" gap={3}>
-          <Button
-            my="1.5rem"
-            bg="linear-gradient(180deg, #ACE075 0%, #3EB751 100%)"
-            onClick={amount !== "0" ? () => onOpen() : () => setNoAmount(true)}
-            variant="tertiary"
-          >
-            Redeem
-          </Button>
           <Flex
             w="full"
             alignItems="center"
@@ -267,8 +406,8 @@ const CloseComp = () => {
             fontWeight={500}
             fontSize="0.9rem"
           >
-            <Text>Total USDC</Text>
-            <Text>2220</Text>
+            <Text>Leverage</Text>
+            <Text>{leverage}x</Text>
           </Flex>
           <Flex
             w="full"
@@ -278,17 +417,38 @@ const CloseComp = () => {
             fontWeight={500}
             fontSize="0.9rem"
           >
-            <Text>Net</Text>
-            <Text>(+45%) 1212</Text>
+            <Text>Entity Prise</Text>
+            <Text>$2000</Text>
+          </Flex>
+          <Flex
+            w="full"
+            alignItems="center"
+            justify="space-between"
+            fontFamily="body"
+            fontWeight={500}
+            fontSize="0.9rem"
+          >
+            <Text>Liquidation Price</Text>
+            <Text>$2000</Text>
+          </Flex>
+          <Flex
+            w="full"
+            alignItems="center"
+            justify="space-between"
+            fontFamily="body"
+            fontWeight={500}
+            fontSize="0.9rem"
+          >
+            <Text>Fees</Text>
+            <Text>0.02 ETH</Text>
           </Flex>
         </VStack>
         <Button
           // disabled={!write}
-          mt="5.18rem"
           onClick={amount !== "0" ? () => onOpen() : () => setNoAmount(true)}
           variant="tertiary"
         >
-          Close Position
+          Open Position
         </Button>
       </VStack>
 
@@ -319,4 +479,4 @@ const CloseComp = () => {
   );
 };
 
-export default CloseComp;
+export default OpenComp;
