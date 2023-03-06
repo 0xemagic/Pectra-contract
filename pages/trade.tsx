@@ -92,7 +92,7 @@ const Trade = () => {
         </Flex>
 
         <Flex w="full" flex={1} direction="column">
-           {/*<Box
+          {/*<Box
             h="fit-content"
             w="full"
             borderRadius={"0.5rem"}
@@ -125,7 +125,7 @@ const Trade = () => {
 
           <Flex
             display={tabIndex === 0 ? "block" : "none"}
-            // w="75%"
+            w="100%"
             minH="50vh"
             px="1.68rem"
             py="1.15rem"
@@ -133,19 +133,22 @@ const Trade = () => {
             borderRadius={"0.5rem"}
             background="#202020"
             mb="1rem"
-            direction="row"
-            justify="center"
+            // direction="row"
             border="1px solid rgba(255, 255, 255, 0.2)"
           >
-            <Charts symb={symbol?.symbol} />
+            <Flex h='full' w='full' gap={2}>
+            <Box h="100%" w="60%">
+              <Charts symb={symbol?.symbol} />
+            </Box>
+            <Box h="100%" w="40%">
+              <Tickers />
+            </Box>
+            </Flex>
           </Flex>
           <Box w="100%" display={tabIndex === 0 ? "block" : "none"}>
             <OpenPositions />
           </Box>
-
         </Flex>
-        {/* <Tickers /> */}
-
       </Flex>
     </>
   );

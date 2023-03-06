@@ -20,9 +20,9 @@ export default function Tickers() {
       p="1.75rem"
       direction="column"
       borderRadius="12px"
-      w="25%"
+      w="100%"
       minH="50%"
-      h="50%"
+      h="100%"
       border="1px solid rgba(255, 255, 255, 0.2)"
     >
       <TableContainer
@@ -35,15 +35,15 @@ export default function Tickers() {
           <Thead fontSize="1.1rem" fontFamily="body">
             <Tr>
               <Td>
-                <Text variant="paragraph">Collateral</Text>
+                <Text variant="paragraph">Symbol</Text>
               </Td>
               <Td>
                 {" "}
-                <Text variant="paragraph">Tokens</Text>
+                <Text variant="paragraph">Last</Text>
               </Td>
               <Td>
                 {" "}
-                <Text variant="paragraph">Entry Size</Text>
+                <Text variant="paragraph">Change (1D)</Text>
               </Td>
             </Tr>
           </Thead>
