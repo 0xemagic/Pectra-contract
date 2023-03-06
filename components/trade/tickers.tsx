@@ -17,7 +17,7 @@ export default function Tickers() {
   return (
     <Flex
       bg="#202020"
-      p="1.75rem"
+      p="1rem"
       direction="column"
       borderRadius="12px"
       w="100%"

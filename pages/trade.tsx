@@ -78,7 +78,7 @@ const Trade = () => {
         }}
       />
       <Flex w="full" fontFamily={"heading"} px="4.25rem">
-        <Flex
+        <Flex  w='30%'
           // w={tabIndex === 0 ? "500px" : "full"}
           border="1px solid rgba(255, 255, 255, 0.2)"
           borderRadius="12px"
@@ -91,7 +91,7 @@ const Trade = () => {
           <ModeComp handleTabsChange={handleTabsChange} tabIndex={tabIndex} />
         </Flex>
 
-        <Flex w="full" flex={1} direction="column">
+        <Flex w="70%" flex={1} direction="column">
           {/*<Box
             h="fit-content"
             w="full"
@@ -137,10 +137,10 @@ const Trade = () => {
             border="1px solid rgba(255, 255, 255, 0.2)"
           >
             <Flex h='full' w='full' gap={2}>
-            <Box h="100%" w="60%">
+            <Box h="100%" w="70%">
               <Charts symb={symbol?.symbol} />
             </Box>
-            <Box h="100%" w="40%">
+            <Box h="100%" w="30%">
               <Tickers />
             </Box>
             </Flex>
