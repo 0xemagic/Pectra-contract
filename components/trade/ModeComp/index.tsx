@@ -6,6 +6,7 @@ import {
   Tabs,
   Flex
 } from "@chakra-ui/react";
+import CloseComp from "../OpenComp";
 import OpenComp from "../OpenComp";
 import OpenPositions from "../PositionsTable";
 
@@ -16,10 +17,9 @@ type ModeCompProps = {
 
 const ModeComp = ({handleTabsChange, tabIndex}: ModeCompProps) => {
 
-
   return (
-    <Flex>
-      <Tabs borderRadius="2xl" isFitted variant="unstyled" index={tabIndex} onChange={handleTabsChange}>
+    <Flex w='full'>
+      <Tabs w='full' borderRadius="2xl" isFitted variant="unstyled" index={tabIndex} onChange={handleTabsChange}>
         <TabList borderRadius="7px" bg="#303030" w={tabIndex === 0 ? "100%" : "400px" }>
           <Tab
             _selected={{
@@ -34,7 +34,7 @@ const ModeComp = ({handleTabsChange, tabIndex}: ModeCompProps) => {
             borderRight="none"
             borderLeftRadius="7px"
           >
-            TRADE
+            Open
           </Tab>
           <Tab
             _selected={{
@@ -49,15 +49,15 @@ const ModeComp = ({handleTabsChange, tabIndex}: ModeCompProps) => {
             borderLeft="none"
             borderRightRadius="7px"
           >
-            POSITIONS
+            Close
           </Tab>
         </TabList>
-        <TabPanels>
-          <TabPanel>
-            <OpenComp />
+        <TabPanels w='full'>
+          <TabPanel w='full'>
           </TabPanel>
           <TabPanel>
-            <OpenPositions />
+            <CloseComp />
+            {/* <OpenPositions /> */}
           </TabPanel>
         </TabPanels>
       </Tabs>

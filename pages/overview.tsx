@@ -100,7 +100,7 @@ const Overview = () => {
         Overview
       </Box>
       <Box w="full" borderRadius="7px" bg="#303030" py="1.25rem" px="1.6875rem">
-        <Tabs borderRadius="2xl" isFitted variant="unstyled">
+        <Tabs borderRadius="2xl" w='full' isFitted variant="unstyled">
           <TabList w="33rem" borderRadius="7px" bg="#303030">
             <Tab
               w="16.8rem"
