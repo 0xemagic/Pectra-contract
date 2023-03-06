@@ -78,7 +78,7 @@ const Trade = () => {
         }}
       />
       <Flex w="full" fontFamily={"heading"} px="4.25rem">
-        <Flex w="full" alignItems={"flex-start"}>
+        <Flex gap='0.75rem' w="full" alignItems={"flex-start"}>
           <Box w="30%">
             <Flex
               w="full"
@@ -111,7 +111,28 @@ const Trade = () => {
               </Flex>
             </Box>
 
-          <Box w="70%"></Box>
+          <Box w="70%">
+          <Flex
+            minH="50vh"
+            px="1.68rem"
+            py="1.15rem"
+            fontSize="1.25rem"
+            borderRadius={"0.5rem"}
+            background="#202020"
+            mb="1rem"
+            h='full'
+            direction="row"
+            justify="center"
+            border="1px solid rgba(255, 255, 255, 0.2)"
+          >
+            <Charts symb={symbol?.symbol} />
+          </Flex>
+          <Box w="100%" >
+            <OpenPositions />
+          </Box>
+
+
+          </Box>
         </Flex>
       </Flex>
     </>
@@ -120,70 +141,4 @@ const Trade = () => {
 
 export default Trade;
 
-{
-  /* <Flex
-          // w={tabIndex === 0 ? "500px" : "full"}
-          border="1px solid rgba(255, 255, 255, 0.2)"
-          borderRadius="12px"
-          direction={{ base: "row", md: "column" }}
-          mr="1rem"
-          background="#202020"
-          px="1.68rem"
-          py="1.25rem"
-        >
-          <ModeComp handleTabsChange={handleTabsChange} tabIndex={tabIndex} />
-        </Flex>
 
-        <Flex w="full" flex={1} direction="column">
-          <Box
-            h="fit-content"
-            w="full"
-            borderRadius={"0.5rem"}
-            background="#202020"
-            border="2px solid #404040"
-            px="1.68rem"
-            py="1.15rem"
-            fontSize="1.25rem"
-            mb="1rem"
-          >
-            {tabIndex === 0 && (
-              <Select
-                variant="outline"
-                onChange={(e) => handleChange(e.target.value)}
-                value={symbol?.label}
-              >
-                  {symbols.map((symb, index) => (
-                       <option key={index} style={optionStyle}>
-                        <Flex justifyContent="space-between" justify="space-between">
-                        <span style={valueStyle as any}>{symb.label}</span>
-                       <span style={valueStyle as any}>{symb.label}</span>
-                       <span style={valueStyle as any}>{symb.label}</span>
-                        </Flex>
-                     </option>
-                    )
-                  )} 
-              </Select>
-            )}
-          </Box>
-
-          <Flex
-            display={tabIndex === 0 ? "block" : "none"}
-            // w="75%"
-            minH="50vh"
-            px="1.68rem"
-            py="1.15rem"
-            fontSize="1.25rem"
-            borderRadius={"0.5rem"}
-            background="#202020"
-            mb="1rem"
-            direction="row"
-            justify="center"
-            border="1px solid rgba(255, 255, 255, 0.2)"
-          >
-            <Charts symb={symbol?.symbol} />
-          </Flex>
-          <Box w="100%" display={tabIndex === 0 ? "block" : "none"}>
-            <OpenPositions />
-          </Box>
-        </Flex> */
-}
