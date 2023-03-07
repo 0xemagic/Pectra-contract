@@ -23,7 +23,7 @@ const Trade = () => {
   const symbols = [
     {
       label: "BTC/ETH",
-      symbol: "VINTAGE:ETHBTC",
+      symbol: "VANTAGE:BTCETH",
       price: btcEthRawPrice ? Number((btcEthRawPrice as any).answer!.toString() / Math.pow(10, (btcEthDecimals as any))).toFixed(2) : 0
     },
     // {
