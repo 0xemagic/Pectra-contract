@@ -50,16 +50,34 @@ const aggregatorV3InterfaceABI = [
     }
 ];
 
-const FEED_CONTRACT_ADDRESS = "0xc5a90A6d7e4Af242dA238FFe279e9f2BA0c64B2e";
+const BTCETH = "0xc5a90A6d7e4Af242dA238FFe279e9f2BA0c64B2e";
+const LINKETH = "0xb7c8Fb1dB45007F98A68Da0588e1AA524C317f27";
 
 export const useReadPrice = () => {
-  const { data } = useContractRead({
-    address: FEED_CONTRACT_ADDRESS,
+  const { data: btcEthRawPrice } = useContractRead({
+    address: BTCETH,
     abi: aggregatorV3InterfaceABI,
     functionName: "latestRoundData",
-    // args: [...args],
   });
 
-  return { data };
+  const { data: btcEthDecimals } = useContractRead({
+    address: BTCETH,
+    abi: aggregatorV3InterfaceABI,
+    functionName: "decimals",
+  });
+
+  const { data: linkEthRawPrice } = useContractRead({
+    address: LINKETH,
+    abi: aggregatorV3InterfaceABI,
+    functionName: "latestRoundData",
+  });
+
+  const { data: linkEthDecimals } = useContractRead({
+    address: LINKETH,
+    abi: aggregatorV3InterfaceABI,
+    functionName: "decimals",
+  });
+
+  return { btcEthRawPrice, btcEthDecimals, linkEthRawPrice, linkEthDecimals };
 }
 
