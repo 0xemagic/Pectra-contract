@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import CircleIcon from "../../UI/CircleIcon";
 
-const OpenPositions = () => {
+const OpenPositions = ({tabIndex}: any) => {
   const marketPositions = [
     {
       collateral: "700",
@@ -50,6 +50,8 @@ const OpenPositions = () => {
     },
   ];
 
+  console.log(tabIndex)
+
   return (
     <Flex
       bg="#202020"
@@ -57,8 +59,7 @@ const OpenPositions = () => {
       direction="column"
       borderRadius="12px"
       w="100%"
-      border="1px solid rgba(255, 255, 255, 0.2)"
-
+      // border="1px solid rgba(255, 255, 255, 0.2)"
     >
       <Text fontFamily="body" fontWeight={600} fontSize="1.1rem">
         Open Positions
@@ -69,7 +70,7 @@ const OpenPositions = () => {
         fontSize="0.875rem"
         w="100%"
       >
-        <Table variant="simple" size="sm">
+        <Table variant="simple" size={tabIndex === 0 ? "sm" : "md"}>
           <Thead fontSize="1.1rem" fontFamily="body">
             <Tr>
               <Td>

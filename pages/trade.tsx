@@ -85,8 +85,8 @@ const Trade = () => {
         }}
       />
       <Flex w="full" fontFamily={"heading"} px={{ base: "2rem", "3xl": "4.25rem" }}>
-        <Flex w='30%'
-          // w={tabIndex === 0 ? "500px" : "full"}
+        <Flex
+          w={tabIndex === 0 ? "30%" : "full"}
           border="1px solid rgba(255, 255, 255, 0.2)"
           borderRadius="12px"
           direction={{ base: "row", md: "column" }}
@@ -153,7 +153,7 @@ const Trade = () => {
             </Flex>
           </Flex>
           <Box w="100%" display={tabIndex === 0 ? "block" : "none"}>
-            <OpenPositions />
+            <OpenPositions tabIndex={tabIndex} />
           </Box>
         </Flex>
       </Flex>

@@ -60,7 +60,7 @@ export default function Tickers({ symbols, handleChange }: TickerProps) {
               // onClick={() => console.log(symbol1)}
               onClick={() => handleChange(symbol1.label)}
                my={2} bg="#252525" borderRadius="7px" 
-               _hover={{ cursor: "pointer" }}>
+               _hover={{ cursor: "pointer", bgColor: "gray" }}>
                 <Td fontSize="0.75rem">{symbol1.label}</Td>
                 <Td fontSize="0.75rem">{symbol1.price}</Td>
                 <Td fontSize="0.75rem">10%</Td></Tr>
