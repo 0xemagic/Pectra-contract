@@ -69,7 +69,7 @@ const OpenPositions = () => {
         fontSize="0.875rem"
         w="100%"
       >
-        <Table variant="simple">
+        <Table variant="simple" size="sm">
           <Thead fontSize="1.1rem" fontFamily="body">
             <Tr>
               <Td>

@@ -129,18 +129,11 @@ const OpenComp = () => {
   const longPrice = tokens.find(({ name }) => name === longToken);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
       fetchETHPrice();
       fetchBTCPrice();
       // fetchLinkPrice();
       // fetchUniPrice();
       // fetchMaticrice();
-    }, 2000);
-
-    return () => {
-      console.log('Component unmounted');
-      clearInterval(intervalId);
-    };
   }, []);
 
     useEffect(() => {

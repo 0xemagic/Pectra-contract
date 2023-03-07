@@ -77,7 +77,7 @@ const Trade = () => {
           ],
         }}
       />
-      <Flex w="full" fontFamily={"heading"} px="4.25rem">
+      <Flex w="full" fontFamily={"heading"} px={{base: "2rem", "3xl": "4.25rem"}}>
         <Flex  w='30%'
           // w={tabIndex === 0 ? "500px" : "full"}
           border="1px solid rgba(255, 255, 255, 0.2)"
@@ -127,7 +127,7 @@ const Trade = () => {
             display={tabIndex === 0 ? "block" : "none"}
             w="100%"
             minH="50vh"
-            px="1.68rem"
+            px="1.5rem"
             py="1.15rem"
             fontSize="1.25rem"
             borderRadius={"0.5rem"}
