@@ -1,4 +1,4 @@
-import PositionComp, { PositionCompProps } from "@/components/trade";
+// import PositionComp, { PositionCompProps } from "@/components/trade";
 import {
   Box,
   Flex,
@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 
 const Overview = () => {
-  const positions: PositionCompProps[] = [
+  const positions = [
     {
       position: "LONG",
       asset: "ETH",
@@ -144,13 +144,13 @@ const Overview = () => {
                     index
                   ) => (
                     <GridItem key={index}>
-                      <PositionComp
+                      {/* <PositionComp
                         position={position}
                         asset={asset}
                         assetAmount={assetAmount}
                         dateOpened={dateOpened}
                         data={data}
-                      />
+                      /> */}
                     </GridItem>
                   )
                 )}

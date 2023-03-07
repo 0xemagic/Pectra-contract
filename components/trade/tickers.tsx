@@ -11,8 +11,6 @@ import {
   Tbody,
 } from "@chakra-ui/react";
 
-import { useEffect, useState } from "react";
-
 type TickerProps = {
   symbols: any,
   handleChange: any
