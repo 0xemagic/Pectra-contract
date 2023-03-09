@@ -45,8 +45,46 @@ contract GMXAdapter {
         return IPositionRouter(POSITION_ROUTER).createIncreasePosition(_path, _indexToken, _amountIn, _minOut, _sizeDelta, _isLong, _acceptablePrice, _executionFee, _referralCode, _callbackTarget);
     }
 
+    function createIncreasePositionETH(
+        address[] memory _path,
+        address _indexToken,
+        uint256 _minOut,
+        uint256 _sizeDelta,
+        bool _isLong,
+        uint256 _acceptablePrice,
+        uint256 _executionFee,
+        bytes32 _referralCode,
+        address _callbackTarget
+    ) external payable returns (bytes32) {
+        return IPositionRouter(POSITION_ROUTER).createIncreasePositionETH(_path, _indexToken, _minOut, _sizeDelta, _isLong, _acceptablePrice, _executionFee, _referralCode, _callbackTarget);
+    }
+    
+    function createDecreasePosition(
+        address[] memory _path,
+        address _indexToken,
+        uint256 _collateralDelta,
+        uint256 _sizeDelta,
+        bool _isLong,
+        address _receiver,
+        uint256 _acceptablePrice,
+        uint256 _minOut,
+        uint256 _executionFee,
+        bool _withdrawETH,
+        address _callbackTarget
+    ) external payable returns (bytes32) {
+        return IPositionRouter(POSITION_ROUTER).createDecreasePosition(_path, _indexToken, _collateralDelta, _sizeDelta, _isLong, _receiver, _acceptablePrice, _minOut, _executionFee, _withdrawETH, _callbackTarget);
+    }
+    
     function cancelIncreasePosition(bytes32 _key, address payable _executionFeeReceiver) external onlyOwner returns (bool) {
         return IPositionRouter(POSITION_ROUTER).cancelIncreasePosition(_key, _executionFeeReceiver);
+    }
+
+    function cancelDecreasePosition(bytes32 _key, address payable _executionFeeReceiver) external returns (bool) {
+        return IPositionRouter(POSITION_ROUTER).cancelDecreasePosition(_key, _executionFeeReceiver);
+    }
+    
+    function executeDecreasePosition(bytes32 _key, address payable _executionFeeReceiver) external returns (bool) {
+        return IPositionRouter(POSITION_ROUTER).executeDecreasePosition(_key, _executionFeeReceiver);
     }
 
     function executeIncreasePosition(bytes32 _key, address payable _executionFeeReceiver) external onlyOwner returns (bool) {
@@ -55,5 +93,11 @@ contract GMXAdapter {
 
     function withdrawToken(address token, address to, uint256 amount) external onlyOwner returns (bool) {
         return IERC20(token).transfer(to, amount);
+    }
+
+    function withdrawEth(address to, uint256 amount) external onlyOwner returns (bool) {
+        (bool success,) = to.call{ value: amount}("");
+        require(success, "Transfer failed!");
+        return success;
     }
 }
