@@ -34,7 +34,7 @@ export default function Tickers({ symbols, handleChange }: TickerProps) {
         fontSize="0.875rem"
       // overflowX="hidden"
       >
-        <Table size='sm' variant="simple" >
+        <Table size={{base: 'sm', "2xl": "md"}} variant="simple" >
           <Thead fontFamily="body">
             <Tr>
               <Td>

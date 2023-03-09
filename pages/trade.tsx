@@ -16,7 +16,6 @@ type SymbolProps = {
 };
 
 const Trade = () => {
-
   const { btcEthRawPrice, btcEthDecimals } = useReadPrice();
   const { linkEthRawPrice, linkEthDecimals } = useReadPrice();
 
@@ -24,7 +23,12 @@ const Trade = () => {
     {
       label: "BTC/ETH",
       symbol: "VANTAGE:BTCETH",
-      price: btcEthRawPrice ? Number((btcEthRawPrice as any).answer!.toString() / Math.pow(10, (btcEthDecimals as any))).toFixed(2) : 0
+      price: btcEthRawPrice
+        ? Number(
+            (btcEthRawPrice as any).answer!.toString() /
+              Math.pow(10, btcEthDecimals as any)
+          ).toFixed(2)
+        : 0,
     },
     // {
     //   label: "BTC/UNI",
@@ -33,7 +37,12 @@ const Trade = () => {
     {
       label: "LINK/ETH",
       symbol: "GEMINI:LINKETH",
-      price: linkEthRawPrice ? Number((linkEthRawPrice as any).answer!.toString() / Math.pow(10, (linkEthDecimals as any))).toFixed(4) : 0
+      price: linkEthRawPrice
+        ? Number(
+            (linkEthRawPrice as any).answer!.toString() /
+              Math.pow(10, linkEthDecimals as any)
+          ).toFixed(4)
+        : 0,
     },
     // {
     //   label: "BTC/MATIC",
@@ -84,9 +93,13 @@ const Trade = () => {
           ],
         }}
       />
-      <Flex w="full" fontFamily={"heading"} px={{ base: "2rem", "3xl": "4.25rem" }}>
+      <Flex
+        w="full"
+        fontFamily={"heading"}
+        px={{ base: "2rem", "3xl": "4.25rem" }}
+      >
         <Flex
-          w={tabIndex === 0 ? "30%" : "full"}
+          w={tabIndex === 0 ? "500px" : "full"}
           border="1px solid rgba(255, 255, 255, 0.2)"
           borderRadius="12px"
           direction={{ base: "row", md: "column" }}
@@ -143,7 +156,7 @@ const Trade = () => {
             // direction="row"
             border="1px solid rgba(255, 255, 255, 0.2)"
           >
-            <Flex h='full' w='full' gap={2}>
+            <Flex h="full" w="100%" gap={2}>
               <Box h="100%" w="70%">
                 <Charts symb={symbol?.symbol} />
               </Box>

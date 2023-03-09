@@ -150,7 +150,8 @@ const OpenPositionModal = ({
               <Values title="Fees" value="0.3$" />
             </Flex>
 
-            <Button variant="secondary" onClick={() => write?.()}>
+            <Button variant="secondary" onClick={() => console.log(longPrice, shortPrice, amount, leverage)}>
+            {/* // {() => write?.()}> */}
               Open Position
             </Button>
           </Flex>

@@ -50,8 +50,6 @@ const OpenPositions = ({tabIndex}: any) => {
     },
   ];
 
-  console.log(tabIndex)
-
   return (
     <Flex
       bg="#202020"
