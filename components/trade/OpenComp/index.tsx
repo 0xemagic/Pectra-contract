@@ -89,7 +89,7 @@ const OpenComp = () => {
     onClose: onErrorClose,
   } = useDisclosure();
 
-   //current tokens available with price variables for each
+  //current tokens available with price variables for each
   const tokens = [
     { name: "ETH", price: ethPrice },
     { name: "BTC", price: btcPrice },
@@ -129,14 +129,15 @@ const OpenComp = () => {
   const longPrice = tokens.find(({ name }) => name === longToken);
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      console.log("This will fetch data every 5 second!");
       fetchETHPrice();
       fetchBTCPrice();
-      // fetchLinkPrice();
-      // fetchUniPrice();
-      // fetchMaticrice();
+    }, 5000);
+    return () => clearInterval(interval);
   }, []);
 
-    useEffect(() => {
+  useEffect(() => {
     if (sameToken) {
       setError(true);
       onErrorOpen();
@@ -206,14 +207,14 @@ const OpenComp = () => {
               </Select>
 
               <Flex ml="auto" justify="end" mr={0} fontSize="0.875rem">
-          <Text mr={2} fontWeight={300}>
-              current price:
-            </Text>
-            <Text fontWeight={600}>
-              ${truncate(commify(longPrice!.price.toString()), 2)}
-            </Text>
-          </Flex>
-          </Flex>
+                <Text mr={2} fontWeight={300}>
+                  current price:
+                </Text>
+                <Text fontWeight={600}>
+                  ${truncate(commify(longPrice!.price.toString()), 2)}
+                </Text>
+              </Flex>
+            </Flex>
           </Flex>
         </Box>
         <Box
@@ -231,7 +232,12 @@ const OpenComp = () => {
             alignItems="center"
             w="full"
           >
-            <Text fontWeight={600} fontFamily="heading" fontSize="0.9rem" justifySelf="center">
+            <Text
+              fontWeight={600}
+              fontFamily="heading"
+              fontSize="0.9rem"
+              justifySelf="center"
+            >
               Short
             </Text>
             <Flex flexDir="column">
@@ -252,16 +258,16 @@ const OpenComp = () => {
                   return <option key={index}>{token.name}</option>;
                 })}
               </Select>
-          <Flex ml="auto" justify="end" mr={0} fontSize="0.875rem">
-            <Text mr={2} fontWeight={300}>
-              current price:
-            </Text>
-            <Text fontWeight={600}>
-              ${truncate(commify(shortPrice!.price.toString()), 2)}
-            </Text>
+              <Flex ml="auto" justify="end" mr={0} fontSize="0.875rem">
+                <Text mr={2} fontWeight={300}>
+                  current price:
+                </Text>
+                <Text fontWeight={600}>
+                  ${truncate(commify(shortPrice!.price.toString()), 2)}
+                </Text>
+              </Flex>
             </Flex>
           </Flex>
-        </Flex>
         </Box>
         <Box>
           <Flex
