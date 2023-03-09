@@ -15,8 +15,6 @@ type ModeCompProps = {
 }
 
 const ModeComp = ({handleTabsChange, tabIndex}: ModeCompProps) => {
-
-
   return (
     <Flex >
       <Tabs w="fit-content" borderRadius="2xl" isFitted variant="unstyled" index={tabIndex} onChange={handleTabsChange}>

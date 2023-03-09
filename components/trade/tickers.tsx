@@ -32,9 +32,10 @@ export default function Tickers({ symbols, handleChange }: TickerProps) {
         fontFamily="body"
         fontWeight={600}
         fontSize="0.875rem"
+        w={'full'}
       // overflowX="hidden"
       >
-        <Table size={{base: 'sm', "2xl": "md"}} variant="simple" >
+        <Table m='auto' size={{base: 'sm', "2xl": "md"}} variant="simple" >
           <Thead fontFamily="body">
             <Tr>
               <Td>
@@ -53,7 +54,7 @@ export default function Tickers({ symbols, handleChange }: TickerProps) {
           <Tbody>
 
             {symbols.map((symbol1: any, key: number) => (
-              <Tr 
+              <Tr m='auto'
               key={key}
               // onClick={() => console.log(symbol1)}
               onClick={() => handleChange(symbol1.label)}
