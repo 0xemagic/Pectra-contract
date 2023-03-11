@@ -57,7 +57,6 @@ const OpenPositions = ({tabIndex}: any) => {
       direction="column"
       borderRadius="12px"
       w="100%"
-      // border="1px solid rgba(255, 255, 255, 0.2)"
     >
       <Text fontFamily="body" fontWeight={600} fontSize="1.1rem">
         Open Positions
@@ -68,7 +67,7 @@ const OpenPositions = ({tabIndex}: any) => {
         fontSize="0.875rem"
         w="100%"
       >
-        <Table variant="simple" size={tabIndex === 0 ? "sm" : "md"}>
+        <Table variant="simple" size={tabIndex === 0 ? "sm" : "md"} w="100%">
           <Thead fontSize="1.1rem" fontFamily="body">
             <Tr>
               <Td>

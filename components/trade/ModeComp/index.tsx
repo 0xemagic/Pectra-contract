@@ -4,7 +4,8 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
-  Flex
+  Flex,
+  Box
 } from "@chakra-ui/react";
 import OpenComp from "../OpenComp";
 import OpenPositions from "../PositionsTable";
@@ -46,16 +47,19 @@ const ModeComp = ({handleTabsChange, tabIndex}: ModeCompProps) => {
             border="1px solid rgba(255, 255, 255, 0.2)"
             borderLeft="none"
             borderRightRadius="7px"
+            w="100%"
           >
             POSITIONS
           </Tab>
         </TabList>
-        <TabPanels>
+        <TabPanels >
           <TabPanel>
             <OpenComp />
           </TabPanel>
-          <TabPanel>
+          <TabPanel >
+            <Box w="100%">
             <OpenPositions tabIndex={tabIndex} />
+            </Box>
           </TabPanel>
         </TabPanels>
       </Tabs>

@@ -153,7 +153,6 @@ const Trade = () => {
             borderRadius={"0.5rem"}
             background="#202020"
             mb="1rem"
-            // direction="row"
             border="1px solid rgba(255, 255, 255, 0.2)"
           >
             <Flex h="full" w="100%" gap={2}>
