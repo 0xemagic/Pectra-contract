@@ -13,7 +13,7 @@ export default function Home() {
           description: "Pair trading made easy.",
           images: [
             {
-              url: "https://www.spectraprotocol.com/spectra-protocol.png",
+              url: "https://www.spectra.garden/spectra-protocol.svg",
               width: 800,
               height: 600,
               alt: "Pectra Protocol",
