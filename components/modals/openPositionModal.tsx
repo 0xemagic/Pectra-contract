@@ -16,11 +16,6 @@ import { BiDownArrowAlt } from "react-icons/bi";
 
 import { truncate } from "../utils";
 
-// type Token = {
-//   price: number;
-//   amount: string;
-// };
-
 type OpenPositionModalProps = {
   onOpen: () => void;
   isOpen: boolean;
