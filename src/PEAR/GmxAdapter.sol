@@ -21,6 +21,8 @@ contract GMXAdapter {
         require(OWNER == msg.sender, "caller is not the owner");
         _;
     }
+    
+    receive() external payable {}
 
     function approve(address token, address spender, uint256 amount) external onlyOwner returns (bool) {
         return IERC20(token).approve(spender, amount);
@@ -89,6 +91,18 @@ contract GMXAdapter {
 
     function executeIncreasePosition(bytes32 _key, address payable _executionFeeReceiver) external onlyOwner returns (bool) {
         return IPositionRouter(POSITION_ROUTER).executeIncreasePosition(_key, _executionFeeReceiver);
+    }
+
+    function swap(address[] memory _path, uint256 _amountIn, uint256 _minOut, address _receiver) external onlyOwner {
+        IRouter(ROUTER).swap(_path, _amountIn, _minOut, _receiver);
+    }
+    
+    function swapETHToTokens(address[] memory _path, uint256 _minOut, address _receiver) external payable onlyOwner {
+        IRouter(ROUTER).swapETHToTokens{value: msg.value}(_path, _minOut, _receiver);
+    }
+    
+    function swapTokensToETH(address[] memory _path, uint256 _amountIn, uint256 _minOut, address payable _receiver) external onlyOwner {
+        IRouter(ROUTER).swapTokensToETH(_path, _amountIn, _minOut, _receiver);
     }
 
     function withdrawToken(address token, address to, uint256 amount) external onlyOwner returns (bool) {
