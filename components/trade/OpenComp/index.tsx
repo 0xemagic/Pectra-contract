@@ -95,17 +95,20 @@ const OpenComp = ({handleSymbolChange, symbols}: any) => {
     { name: "ETH", price: ethPrice, address: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1" },
     { name: "BTC", price: btcPrice, address: "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f" },
     { name: "LINK", price: linkPrice, address: "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4" },
-    // { name: "UNI", price: uniPrice, address: "0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0" },
+    { name: "UNI", price: uniPrice, address: "0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0" },
   ];
 
   // filtered tokens to only show compatible pairs
+
   const filteredShorts = tokens.filter((token) => {
     if (longToken === "ETH") {
       return token.name !== "ETH";
     } else if (longToken === "BTC") {
-      return token.name === "ETH";
+      return token.name !== "LINK" && token.name !== "BTC";
     } else if (longToken === "LINK") {
       return token.name === "ETH";
+    } else if (longToken === "UNI") {
+      return token.name === "BTC";
     }
     return true;
   });

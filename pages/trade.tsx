@@ -19,6 +19,9 @@ const Trade = () => {
   const { btcEthRawPrice, btcEthDecimals } = useReadPrice();
   const { linkEthRawPrice, linkEthDecimals } = useReadPrice();
 
+  const [longToken, setLongToken] = useState("ETH");
+  const [shortToken, setShortToken] = useState("BTC");
+
   const symbols = [
     {
       label: "BTC/ETH",
@@ -30,10 +33,11 @@ const Trade = () => {
           ).toFixed(2)
         : 0,
     },
-    // {
-    //   label: "BTC/UNI",
-    //   symbol: "BINANCE:UNIBTC",
-    // },
+    {
+      label: "BTC/UNI",
+      symbol: "BINANCE:UNIBTC",
+      price: 0,
+    },
     {
       label: "LINK/ETH",
       symbol: "GEMINI:LINKETH",
