@@ -36,7 +36,7 @@ import ErrorModal from "@/components/modals/errorModal";
 
 import { useBalance, useAccount } from "wagmi";
 
-const OpenComp = () => {
+const OpenComp = ({handleSymbolChange, symbols}: any) => {
   const labelStyles = {
     mt: "3",
     ml: "-1.5",
@@ -69,8 +69,10 @@ const OpenComp = () => {
     "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
   ];
 
-  // smart contract / wagmi STUFF
+  //smart contract interaction
   const { data, isLoading, isSuccess, write } = useWriteOpenPosition(args);
+
+  // wagmi user data fetching
   const { address, isConnecting, isDisconnected } = useAccount();
   const {
     data: tokenBalance,
@@ -93,8 +95,43 @@ const OpenComp = () => {
     { name: "ETH", price: ethPrice, address: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1" },
     { name: "BTC", price: btcPrice, address: "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f" },
     { name: "LINK", price: linkPrice, address: "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4" },
-    { name: "UNI", price: uniPrice, address: "0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0" },
+    // { name: "UNI", price: uniPrice, address: "0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0" },
   ];
+
+  // filtered tokens to only show compatible pairs
+  const filteredShorts = tokens.filter((token) => {
+    if (longToken === "ETH") {
+      return token.name !== "ETH";
+    } else if (longToken === "BTC") {
+      return token.name === "ETH";
+    } else if (longToken === "LINK") {
+      return token.name === "ETH";
+    }
+    return true;
+  });
+
+  // function that changes the symbols for the charts
+    function getSymbol(shortToken: any, longToken: any) {
+      const shortTokenInfo = tokens.find((token) => token.name === shortToken);
+      const longTokenInfo = tokens.find((token) => token.name === longToken);
+      if (shortTokenInfo && longTokenInfo) {
+        const selectedLabel = `${shortTokenInfo.name}/${longTokenInfo.name}`;
+        const symbol = symbols.find(
+          (sym: any) =>
+            sym.label === selectedLabel ||
+            sym.label === `${longTokenInfo.name}/${shortTokenInfo.name}`
+        );
+        if (symbol) {
+          console.log(symbol.label)
+          handleSymbolChange(symbol.label);
+        }
+      }
+      return null;
+    }
+
+    useEffect(() => {
+      getSymbol(shortToken, longToken);
+    }, [shortToken, longToken]);
 
   // function that fetches prices is used to get the price of each token asynchronously
   // should change to fetch price every few seconds instead? put into timer maybe?
@@ -236,7 +273,7 @@ const OpenComp = () => {
                 isInvalid={sameToken}
                 mb="0.25rem"
               >
-                {tokens.map((token, index) => {
+                {filteredShorts.map((token, index) => {
                   return <option key={index}>{token.name}</option>;
                 })}
               </Select>
@@ -425,9 +462,10 @@ const OpenComp = () => {
           </Flex>
         </VStack>
         <Button
-          // disabled={!write}
+          disabled={amount === "0" || error}
           onClick={amount !== "0" ? () => onOpen() : () => setNoAmount(true)}
           variant="tertiary"
+
         >
           Open Position
         </Button>

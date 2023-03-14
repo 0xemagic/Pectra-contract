@@ -52,7 +52,7 @@ const Trade = () => {
 
   const [symbol, setSymbol] = useState<SymbolProps>(symbols[1]);
 
-  const handleChange = (selectedValue: string) => {
+  const handleSymbolChange = (selectedValue: string) => {
     const selectedObject = symbols.find((symb) => symb.label === selectedValue);
     setSymbol(selectedObject!);
   };
@@ -108,7 +108,7 @@ const Trade = () => {
           px="1.68rem"
           py="1.25rem"
         >
-          <ModeComp handleTabsChange={handleTabsChange} tabIndex={tabIndex} />
+          <ModeComp handleTabsChange={handleTabsChange} tabIndex={tabIndex} handleSymbolChange={handleSymbolChange} symbols={symbols} />
         </Flex>
 
         <Flex w="70%" flex={1} direction="column">
@@ -160,7 +160,7 @@ const Trade = () => {
                 <Charts symb={symbol?.symbol} />
               </Box>
               <Box h="100%" w="30%">
-                <Tickers symbols={symbols} handleChange={handleChange} />
+                <Tickers symbols={symbols} handleChange={handleSymbolChange} />
               </Box>
             </Flex>
           </Flex>

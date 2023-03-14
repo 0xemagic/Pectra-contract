@@ -52,14 +52,18 @@ const OpenPositionModal = ({
 }: OpenPositionModalProps) => {
 
   const longData = {
+    address: longPrice.address,
+    entryPrice: longPrice.price,
+    tokenName: longPrice.name,
     amount: truncate(((+amount / longPrice.price) / 2 * leverage).toString(), 5),
-    token: longPrice,
     leverage: leverage
   };
 
   const shortData = {
+    address: shortPrice.address,
+    entryPrice: shortPrice.price,
+    tokenName: shortPrice.name,
     amount: truncate(((+amount / shortPrice.price ) / 2 * leverage).toString(), 5),
-    token: shortPrice,
     leverage: leverage
   };
 
