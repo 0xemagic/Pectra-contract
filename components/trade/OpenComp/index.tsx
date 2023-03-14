@@ -52,7 +52,6 @@ const OpenComp = () => {
   const [btcPrice, setBtcPrice] = useState(0);
   const [linkPrice, setLinkPrice] = useState(0);
   const [uniPrice, setUniPrice] = useState(0);
-  const [maticPrice, setMaticPrice] = useState(0);
 
   const [error, setError] = useState(false);
   const [noAmount, setNoAmount] = useState(false);
@@ -91,50 +90,33 @@ const OpenComp = () => {
 
   //current tokens available with price variables for each
   const tokens = [
-    { name: "ETH", price: ethPrice },
-    { name: "BTC", price: btcPrice },
-    // { name: "MATIC", price: maticPrice },
-    // { name: "LINK", price: linkPrice },
-    // { name: "UNI", price: uniPrice },
+    { name: "ETH", price: ethPrice, address: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1" },
+    { name: "BTC", price: btcPrice, address: "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f" },
+    { name: "LINK", price: linkPrice, address: "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4" },
+    { name: "UNI", price: uniPrice, address: "0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0" },
   ];
 
-  // functions that fetchETHPrice and fetchBTCPrice are used to get the price of each token asynchronously
+  // function that fetches prices is used to get the price of each token asynchronously
   // should change to fetch price every few seconds instead? put into timer maybe?
-  async function fetchETHPrice() {
-    const data = await client2.query(ethPriceQuery, {}).toPromise();
-    setEthPrice(data.data.bundle.ethPriceUSD);
+  async function fetchPrices() {
+    const data1 = await client2.query(ethPriceQuery, {}).toPromise();
+    setEthPrice(data1.data.bundle.ethPriceUSD);
+
+    const data2 = await client2.query(btcPriceQuery, {}).toPromise();
+    setBtcPrice(data2.data.pool.token1Price * data2.data.bundle.ethPriceUSD);
+
+    const data3 = await client2.query(linkPriceQuery, {}).toPromise();
+    setLinkPrice(data3.data.pool.token1Price * data3.data.bundle.ethPriceUSD);
+
+    const data4 = await client2.query(uniPriceQuery, {}).toPromise();
+    setUniPrice(data4.data.pool.token1Price * data4.data.bundle.ethPriceUSD);
   }
-
-  async function fetchBTCPrice() {
-    const data = await client2.query(btcPriceQuery, {}).toPromise();
-    setBtcPrice(data.data.pool.token1Price * data.data.bundle.ethPriceUSD);
-  }
-
-  // async function fetchLinkPrice() {
-  //   const data = await client2.query(linkPriceQuery, {}).toPromise();
-  //   setLinkPrice(data.data.pool.token1Price * data.data.bundle.ethPriceUSD);
-  // }
-
-  // async function fetchUniPrice() {
-  //   const data = await client2.query(uniPriceQuery, {}).toPromise();
-  //   setUniPrice(data.data.pool.token1Price * data.data.bundle.ethPriceUSD);
-  // }
-
-  // async function fetchMaticrice() {
-  //   const data = await client2.query(maticPriceQuery, {}).toPromise();
-  //   setMaticPrice(data.data.pool.token1Price * data.data.bundle.ethPriceUSD);
-  // }
 
   const shortPrice = tokens.find(({ name }) => name === shortToken);
   const longPrice = tokens.find(({ name }) => name === longToken);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      console.log("This will fetch data every 5 second!");
-      fetchETHPrice();
-      fetchBTCPrice();
-    }, 5000);
-    return () => clearInterval(interval);
+    fetchPrices();
   }, []);
 
   useEffect(() => {

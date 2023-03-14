@@ -50,6 +50,19 @@ const OpenPositionModal = ({
   amount,
   leverage
 }: OpenPositionModalProps) => {
+
+  const longData = {
+    amount: truncate(((+amount / longPrice.price) / 2 * leverage).toString(), 5),
+    token: longPrice,
+    leverage: leverage
+  };
+
+  const shortData = {
+    amount: truncate(((+amount / shortPrice.price ) / 2 * leverage).toString(), 5),
+    token: shortPrice,
+    leverage: leverage
+  };
+
   const Boxes = ({ bg, border, value, title, token }: BoxesProps) => {
     return (
       <Box
@@ -145,7 +158,7 @@ const OpenPositionModal = ({
               <Values title="Fees" value="0.3$" />
             </Flex>
 
-            <Button variant="secondary" onClick={() => console.log(longPrice, shortPrice, amount, leverage)}>
+            <Button variant="secondary" onClick={() => console.log(longData, shortData)}>
             {/* // {() => write?.()}> */}
               Open Position
             </Button>
