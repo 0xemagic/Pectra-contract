@@ -136,6 +136,11 @@ const OpenComp = ({handleSymbolChange, symbols}: any) => {
       getSymbol(shortToken, longToken);
     }, [shortToken, longToken]);
 
+    useEffect(() => {
+      setShortToken(filteredShorts![0].name);
+    }, [longToken]);
+  
+
   // function that fetches prices is used to get the price of each token asynchronously
   // should change to fetch price every few seconds instead? put into timer maybe?
   async function fetchPrices() {
