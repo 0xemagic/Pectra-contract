@@ -10,10 +10,16 @@ import {
   Button,
   Thead,
   Tr,
+  useDisclosure
 } from "@chakra-ui/react";
 import CircleIcon from "../../UI/CircleIcon";
 
+import ClosePositionModal from "../../modals/closePositionModal";
+
 const OpenPositions = ({tabIndex}: any) => {
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const marketPositions = [
     {
       collateral: "700",
@@ -107,6 +113,21 @@ const OpenPositions = ({tabIndex}: any) => {
           <Tbody>
             {marketPositions.map((position, key) => (
               <Tr key={key} my={2} bg="#252525" borderRadius="7px">
+                <ClosePositionModal
+                  isOpen={isOpen}
+                  onClose={onClose}
+                  onOpen={onOpen}
+                  size={position.size}
+                  liquidation={position.liquidation}
+                  netvalue={position.netvalue}
+                  pnl={position.pnl}
+                  leverage={position.leverage}
+                  collateral={position.collateral}
+                  long={position.long}
+                  short={position.short}
+                  entry={position.entry}
+                />
+
                 <Td>{position.collateral} USDC</Td>
                 <Td>
                   <Flex>
@@ -143,6 +164,7 @@ const OpenPositions = ({tabIndex}: any) => {
                     <Button variant="tertiary" width="5rem" height="1.5rem" fontSize="1rem"
                            borderColor="#B8B8B8"
                            borderWidth="1px"
+                           onClick={() => onOpen()}
                     >
                       Close
                     </Button>
@@ -154,6 +176,8 @@ const OpenPositions = ({tabIndex}: any) => {
           </Tbody>
         </Table>
       </TableContainer>
+
+
     </Flex>
   );
 };

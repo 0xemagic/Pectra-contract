@@ -125,7 +125,6 @@ const OpenComp = ({handleSymbolChange, symbols}: any) => {
             sym.label === `${longTokenInfo.name}/${shortTokenInfo.name}`
         );
         if (symbol) {
-          console.log(symbol.label)
           handleSymbolChange(symbol.label);
         }
       }
@@ -154,6 +153,7 @@ const OpenComp = ({handleSymbolChange, symbols}: any) => {
     setLinkPrice(data3.data.pool.token1Price * data3.data.bundle.ethPriceUSD);
 
     const data4 = await client2.query(uniPriceQuery, {}).toPromise();
+    console.log(data4.data.pool.token1Price * data4.data.bundle.ethPriceUSD);
     setUniPrice(data4.data.pool.token1Price * data4.data.bundle.ethPriceUSD);
   }
 
@@ -161,7 +161,11 @@ const OpenComp = ({handleSymbolChange, symbols}: any) => {
   const longPrice = tokens.find(({ name }) => name === longToken);
 
   useEffect(() => {
-    fetchPrices();
+    const interval = setInterval(() => {
+      fetchPrices();
+    }, 3000);
+
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -475,7 +479,7 @@ const OpenComp = ({handleSymbolChange, symbols}: any) => {
           variant="tertiary"
 
         >
-          Open Position
+          {amount === "0" ? "Enter an amount" : "Open Position"}
         </Button>
       </VStack>
 
