@@ -1,8 +1,8 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, memo } from "react";
 
 let tvScriptLoadingPromise: any;
 
-export default function Charts(symb: any) {
+function Charts(symb: any) {
   const onLoadScriptRef: any = useRef();
 
   // @ts-expect-error
@@ -57,3 +57,7 @@ export default function Charts(symb: any) {
       <div id="basic-area-chart-demo" style={{height: "100%", width: "100%"}} />
   );
 }
+
+const MemoizedCharts = memo(Charts);
+
+export default MemoizedCharts;
