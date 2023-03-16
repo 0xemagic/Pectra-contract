@@ -187,7 +187,7 @@ const OpenComp = ({handleSymbolChange, symbols}: any) => {
       setNoAmount(false);
     }
   }, [error, noAmount, amount]);
-
+  
   return (
     <>
       <Text

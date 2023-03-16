@@ -30,7 +30,7 @@ const Trade = () => {
         ? Number(
             (btcEthRawPrice as any).answer!.toString() /
               Math.pow(10, btcEthDecimals as any)
-          ).toFixed(2)
+          ).toFixed(4)
         : 0,
     },
     {
