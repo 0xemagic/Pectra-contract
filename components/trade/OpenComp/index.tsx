@@ -21,22 +21,18 @@ import {
 } from "@chakra-ui/react";
 
 import { useWriteOpenPosition } from "@/components/hooks/useContract";
-import {
-  btcPriceQuery,
-  client2,
-  ethPriceQuery,
-  linkPriceQuery,
-  maticPriceQuery,
-  truncate,
-  uniPriceQuery,
-} from "@/components/utils";
+
 import { commify } from "ethers/lib/utils";
 import OpenPositionModal from "@/components/modals/openPositionModal";
 import ErrorModal from "@/components/modals/errorModal";
 
 import { useBalance, useAccount } from "wagmi";
 
-const OpenComp = ({handleSymbolChange, symbols}: any) => {
+import {
+  truncate,
+} from "@/components/utils";
+
+const OpenComp = ({handleSymbolChange, symbols, tokens}: any) => {
   const labelStyles = {
     mt: "3",
     ml: "-1.5",
@@ -48,10 +44,6 @@ const OpenComp = ({handleSymbolChange, symbols}: any) => {
   const [amount, setAmount] = useState<string>("0");
   const [longToken, setLongToken] = useState("ETH");
   const [shortToken, setShortToken] = useState("BTC");
-  const [ethPrice, setEthPrice] = useState(0);
-  const [btcPrice, setBtcPrice] = useState(0);
-  const [linkPrice, setLinkPrice] = useState(0);
-  const [uniPrice, setUniPrice] = useState(0);
 
   const [error, setError] = useState(false);
   const [noAmount, setNoAmount] = useState(false);
@@ -90,17 +82,8 @@ const OpenComp = ({handleSymbolChange, symbols}: any) => {
     onClose: onErrorClose,
   } = useDisclosure();
 
-  //current tokens available with price variables for each
-  const tokens = [
-    { name: "ETH", price: ethPrice, address: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1" },
-    { name: "BTC", price: btcPrice, address: "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f" },
-    { name: "LINK", price: linkPrice, address: "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4" },
-    { name: "UNI", price: uniPrice, address: "0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0" },
-  ];
-
   // filtered tokens to only show compatible pairs
-
-  const filteredShorts = tokens.filter((token) => {
+  const filteredShorts = tokens.filter((token: any) => {
     if (longToken === "ETH") {
       return token.name !== "ETH";
     } else if (longToken === "BTC") {
@@ -115,8 +98,8 @@ const OpenComp = ({handleSymbolChange, symbols}: any) => {
 
   // function that changes the symbols for the charts
     function getSymbol(shortToken: any, longToken: any) {
-      const shortTokenInfo = tokens.find((token) => token.name === shortToken);
-      const longTokenInfo = tokens.find((token) => token.name === longToken);
+      const shortTokenInfo = tokens.find((token: any) => token.name === shortToken);
+      const longTokenInfo = tokens.find((token: any) => token.name === longToken);
       if (shortTokenInfo && longTokenInfo) {
         const selectedLabel = `${shortTokenInfo.name}/${longTokenInfo.name}`;
         const symbol = symbols.find(
@@ -140,33 +123,8 @@ const OpenComp = ({handleSymbolChange, symbols}: any) => {
     }, [longToken]);
   
 
-  // function that fetches prices is used to get the price of each token asynchronously
-  // should change to fetch price every few seconds instead? put into timer maybe?
-  async function fetchPrices() {
-    const data1 = await client2.query(ethPriceQuery, {}).toPromise();
-    setEthPrice(data1.data.bundle.ethPriceUSD);
-
-    const data2 = await client2.query(btcPriceQuery, {}).toPromise();
-    setBtcPrice(data2.data.pool.token1Price * data2.data.bundle.ethPriceUSD);
-
-    const data3 = await client2.query(linkPriceQuery, {}).toPromise();
-    setLinkPrice(data3.data.pool.token1Price * data3.data.bundle.ethPriceUSD);
-
-    const data4 = await client2.query(uniPriceQuery, {}).toPromise();
-    console.log(data4.data.pool.token1Price * data4.data.bundle.ethPriceUSD);
-    setUniPrice(data4.data.pool.token1Price * data4.data.bundle.ethPriceUSD);
-  }
-
-  const shortPrice = tokens.find(({ name }) => name === shortToken);
-  const longPrice = tokens.find(({ name }) => name === longToken);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetchPrices();
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
+  const shortPrice = tokens.find(({ name }: any) => name === shortToken);
+  const longPrice = tokens.find(({ name }: any) => name === longToken);
 
   useEffect(() => {
     if (sameToken) {
@@ -232,7 +190,7 @@ const OpenComp = ({handleSymbolChange, symbols}: any) => {
                 isInvalid={sameToken}
                 mb="0.25rem"
               >
-                {tokens.map((token, index) => {
+                {tokens.map((token: any, index: number) => {
                   return <option key={index}>{token.name}</option>;
                 })}
               </Select>
@@ -285,7 +243,7 @@ const OpenComp = ({handleSymbolChange, symbols}: any) => {
                 isInvalid={sameToken}
                 mb="0.25rem"
               >
-                {filteredShorts.map((token, index) => {
+                {filteredShorts.map((token: any, index: number) => {
                   return <option key={index}>{token.name}</option>;
                 })}
               </Select>

@@ -15,9 +15,10 @@ type ModeCompProps = {
   tabIndex: number;
   handleSymbolChange: (selectedValue: string) => void;
   symbols: any;
+  tokens: any;
 }
 
-const ModeComp = ({handleTabsChange, tabIndex, handleSymbolChange, symbols}: ModeCompProps) => {
+const ModeComp = ({handleTabsChange, tabIndex, handleSymbolChange, symbols, tokens}: ModeCompProps) => {
   return (
     <Flex >
       <Tabs w="fit-content" borderRadius="2xl" isFitted variant="unstyled" index={tabIndex} onChange={handleTabsChange}>
@@ -56,11 +57,11 @@ const ModeComp = ({handleTabsChange, tabIndex, handleSymbolChange, symbols}: Mod
         </TabList>
         <TabPanels >
           <TabPanel>
-            <OpenComp handleSymbolChange={handleSymbolChange} symbols={symbols} />
+            <OpenComp handleSymbolChange={handleSymbolChange} symbols={symbols} tokens={tokens} />
           </TabPanel>
           <TabPanel >
             <Box w="100%">
-            <OpenPositions tabIndex={tabIndex} />
+            <OpenPositions tabIndex={tabIndex} tokens={tokens} />
             </Box>
           </TabPanel>
         </TabPanels>

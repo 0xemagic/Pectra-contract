@@ -48,23 +48,28 @@ const OpenPositionModal = ({
   longPrice,
   shortPrice,
   amount,
-  leverage
+  leverage,
 }: OpenPositionModalProps) => {
-
   const longData = {
     address: longPrice.address,
     entryPrice: longPrice.price,
     tokenName: longPrice.name,
-    amount: truncate(((+amount / longPrice.price) / 2 * leverage).toString(), 5),
-    leverage: leverage
+    amount: truncate(
+      ((+amount / longPrice.price / 2) * leverage).toString(),
+      5
+    ),
+    leverage: leverage,
   };
 
   const shortData = {
     address: shortPrice.address,
     entryPrice: shortPrice.price,
     tokenName: shortPrice.name,
-    amount: truncate(((+amount / shortPrice.price ) / 2 * leverage).toString(), 5),
-    leverage: leverage
+    amount: truncate(
+      ((+amount / shortPrice.price / 2) * leverage).toString(),
+      5
+    ),
+    leverage: leverage,
   };
 
   const Boxes = ({ bg, border, value, title, token }: BoxesProps) => {
@@ -121,7 +126,13 @@ const OpenPositionModal = ({
         <ModalHeader>Confirm Position</ModalHeader>
         <ModalCloseButton />
         <ModalBody w="full">
-          <Flex as={Flex} direction="column" px="1.5rem" py="1rem" alignItems="center">
+          <Flex
+            as={Flex}
+            direction="column"
+            px="1.5rem"
+            py="1rem"
+            alignItems="center"
+          >
             <Boxes
               bg="transparent"
               border="1px solid #505050"
@@ -135,14 +146,20 @@ const OpenPositionModal = ({
             <Boxes
               bg="#404040"
               border="none"
-              value={truncate(((+amount / longPrice.price) / 2 * leverage).toString(), 5)}
+              value={truncate(
+                ((+amount / longPrice.price / 2) * leverage).toString(),
+                5
+              )}
               token={longPrice.name}
               title="Long"
             />
             <Boxes
               bg="#404040"
               border="none"
-              value={truncate(((+amount / shortPrice.price ) / 2 * leverage).toString(), 5)}
+              value={truncate(
+                ((+amount / shortPrice.price / 2) * leverage).toString(),
+                5
+              )}
               token={shortPrice.name}
               title="Short"
             />
@@ -162,8 +179,11 @@ const OpenPositionModal = ({
               <Values title="Fees" value="0.3$" />
             </Flex>
 
-            <Button variant="secondary" onClick={() => console.log(longData, shortData)}>
-            {/* // {() => write?.()}> */}
+            <Button
+              variant="secondary"
+              onClick={() => console.log(longData, shortData)}
+            >
+              {/* // {() => write?.()}> */}
               Open Position
             </Button>
           </Flex>

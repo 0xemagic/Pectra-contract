@@ -64,8 +64,6 @@ export const useReadPrice = () => {
     staleTime: 6_000,
   });
 
-  console.log({ isLoading });
-
   const { data: btcEthDecimals } = useContractRead({
     address: BTCETH,
     abi: aggregatorV3InterfaceABI,

@@ -60,7 +60,6 @@ export default function Tickers({ symbols, handleChange }: TickerProps) {
             {symbols.map((symbol1: any, key: number) => {
               let change = key % 2 === 0 ? 1 : -1;
               const color = change >= 0 ? "green" : "red";
-              console.log("symbol1", symbol1);
               return (
                 <Tr
                   m="auto"

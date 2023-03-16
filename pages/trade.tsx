@@ -10,6 +10,16 @@ import Tickers from "@/components/trade/tickers";
 import { NextSeo } from "next-seo";
 import { useReadPrice } from "@/components/hooks/usePrices";
 
+import {
+  btcPriceQuery,
+  client2,
+  ethPriceQuery,
+  linkPriceQuery,
+  maticPriceQuery,
+  truncate,
+  uniPriceQuery,
+} from "@/components/utils";
+
 type SymbolProps = {
   label: string;
   symbol: string;
@@ -19,8 +29,10 @@ const Trade = () => {
   const { btcEthRawPrice, btcEthDecimals } = useReadPrice();
   const { linkEthRawPrice, linkEthDecimals } = useReadPrice();
 
-  const [longToken, setLongToken] = useState("ETH");
-  const [shortToken, setShortToken] = useState("BTC");
+  const [ethPrice, setEthPrice] = useState(0);
+  const [btcPrice, setBtcPrice] = useState(0);
+  const [linkPrice, setLinkPrice] = useState(0);
+  const [uniPrice, setUniPrice] = useState(0);
 
   const symbols = [
     {
@@ -67,17 +79,33 @@ const Trade = () => {
     setTabIndex(index);
   };
 
-  const optionStyle = {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr 1fr",
-    gridGap: "10px",
-  };
+    // function that fetches prices is used to get the price of each token asynchronously
+  // should change to fetch price every few seconds instead? put into timer maybe?
+  async function fetchPrices() {
+    const data1 = await client2.query(ethPriceQuery, {}).toPromise();
+    setEthPrice(data1.data.bundle.ethPriceUSD);
 
-  const valueStyle = {
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-  };
+    const data2 = await client2.query(btcPriceQuery, {}).toPromise();
+    setBtcPrice(data2.data.pool.token1Price * data2.data.bundle.ethPriceUSD);
+
+    const data3 = await client2.query(linkPriceQuery, {}).toPromise();
+    setLinkPrice(data3.data.pool.token1Price * data3.data.bundle.ethPriceUSD);
+
+    const data4 = await client2.query(uniPriceQuery, {}).toPromise();
+    setUniPrice(data4.data.pool.token1Price * data4.data.bundle.ethPriceUSD);
+  }
+
+    //current tokens available with price variables for each
+    const tokens = [
+      { name: "ETH", price: ethPrice, address: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1" },
+      { name: "BTC", price: btcPrice, address: "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f" },
+      { name: "LINK", price: linkPrice, address: "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4" },
+      { name: "UNI", price: uniPrice, address: "0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0" },
+    ];
+
+  useEffect(() => {
+      fetchPrices();
+  }, []);
 
   return (
     <>
@@ -112,7 +140,7 @@ const Trade = () => {
           px="1.68rem"
           py="1.25rem"
         >
-          <ModeComp handleTabsChange={handleTabsChange} tabIndex={tabIndex} handleSymbolChange={handleSymbolChange} symbols={symbols} />
+          <ModeComp handleTabsChange={handleTabsChange} tabIndex={tabIndex} handleSymbolChange={handleSymbolChange} symbols={symbols} tokens={tokens} />
         </Flex>
 
         <Flex w="70%" flex={1} direction="column">

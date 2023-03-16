@@ -16,8 +16,7 @@ import CircleIcon from "../../UI/CircleIcon";
 
 import ClosePositionModal from "../../modals/closePositionModal";
 
-const OpenPositions = ({tabIndex}: any) => {
-
+const OpenPositions = ({tabIndex, tokens}: any) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const marketPositions = [
@@ -29,8 +28,8 @@ const OpenPositions = ({tabIndex}: any) => {
       leverage: "2x",
       entry: "1,300",
       liquidation: "800",
-      pnl: "-$200",
-      netvalue: "$500",
+      pnl: "-200",
+      netvalue: "500",
     },
     {
       collateral: "200",
@@ -40,8 +39,8 @@ const OpenPositions = ({tabIndex}: any) => {
       leverage: "2x",
       entry: "1,600",
       liquidation: "1,800",
-      pnl: "+$200",
-      netvalue: "$500",
+      pnl: "+200",
+      netvalue: "500",
     },
     {
       collateral: "1,500",
@@ -51,11 +50,10 @@ const OpenPositions = ({tabIndex}: any) => {
       leverage: "2x",
       entry: "1,200",
       liquidation: "1,700",
-      pnl: "-$200",
-      netvalue: "$500"
+      pnl: "-200",
+      netvalue: "500"
     },
   ];
-
   return (
     <Flex
       bg="#202020"
@@ -126,6 +124,7 @@ const OpenPositions = ({tabIndex}: any) => {
                   long={position.long}
                   short={position.short}
                   entry={position.entry}
+                  tokens={tokens}
                 />
 
                 <Td>{position.collateral} USDC</Td>
