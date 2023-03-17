@@ -19,6 +19,8 @@ import ClosePositionModal from "../../modals/closePositionModal";
 const OpenPositions = ({tabIndex, tokens}: any) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  console.log(tokens)
+
   const marketPositions = [
     {
       collateral: "700",
@@ -28,7 +30,7 @@ const OpenPositions = ({tabIndex, tokens}: any) => {
       leverage: "2x",
       entry: "1,300",
       liquidation: "800",
-      pnl: "-200",
+      pnl: "+100",
       netvalue: "500",
     },
     {
@@ -50,7 +52,7 @@ const OpenPositions = ({tabIndex, tokens}: any) => {
       leverage: "2x",
       entry: "1,200",
       liquidation: "1,700",
-      pnl: "-200",
+      pnl: "+100",
       netvalue: "500"
     },
   ];
@@ -109,7 +111,12 @@ const OpenPositions = ({tabIndex, tokens}: any) => {
             </Tr>
           </Thead>
           <Tbody>
-            {marketPositions.map((position, key) => (
+            {marketPositions.map((position, key) => {
+              const longPrice = tokens?.find((name: string) => name === position.long)             
+              console.log(
+                longPrice
+              )
+              return (
               <Tr key={key} my={2} bg="#252525" borderRadius="7px">
                 <ClosePositionModal
                   isOpen={isOpen}
@@ -124,7 +131,8 @@ const OpenPositions = ({tabIndex, tokens}: any) => {
                   long={position.long}
                   short={position.short}
                   entry={position.entry}
-                  tokens={tokens}
+                  shortPrice={tokens?.find((name: string) => name === position.short)}
+                  longPrice={tokens?.find((name: string) => name === position.long)}                  
                 />
 
                 <Td>{position.collateral} USDC</Td>
@@ -171,7 +179,7 @@ const OpenPositions = ({tabIndex, tokens}: any) => {
                   </Flex>
                 </Td>
               </Tr>
-            ))}
+            )})}
           </Tbody>
         </Table>
       </TableContainer>

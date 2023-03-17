@@ -64,7 +64,6 @@ export default function Tickers({ symbols, handleChange }: TickerProps) {
                 <Tr
                   m="auto"
                   key={key}
-                  // onClick={() => console.log(symbol1)}
                   onClick={() => handleChange(symbol1.label)}
                   my={2}
                   bg="#252525"

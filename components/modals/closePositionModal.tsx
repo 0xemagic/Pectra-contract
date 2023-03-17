@@ -16,6 +16,8 @@ import {
   InputRightElement,
 } from "@chakra-ui/react";
 
+import { useState} from "react";
+
 import { BiDownArrowAlt } from "react-icons/bi";
 
 import { truncate } from "../utils";
@@ -33,13 +35,15 @@ type OpenPositionModalProps = {
   pnl: string;
   netvalue: string;
   size: string;
-  tokens: any;
+  shortPrice: any;
+  longPrice: any;
 };
 
 type BoxesProps = {
   bg: string;
   border: string;
-  value: number;
+  usdcValue: number;
+  tokenValue?: number;
   title: string;
   token?: string;
 };
@@ -62,17 +66,13 @@ const OpenPositionModal = ({
   pnl,
   netvalue,
   size,
-  tokens
+  shortPrice,
+  longPrice,
 }: OpenPositionModalProps) => {
 
-  // const shortPrice = tokens.find(({ name }: any) => name === long);
-  // const longPrice = tokens.find(({ name }: any) => name === short);
+  const [amount, setAmount] = useState<number>(0);
 
-
-  console.log(tokens)
-
-
-  const Boxes = ({ bg, border, value, title, token }: BoxesProps) => {
+  const Boxes = ({ bg, border, tokenValue, usdcValue, title, token }: BoxesProps) => {
     return (
       <Box
         bg={bg}
@@ -92,9 +92,10 @@ const OpenPositionModal = ({
         >
           <Text>{title}</Text>
           <Flex>
-            <Text variant="paragraph">{token}</Text>
+            <Text variant="paragraph">{tokenValue}</Text>
+            <Text variant="paragraph" ml="0.5rem">{token}</Text>
             <Text variant="paragraph" ml="0.5rem">
-              {`($${value})`}
+              {`($${usdcValue})`}
             </Text>
           </Flex>
         </Flex>
@@ -148,27 +149,33 @@ const OpenPositionModal = ({
                 height="50px"
                 type="number"
                 placeholder="Amount"
+                value={amount}
               />
               <InputRightElement
                 mr="1rem"
                 ml={3}
                 height="50px"
                 children={
-                  <Button alignItems="center" justifyContent="center">
+                  <Button variant="function" alignItems="center" justifyContent="center" minW="50px"
+                  onClick={() => setAmount(+netvalue)}
+                  >
                     Max
                   </Button>
                 }
               />
             </InputGroup>
             <Text mt="0.25rem" alignSelf="end" variant="paragraph">
-              Max Amount: {netvalue}
+              Max Amount: {netvalue} USDC
             </Text>
+            <Flex my="1rem">
+            <BiDownArrowAlt size="2.25rem" />
 
-            <BiDownArrowAlt size="2rem" />
+            </Flex>
             <Boxes
               bg="#404040"
               border="none"
-              value={+netvalue / 2}
+              usdcValue={250}
+              tokenValue={0.15}
               token={long}
               title="Long"
             />
@@ -176,16 +183,17 @@ const OpenPositionModal = ({
             <Boxes
               bg="#404040"
               border="none"
-              value={+netvalue / 2}
+              usdcValue={250}
+              tokenValue={0.010}
               token={short}
               title="Short"
             />
 
             <Flex mt="1rem" mb="1rem" direction="column" w="full">
-              <Values title="Total Entry Size" value="USDC" />
-              <Values title="Current Size" value={`$${size}`} />
+              <Values title="Total Entry Size" value="400 USDC" />
+              <Values title="Current Size" value={`500 USDC`} />
               <Values title="PnL" value={`${pnl}`} />
-              <Values title="Fees" value={`$0.3`} />
+              <Values title="Fees" value={`0.3 USDC`} />
               {/* <Values title="Position Value" value={`$${+amount * leverage}`} />
                 <Values
                   title="Liquidation Price"
@@ -196,7 +204,8 @@ const OpenPositionModal = ({
                 /> */}{" "}
             </Flex>
 
-            <Button variant="secondary" onClick={() => console.log("works")}>
+            <Button variant="secondary" onClick={() => console.log(  longPrice
+)}>
               Close Position
             </Button>
           </Flex>

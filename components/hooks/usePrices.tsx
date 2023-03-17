@@ -59,39 +59,25 @@ export const useReadPrice = () => {
     abi: aggregatorV3InterfaceABI,
     functionName: "latestRoundData",
     watch: true,
-    cacheOnBlock: true,
-    cacheTime: 6_000,
-    staleTime: 6_000,
   });
 
   const { data: btcEthDecimals } = useContractRead({
     address: BTCETH,
     abi: aggregatorV3InterfaceABI,
     functionName: "decimals",
-    watch: true,
-    cacheOnBlock: true,
-    cacheTime: 6_000,
-    staleTime: 6_000,
-  });
+    watch: true,  });
 
   const { data: linkEthRawPrice } = useContractRead({
     address: LINKETH,
     abi: aggregatorV3InterfaceABI,
     functionName: "latestRoundData",
-    watch: true,
-    cacheOnBlock: true,
-    cacheTime: 6_000,
-    staleTime: 6_000,
-  });
+    watch: true,  });
 
   const { data: linkEthDecimals } = useContractRead({
     address: LINKETH,
     abi: aggregatorV3InterfaceABI,
     functionName: "decimals",
     watch: true,
-    cacheOnBlock: true,
-    cacheTime: 6_000,
-    staleTime: 6_000,
   });
 
   return { btcEthRawPrice, btcEthDecimals, linkEthRawPrice, linkEthDecimals };
