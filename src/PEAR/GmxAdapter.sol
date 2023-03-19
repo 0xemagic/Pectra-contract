@@ -58,7 +58,7 @@ contract GMXAdapter {
         bytes32 _referralCode,
         address _callbackTarget
     ) external payable returns (bytes32) {
-        return IPositionRouter(POSITION_ROUTER).createIncreasePositionETH(_path, _indexToken, _minOut, _sizeDelta, _isLong, _acceptablePrice, _executionFee, _referralCode, _callbackTarget);
+        return IPositionRouter(POSITION_ROUTER).createIncreasePositionETH{value: msg.value}(_path, _indexToken, _minOut, _sizeDelta, _isLong, _acceptablePrice, _executionFee, _referralCode, _callbackTarget);
     }
     
     function createDecreasePosition(
