@@ -10,15 +10,21 @@ import {
 import OpenComp from "../OpenComp";
 import OpenPositions from "../PositionsTable";
 
+type SymbolProps = {
+  label: string;
+  symbol: string;
+};
+
 type ModeCompProps = {
   handleTabsChange: (index: number) => void;
   tabIndex: number;
   handleSymbolChange: (selectedValue: string) => void;
   symbols: any;
   tokens: any;
+  symbol: SymbolProps;
 }
 
-const ModeComp = ({handleTabsChange, tabIndex, handleSymbolChange, symbols, tokens}: ModeCompProps) => {
+const ModeComp = ({handleTabsChange, tabIndex, handleSymbolChange, symbols, tokens, symbol}: ModeCompProps) => {
   return (
     <Flex >
       <Tabs w="fit-content" borderRadius="2xl" isFitted variant="unstyled" index={tabIndex} onChange={handleTabsChange}>
@@ -57,7 +63,7 @@ const ModeComp = ({handleTabsChange, tabIndex, handleSymbolChange, symbols, toke
         </TabList>
         <TabPanels >
           <TabPanel>
-            <OpenComp handleSymbolChange={handleSymbolChange} symbols={symbols} tokens={tokens} />
+            <OpenComp handleSymbolChange={handleSymbolChange} symbols={symbols} tokens={tokens} symbol={symbol} />
           </TabPanel>
           <TabPanel >
             <Box w="100%">

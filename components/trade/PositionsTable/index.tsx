@@ -19,8 +19,6 @@ import ClosePositionModal from "../../modals/closePositionModal";
 const OpenPositions = ({tabIndex, tokens}: any) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  console.log(tokens)
-
   const marketPositions = [
     {
       collateral: "700",
@@ -113,9 +111,6 @@ const OpenPositions = ({tabIndex, tokens}: any) => {
           <Tbody>
             {marketPositions.map((position, key) => {
               const longPrice = tokens?.find((name: string) => name === position.long)             
-              console.log(
-                longPrice
-              )
               return (
               <Tr key={key} my={2} bg="#252525" borderRadius="7px">
                 <ClosePositionModal

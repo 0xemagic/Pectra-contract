@@ -60,10 +60,6 @@ const Trade = () => {
           ).toFixed(4)
         : 0,
     },
-    // {
-    //   label: "BTC/MATIC",
-    //   symbol: "BINANCE:MATICBTC",
-    // },
   ];
 
   const [symbol, setSymbol] = useState<SymbolProps>(symbols[1]);
@@ -140,7 +136,7 @@ const Trade = () => {
           px="1.68rem"
           py="1.25rem"
         >
-          <ModeComp handleTabsChange={handleTabsChange} tabIndex={tabIndex} handleSymbolChange={handleSymbolChange} symbols={symbols} tokens={tokens} />
+          <ModeComp handleTabsChange={handleTabsChange} tabIndex={tabIndex} handleSymbolChange={handleSymbolChange} symbols={symbols} tokens={tokens} symbol={symbol} />
         </Flex>
 
         <Flex w="70%" flex={1} direction="column">

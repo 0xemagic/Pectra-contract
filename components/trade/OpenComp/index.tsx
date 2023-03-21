@@ -32,13 +32,15 @@ import {
   truncate,
 } from "@/components/utils";
 
-const OpenComp = ({handleSymbolChange, symbols, tokens}: any) => {
+const OpenComp = ({ handleSymbolChange, symbols, tokens, symbol }: any) => {
   const labelStyles = {
     mt: "3",
     ml: "-1.5",
     fontSize: "sm",
     fontStyle: "body",
   };
+
+  console.log(symbol)
 
   const [leverage, setLeverage] = useState(1);
   const [amount, setAmount] = useState<string>("0");
@@ -48,6 +50,8 @@ const OpenComp = ({handleSymbolChange, symbols, tokens}: any) => {
   const [error, setError] = useState(false);
   const [noAmount, setNoAmount] = useState(false);
   const sameToken = longToken === shortToken;
+
+  const [filteredTokens, setFilteredTokens] = useState(tokens);
 
   const args = [
     ["0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"],
@@ -97,31 +101,47 @@ const OpenComp = ({handleSymbolChange, symbols, tokens}: any) => {
   });
 
   // function that changes the symbols for the charts
-    function getSymbol(shortToken: any, longToken: any) {
-      const shortTokenInfo = tokens.find((token: any) => token.name === shortToken);
-      const longTokenInfo = tokens.find((token: any) => token.name === longToken);
-      if (shortTokenInfo && longTokenInfo) {
-        const selectedLabel = `${shortTokenInfo.name}/${longTokenInfo.name}`;
-        const symbol = symbols.find(
-          (sym: any) =>
-            sym.label === selectedLabel ||
-            sym.label === `${longTokenInfo.name}/${shortTokenInfo.name}`
-        );
-        if (symbol) {
-          handleSymbolChange(symbol.label);
-        }
+  function getSymbol(shortToken: any, longToken: any) {
+    const shortTokenInfo = tokens.find((token: any) => token.name === shortToken);
+    const longTokenInfo = tokens.find((token: any) => token.name === longToken);
+    if (shortTokenInfo && longTokenInfo) {
+      const selectedLabel = `${shortTokenInfo.name}/${longTokenInfo.name}`;
+      const symb = symbols.find(
+        (sym: any) =>
+          sym.label === selectedLabel ||
+          sym.label === `${longTokenInfo.name}/${shortTokenInfo.name}`
+      );
+      if (symb) {
+        handleSymbolChange(symbol.label);
       }
-      return null;
     }
+    return null;
+  }
 
-    useEffect(() => {
-      getSymbol(shortToken, longToken);
-    }, [shortToken, longToken]);
+  useEffect(() => {
+    getSymbol(shortToken, longToken);
+  }, [shortToken, longToken]);
 
-    useEffect(() => {
-      setShortToken(filteredShorts![0].name);
-    }, [longToken]);
-  
+  useEffect(() => {
+    setShortToken(filteredShorts![0].name);
+  }, [longToken]);
+
+  const getTokensFromSymbol = (symb: any) => {
+    const tokens = symb.label.split('/').filter((t: any) => t !== '');
+    return { longToken1: tokens[0], shortToken1: tokens[1] };
+  };
+
+  useEffect(() => {
+      const { longToken1, shortToken1 } = getTokensFromSymbol(symbol);
+      if (shortToken1 !== shortToken){
+      setShortToken(shortToken1);
+      }
+
+      if (longToken !== longToken1) {
+        setLongToken(longToken1);
+      }
+  }, [symbol]);
+
 
   const shortPrice = tokens.find(({ name }: any) => name === shortToken);
   const longPrice = tokens.find(({ name }: any) => name === longToken);
@@ -145,7 +165,7 @@ const OpenComp = ({handleSymbolChange, symbols, tokens}: any) => {
       setNoAmount(false);
     }
   }, [error, noAmount, amount]);
-  
+
   return (
     <>
       <Text
@@ -191,7 +211,7 @@ const OpenComp = ({handleSymbolChange, symbols, tokens}: any) => {
                 mb="0.25rem"
               >
                 {tokens.map((token: any, index: number) => {
-                  return <option key={index}>{token.name}</option>;
+                  return <option key={index} selected={token.name === longToken}>{token.name}</option>;
                 })}
               </Select>
 
@@ -244,7 +264,7 @@ const OpenComp = ({handleSymbolChange, symbols, tokens}: any) => {
                 mb="0.25rem"
               >
                 {filteredShorts.map((token: any, index: number) => {
-                  return <option key={index}>{token.name}</option>;
+                  return <option key={index} selected={token.name === shortToken}>{token.name}</option>;
                 })}
               </Select>
               <Flex ml="auto" justify="end" mr={0} fontSize="0.875rem">
