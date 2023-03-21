@@ -45,7 +45,7 @@ export default function Tickers({ symbols, handleChange }: TickerProps) {
               <Td>
                 {" "}
                 <Text fontSize="0.75rem" variant="paragraph">
-                  Last
+                  Last (1D)
                 </Text>
               </Td>
               <Td>

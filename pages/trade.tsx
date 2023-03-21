@@ -46,9 +46,14 @@ const Trade = () => {
         : 0,
     },
     {
-      label: "BTC/UNI",
+      label: "UNI/BTC",
       symbol: "BINANCE:UNIBTC",
-      price: 0,
+      price: (btcPrice && uniPrice) ? (uniPrice/btcPrice).toFixed(4) : 0,
+    },
+    {
+      label: "LINK/BTC",
+      symbol: "BINANCE:LINKBTC",
+      price: (linkPrice && btcPrice) ? (linkPrice/btcPrice).toFixed(4) : 0,
     },
     {
       label: "LINK/ETH",
@@ -59,7 +64,11 @@ const Trade = () => {
               Math.pow(10, linkEthDecimals as any)
           ).toFixed(4)
         : 0,
-    },
+    },{
+    label: "ETH/LINK",
+    symbol: "UNISWAP:WETHLINK",
+    price: (ethPrice && linkPrice) ? (ethPrice/linkPrice).toFixed(4) : 0,
+    }
   ];
 
   const [symbol, setSymbol] = useState<SymbolProps>(symbols[1]);

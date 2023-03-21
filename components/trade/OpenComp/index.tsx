@@ -40,8 +40,6 @@ const OpenComp = ({ handleSymbolChange, symbols, tokens, symbol }: any) => {
     fontStyle: "body",
   };
 
-  console.log(symbol)
-
   const [leverage, setLeverage] = useState(1);
   const [amount, setAmount] = useState<string>("0");
   const [longToken, setLongToken] = useState("ETH");
@@ -50,8 +48,6 @@ const OpenComp = ({ handleSymbolChange, symbols, tokens, symbol }: any) => {
   const [error, setError] = useState(false);
   const [noAmount, setNoAmount] = useState(false);
   const sameToken = longToken === shortToken;
-
-  const [filteredTokens, setFilteredTokens] = useState(tokens);
 
   const args = [
     ["0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"],
