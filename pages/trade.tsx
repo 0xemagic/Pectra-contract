@@ -124,25 +124,25 @@ const Trade = () => {
         fontFamily={"heading"}
         px={{ base: "2rem", "3xl": "4.25rem" }}
       >
-              {process.env.NODE_ENV === "production" ? (
-                <Heading>Coming Soon</Heading>
-              ) : (
-                <>
-        <Flex
-          w={tabIndex === 0 ? "500px" : "full"}
-          border="1px solid rgba(255, 255, 255, 0.2)"
-          borderRadius="12px"
-          direction={{ base: "row", md: "column" }}
-          mr="1rem"
-          background="#202020"
-          px="1.68rem"
-          py="1.25rem"
-        >
-          <ModeComp handleTabsChange={handleTabsChange} tabIndex={tabIndex} handleSymbolChange={handleSymbolChange} symbols={symbols} tokens={tokens} symbol={symbol!} />
-        </Flex>
+        {process.env.NODE_ENV === "production" ? (
+          <Heading m="auto" mt="20%">Coming Soon</Heading>
+        ) : (
+          <>
+            <Flex
+              w={tabIndex === 0 ? "500px" : "full"}
+              border="1px solid rgba(255, 255, 255, 0.2)"
+              borderRadius="12px"
+              direction={{ base: "row", md: "column" }}
+              mr="1rem"
+              background="#202020"
+              px="1.68rem"
+              py="1.25rem"
+            >
+              <ModeComp handleTabsChange={handleTabsChange} tabIndex={tabIndex} handleSymbolChange={handleSymbolChange} symbols={symbols} tokens={tokens} symbol={symbol!} />
+            </Flex>
 
-        <Flex w="70%" flex={1} direction="column">
-          {/*<Box
+            <Flex w="70%" flex={1} direction="column">
+              {/*<Box
             h="fit-content"
             w="full"
             borderRadius={"0.5rem"}
@@ -173,31 +173,31 @@ const Trade = () => {
             )}
           </Box>*/}
 
-          <Flex
-            display={tabIndex === 0 ? "block" : "none"}
-            w="100%"
-            minH="50vh"
-            pl="1.5rem"
-            py="1.15rem"
-            fontSize="1.25rem"
-            borderRadius={"0.5rem"}
-            background="#202020"
-            mb="1rem"
-            border="1px solid rgba(255, 255, 255, 0.2)"
-          >
-            <Flex h="full" w="100%" gap={2}>
-              <Box h="100%" w="70%">
-                <Charts symb={symbol?.symbol} />
+              <Flex
+                display={tabIndex === 0 ? "block" : "none"}
+                w="100%"
+                minH="50vh"
+                pl="1.5rem"
+                py="1.15rem"
+                fontSize="1.25rem"
+                borderRadius={"0.5rem"}
+                background="#202020"
+                mb="1rem"
+                border="1px solid rgba(255, 255, 255, 0.2)"
+              >
+                <Flex h="full" w="100%" gap={2}>
+                  <Box h="100%" w="70%">
+                    <Charts symb={symbol?.symbol} />
+                  </Box>
+                  <Box h="100%" w="30%">
+                    <Tickers symbols={symbols} handleChange={handleSymbolChange} />
+                  </Box>
+                </Flex>
+              </Flex>
+              <Box w="100%" display={tabIndex === 0 ? "block" : "none"}>
+                <OpenPositions tabIndex={tabIndex} />
               </Box>
-              <Box h="100%" w="30%">
-                <Tickers symbols={symbols} handleChange={handleSymbolChange} />
-              </Box>
-            </Flex>
-          </Flex>
-          <Box w="100%" display={tabIndex === 0 ? "block" : "none"}>
-            <OpenPositions tabIndex={tabIndex} />
-          </Box>
-        </Flex></>)}
+            </Flex></>)}
       </Flex>
     </>
   );
