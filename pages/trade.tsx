@@ -46,6 +46,31 @@ const Trade = () => {
         : 0,
     },
     {
+      label: "BTC/LINK",
+      symbol: "UNISWAP3ETH:WBTCLINK",
+      price: (btcPrice && linkPrice) ? (btcPrice/linkPrice).toFixed(2) : 0,
+    },
+    {
+      label: "BTC/UNI",
+      symbol: "UNISWAP3ETH:WBTCUNI",
+      price: (btcPrice && uniPrice) ? (btcPrice/uniPrice).toFixed(2) : 0,
+    },
+    {
+      label: "ETH/BTC",
+      symbol: "BINANCE:ETHBTC",
+      price: (ethPrice && btcPrice) ? (ethPrice/btcPrice).toFixed(4) : 0,
+      },
+    {
+      label: "ETH/LINK",
+      symbol: "UNISWAP:WETHLINK",
+      price: (ethPrice && linkPrice) ? (ethPrice/linkPrice).toFixed(4) : 0,
+      },
+      {   
+           label: "ETH/UNI",
+      symbol: "UNISWAP:WETHUNI",
+      price: (ethPrice && uniPrice) ? (ethPrice/uniPrice).toFixed(4) : 0,
+      },
+    {
       label: "UNI/BTC",
       symbol: "BINANCE:UNIBTC",
       price: (btcPrice && uniPrice) ? (uniPrice/btcPrice).toFixed(4) : 0,
@@ -64,14 +89,10 @@ const Trade = () => {
               Math.pow(10, linkEthDecimals as any)
           ).toFixed(4)
         : 0,
-    },{
-    label: "ETH/LINK",
-    symbol: "UNISWAP:WETHLINK",
-    price: (ethPrice && linkPrice) ? (ethPrice/linkPrice).toFixed(4) : 0,
     }
   ];
 
-  const [symbol, setSymbol] = useState<SymbolProps>(symbols[1]);
+  const [symbol, setSymbol] = useState<SymbolProps>();
 
   const handleSymbolChange = (selectedValue: string) => {
     const selectedObject = symbols.find((symb) => symb.label === selectedValue);
@@ -145,7 +166,7 @@ const Trade = () => {
           px="1.68rem"
           py="1.25rem"
         >
-          <ModeComp handleTabsChange={handleTabsChange} tabIndex={tabIndex} handleSymbolChange={handleSymbolChange} symbols={symbols} tokens={tokens} symbol={symbol} />
+          <ModeComp handleTabsChange={handleTabsChange} tabIndex={tabIndex} handleSymbolChange={handleSymbolChange} symbols={symbols} tokens={tokens} symbol={symbol!} />
         </Flex>
 
         <Flex w="70%" flex={1} direction="column">
@@ -184,7 +205,7 @@ const Trade = () => {
             display={tabIndex === 0 ? "block" : "none"}
             w="100%"
             minH="50vh"
-            px="1.5rem"
+            pl="1.5rem"
             py="1.15rem"
             fontSize="1.25rem"
             borderRadius={"0.5rem"}

@@ -82,33 +82,18 @@ const OpenComp = ({ handleSymbolChange, symbols, tokens, symbol }: any) => {
     onClose: onErrorClose,
   } = useDisclosure();
 
-  // filtered tokens to only show compatible pairs
-  const filteredShorts = tokens.filter((token: any) => {
-    if (longToken === "ETH") {
-      return token.name !== "ETH";
-    } else if (longToken === "BTC") {
-      return token.name !== "LINK" && token.name !== "BTC";
-    } else if (longToken === "LINK") {
-      return token.name === "ETH";
-    } else if (longToken === "UNI") {
-      return token.name === "BTC";
-    }
-    return true;
-  });
-
   // function that changes the symbols for the charts
   function getSymbol(shortToken: any, longToken: any) {
     const shortTokenInfo = tokens.find((token: any) => token.name === shortToken);
     const longTokenInfo = tokens.find((token: any) => token.name === longToken);
     if (shortTokenInfo && longTokenInfo) {
-      const selectedLabel = `${shortTokenInfo.name}/${longTokenInfo.name}`;
+      const selectedLabel = `${longTokenInfo.name}/${shortTokenInfo.name}`;
       const symb = symbols.find(
         (sym: any) =>
-          sym.label === selectedLabel ||
-          sym.label === `${longTokenInfo.name}/${shortTokenInfo.name}`
+          sym.label === selectedLabel
       );
       if (symb) {
-        handleSymbolChange(symbol.label);
+        handleSymbolChange(symb.label);
       }
     }
     return null;
@@ -118,24 +103,20 @@ const OpenComp = ({ handleSymbolChange, symbols, tokens, symbol }: any) => {
     getSymbol(shortToken, longToken);
   }, [shortToken, longToken]);
 
-  useEffect(() => {
-    setShortToken(filteredShorts![0].name);
-  }, [longToken]);
-
   const getTokensFromSymbol = (symb: any) => {
-    const tokens = symb.label.split('/').filter((t: any) => t !== '');
+    const tokens = symb !== undefined ? symb.label.split('/').filter((t: any) => t !== '') : ["ETH", "BTC"];
     return { longToken1: tokens[0], shortToken1: tokens[1] };
   };
 
   useEffect(() => {
-      const { longToken1, shortToken1 } = getTokensFromSymbol(symbol);
-      if (shortToken1 !== shortToken){
+    const { longToken1, shortToken1 } = getTokensFromSymbol(symbol);
+    if (shortToken1 !== shortToken) {
       setShortToken(shortToken1);
-      }
+    }
 
-      if (longToken !== longToken1) {
-        setLongToken(longToken1);
-      }
+    if (longToken !== longToken1) {
+      setLongToken(longToken1);
+    }
   }, [symbol]);
 
 
@@ -259,7 +240,7 @@ const OpenComp = ({ handleSymbolChange, symbols, tokens, symbol }: any) => {
                 isInvalid={sameToken}
                 mb="0.25rem"
               >
-                {filteredShorts.map((token: any, index: number) => {
+                {tokens.map((token: any, index: number) => {
                   return <option key={index} selected={token.name === shortToken}>{token.name}</option>;
                 })}
               </Select>

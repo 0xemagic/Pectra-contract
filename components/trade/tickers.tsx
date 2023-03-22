@@ -25,14 +25,16 @@ export default function Tickers({ symbols, handleChange }: TickerProps) {
       borderRadius="12px"
       w="100%"
       minH="50%"
-      h="inherit"
-    >
+      maxH="50%"
+      h="50%"  
+      overflowY="hidden"
+      >
       <TableContainer
         fontFamily="body"
         fontWeight={600}
         fontSize="0.875rem"
         w={"full"}
-        // overflowX="hidden"
+        overflowY="scroll"
       >
         <Table m="auto" size={{ base: "sm", "2xl": "md" }} variant="simple">
           <Thead fontFamily="body">
