@@ -1,5 +1,5 @@
 import ModeComp from "@/components/trade/ModeComp";
-import { Box, Flex, Select, Grid, GridItem } from "@chakra-ui/react";
+import { Box, Flex, Select, Grid, GridItem, Heading } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
 
@@ -124,6 +124,10 @@ const Trade = () => {
         fontFamily={"heading"}
         px={{ base: "2rem", "3xl": "4.25rem" }}
       >
+              {process.env.NODE_ENV === "production" ? (
+                <Heading>Coming Soon</Heading>
+              ) : (
+                <>
         <Flex
           w={tabIndex === 0 ? "500px" : "full"}
           border="1px solid rgba(255, 255, 255, 0.2)"
@@ -193,7 +197,7 @@ const Trade = () => {
           <Box w="100%" display={tabIndex === 0 ? "block" : "none"}>
             <OpenPositions tabIndex={tabIndex} />
           </Box>
-        </Flex>
+        </Flex></>)}
       </Flex>
     </>
   );

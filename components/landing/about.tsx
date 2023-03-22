@@ -12,15 +12,12 @@ import {
 const About = () => {
   const { colorMode } = useColorMode();
   const data = [
-    "Fast and simple user experience for retail and institutional traders.",
-    "Deep liquidity through our on-chain oracle-based partners.",
-    "Fully composable, building at the intersection of DeFi and NFTs.",
-    "Completely decentralized, on-chain, and self-custodial.",
     "Go long, short, or remain market neutral through convenient spread trading.",
-    "Pairs trading enables precise speculation on the latest crypto narratives."
+    "Deep liquidity through our on-chain oracle-based partners.",
+    "Fully composable and self-custodial, building at the intersection of DeFi and NFTs.",
   ];
   return (
-    <Box pt={{base: "10rem", "2xl": "0rem"}}>
+    <Box pt="10rem">
       <Heading fontSize={{ base: "2.1875rem", md: "3.125rem" }} variant="hero">
      Leveraged Pairs Trading
       </Heading>
