@@ -20,7 +20,7 @@ const About = () => {
     "Pairs trading enables precise speculation on the latest crypto narratives."
   ];
   return (
-    <Box pt="10rem">
+    <Box pt={{base: "10rem", "2xl": "0rem"}}>
       <Heading fontSize={{ base: "2.1875rem", md: "3.125rem" }} variant="hero">
      Leveraged Pairs Trading
       </Heading>

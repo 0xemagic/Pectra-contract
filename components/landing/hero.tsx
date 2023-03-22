@@ -52,6 +52,7 @@ export default function Hero() {
         <Image ml={colorMode === "dark" ? "-0.25rem" : "-0.75rem"} h="58px" src={colorMode === "dark" ? "/icons/arbitrum-dark.svg" : "/icons/arbitrum-light.svg"} />
       </Flex>
       <Flex direction={{ base: "column", md: "row" }} justify={{base: "center", lg: "start"}}align={{ base: "center", md: "start" }} mt={{ base: "1.5rem", md: "3rem" }}>
+        {process.env.NODE_ENV === "development" ? (
         <Button
           variant="primary"
           boxShadow={colorMode === "dark" ? "0px -1px 22px #518128" : "none"}
@@ -59,7 +60,16 @@ export default function Hero() {
           mb={{ base: "1rem", md: "none" }}
            onClick={() => router.push("/trade")}> 
           START TRADING
-        </Button>
+        </Button>  
+        ) : (
+          <Button
+          variant="primary"
+          boxShadow={colorMode === "dark" ? "0px -1px 22px #518128" : "none"}
+          mr={{ base: "none", md: "0.5rem" }}
+          mb={{ base: "1rem", md: "none" }}
+          > 
+          COMING SOON
+        </Button>)}
         <Link
           href="https://discord.gg/RKNRDVeFwG"
           isExternal
@@ -69,9 +79,9 @@ export default function Hero() {
       <Image
         display={{ base: "none", lg: "block" }}
         pos="absolute"
-        right={{lg: "-7rem", xl: "0rem"}}
-        top={{base: "15%", md: "5%", lg: "5%", xl: "2.5%", "2xl": "-1.5%"}}
-        h={{ base: "0px", md: "500px", lg: "400px", xl: "600px", "2xl": "600px" }}
+        right={{lg: "-7rem", xl: "-2rem", "2xl": "0rem"}}
+        top={{base: "15%", md: "5%", lg: "5%", xl: "-2%", "2xl": "-1.5%"}}
+        h={{ base: "0px", md: "500px", lg: "400px", xl: "650px", "2xl": "600px" }}
         minW={{ base: "0px", md: "300px", xl: "400px", "2xl": "500px" }}
         src={colorMode === "dark" ? "/assets/spectra1.svg" : "/assets/spectra1-light.svg"}
         alt="spectra-protocol-logo"
@@ -80,8 +90,8 @@ export default function Hero() {
         display={{ base: "none", lg: "block" }}
         pos="absolute"
         right={{lg: "-9rem", "2xl": "-4rem"}}
-        top={{lg: "4%", xl: "6%", "2xl": "1%"}}
-        h={{ base: "0px", md: "350px", lg: "450px", xl: "500px", "2xl": "600px" }}
+        top={{lg: "4%", xl: "3%", "2xl": "1%"}}
+        h={{ base: "0px", md: "350px", lg: "450px", xl: "550px", "2xl": "600px" }}
         minW={{ base: "0px", md: "400px", xl: "800px" }}
         src={colorMode === "dark" ? "/assets/spectra2.svg" : "/assets/spectra2-light.svg"}
         alt="spectra-protocol-logo"
