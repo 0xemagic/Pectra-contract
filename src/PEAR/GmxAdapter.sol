@@ -77,22 +77,6 @@ contract GMXAdapter {
         return IPositionRouter(POSITION_ROUTER).createDecreasePosition(_path, _indexToken, _collateralDelta, _sizeDelta, _isLong, _receiver, _acceptablePrice, _minOut, _executionFee, _withdrawETH, _callbackTarget);
     }
     
-    function cancelIncreasePosition(bytes32 _key, address payable _executionFeeReceiver) external onlyOwner returns (bool) {
-        return IPositionRouter(POSITION_ROUTER).cancelIncreasePosition(_key, _executionFeeReceiver);
-    }
-
-    function cancelDecreasePosition(bytes32 _key, address payable _executionFeeReceiver) external returns (bool) {
-        return IPositionRouter(POSITION_ROUTER).cancelDecreasePosition(_key, _executionFeeReceiver);
-    }
-    
-    function executeDecreasePosition(bytes32 _key, address payable _executionFeeReceiver) external returns (bool) {
-        return IPositionRouter(POSITION_ROUTER).executeDecreasePosition(_key, _executionFeeReceiver);
-    }
-
-    function executeIncreasePosition(bytes32 _key, address payable _executionFeeReceiver) external onlyOwner returns (bool) {
-        return IPositionRouter(POSITION_ROUTER).executeIncreasePosition(_key, _executionFeeReceiver);
-    }
-
     function swap(address[] memory _path, uint256 _amountIn, uint256 _minOut, address _receiver) external onlyOwner {
         IRouter(ROUTER).swap(_path, _amountIn, _minOut, _receiver);
     }
