@@ -1,4 +1,4 @@
-import { Flex, Heading, Text, Image, Button, useColorMode } from "@chakra-ui/react";
+import { Flex, Heading, Text, Image, Button, Link, useColorMode } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 
 export default function Hero() {
@@ -6,7 +6,7 @@ export default function Hero() {
   const router = useRouter();
   return (
     <Flex direction="column" minH="80vh">
-      <Flex direction="column" mt={{base: "6rem", lg: "4rem"}} w="full" justify={{base: "center", lg: "start"}}>
+      <Flex direction="column" mt={{base: "4rem", lg: "2rem"}} w="full" justify={{base: "center", lg: "start"}}>
         {" "}
         <Heading fontSize={{ base: "2.75rem", md: "6rem" }} variant="hero" textAlign={{base: "center", lg: "start"}}>
           RIDE THE<br/> NARRATIVE
@@ -51,7 +51,7 @@ export default function Hero() {
         </Text>
         <Image ml={colorMode === "dark" ? "-0.25rem" : "-0.75rem"} h="58px" src={colorMode === "dark" ? "/icons/arbitrum-dark.svg" : "/icons/arbitrum-light.svg"} />
       </Flex>
-      <Flex direction={{ base: "column", md: "row" }} justify={{base: "center", lg: "start"}}align={{ base: "center", md: "start" }} mt={{ base: "2.5rem", md: "5rem" }}>
+      <Flex direction={{ base: "column", md: "row" }} justify={{base: "center", lg: "start"}}align={{ base: "center", md: "start" }} mt={{ base: "1.5rem", md: "3rem" }}>
         <Button
           variant="primary"
           boxShadow={colorMode === "dark" ? "0px -1px 22px #518128" : "none"}
@@ -60,13 +60,17 @@ export default function Hero() {
            onClick={() => router.push("/trade")}> 
           START TRADING
         </Button>
-        <Button variant="secondary">JOIN DISCORD</Button>
+        <Link
+          href="https://discord.gg/RKNRDVeFwG"
+          isExternal
+          _hover={{ textDecoration: "none" }}
+        ><Button variant="secondary">JOIN DISCORD</Button></Link>
       </Flex>
       <Image
         display={{ base: "none", lg: "block" }}
         pos="absolute"
         right={{lg: "-7rem", xl: "0rem"}}
-        top={{base: "15%", md: "5%", lg: "5%", xl: "2.5%", "2xl": "0%"}}
+        top={{base: "15%", md: "5%", lg: "5%", xl: "2.5%", "2xl": "-1.5%"}}
         h={{ base: "0px", md: "500px", lg: "400px", xl: "600px", "2xl": "600px" }}
         minW={{ base: "0px", md: "300px", xl: "400px", "2xl": "500px" }}
         src={colorMode === "dark" ? "/assets/spectra1.svg" : "/assets/spectra1-light.svg"}
@@ -76,7 +80,7 @@ export default function Hero() {
         display={{ base: "none", lg: "block" }}
         pos="absolute"
         right={{lg: "-9rem", "2xl": "-4rem"}}
-        top={{lg: "4%", xl: "6%", "2xl": "2%"}}
+        top={{lg: "4%", xl: "6%", "2xl": "1%"}}
         h={{ base: "0px", md: "350px", lg: "450px", xl: "500px", "2xl": "600px" }}
         minW={{ base: "0px", md: "400px", xl: "800px" }}
         src={colorMode === "dark" ? "/assets/spectra2.svg" : "/assets/spectra2-light.svg"}

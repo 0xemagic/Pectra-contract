@@ -8,17 +8,7 @@ import Charts from "@/components/trade/Charts";
 import Tickers from "@/components/trade/tickers";
 
 import { NextSeo } from "next-seo";
-import { useReadPrice } from "@/components/hooks/usePrices";
-
-import {
-  btcPriceQuery,
-  client2,
-  ethPriceQuery,
-  linkPriceQuery,
-  maticPriceQuery,
-  truncate,
-  uniPriceQuery,
-} from "@/components/utils";
+import { useReadPrices } from "@/components/hooks/usePrices";
 
 type SymbolProps = {
   label: string;
@@ -26,13 +16,9 @@ type SymbolProps = {
 };
 
 const Trade = () => {
-  const { btcEthRawPrice, btcEthDecimals } = useReadPrice();
-  const { linkEthRawPrice, linkEthDecimals } = useReadPrice();
-
-  const [ethPrice, setEthPrice] = useState(0);
-  const [btcPrice, setBtcPrice] = useState(0);
-  const [linkPrice, setLinkPrice] = useState(0);
-  const [uniPrice, setUniPrice] = useState(0);
+  const { btcEthRawPrice, btcEthDecimals } = useReadPrices();
+  const { linkEthRawPrice, linkEthDecimals } = useReadPrices();
+  const { btcPrice, ethPrice, linkPrice, uniPrice } = useReadPrices();
 
   const symbols = [
     {
@@ -40,54 +26,55 @@ const Trade = () => {
       symbol: "VANTAGE:BTCETH",
       price: btcEthRawPrice
         ? Number(
-            (btcEthRawPrice as any).answer!.toString() /
-              Math.pow(10, btcEthDecimals as any)
-          ).toFixed(4)
+          (btcEthRawPrice as any).answer!.toString() /
+          Math.pow(10, btcEthDecimals as any)
+        ).toFixed(4)
         : 0,
     },
     {
       label: "BTC/LINK",
       symbol: "UNISWAP3ETH:WBTCLINK",
-      price: (btcPrice && linkPrice) ? (btcPrice/linkPrice).toFixed(2) : 0,
+      price: (btcPrice && linkPrice) ? (btcPrice / linkPrice).toFixed(2) : 0,
     },
     {
       label: "BTC/UNI",
       symbol: "UNISWAP3ETH:WBTCUNI",
-      price: (btcPrice && uniPrice) ? (btcPrice/uniPrice).toFixed(2) : 0,
+      price: (btcPrice && uniPrice) ? (btcPrice / uniPrice).toFixed(2) : 0,
     },
     {
       label: "ETH/BTC",
       symbol: "BINANCE:ETHBTC",
-      price: (ethPrice && btcPrice) ? (ethPrice/btcPrice).toFixed(4) : 0,
-      },
+      price: (ethPrice && btcPrice) ? (ethPrice / btcPrice).toFixed(4) : 0,
+    },
     {
       label: "ETH/LINK",
       symbol: "UNISWAP:WETHLINK",
-      price: (ethPrice && linkPrice) ? (ethPrice/linkPrice).toFixed(4) : 0,
-      },
-      {   
-           label: "ETH/UNI",
+      price: (ethPrice && linkPrice) ? (ethPrice / linkPrice).toFixed(4) : 0,
+    },
+    {
+      label: "ETH/UNI",
       symbol: "UNISWAP:WETHUNI",
-      price: (ethPrice && uniPrice) ? (ethPrice/uniPrice).toFixed(4) : 0,
-      },
+      price: (ethPrice && uniPrice) ? (ethPrice / uniPrice).toFixed(4) : 0,
+    },
     {
       label: "UNI/BTC",
+
       symbol: "BINANCE:UNIBTC",
-      price: (btcPrice && uniPrice) ? (uniPrice/btcPrice).toFixed(4) : 0,
+      price: (btcPrice && uniPrice) ? (uniPrice / btcPrice).toFixed(4) : 0,
     },
     {
       label: "LINK/BTC",
       symbol: "BINANCE:LINKBTC",
-      price: (linkPrice && btcPrice) ? (linkPrice/btcPrice).toFixed(4) : 0,
+      price: (linkPrice && btcPrice) ? (linkPrice / btcPrice).toFixed(4) : 0,
     },
     {
       label: "LINK/ETH",
       symbol: "GEMINI:LINKETH",
       price: linkEthRawPrice
         ? Number(
-            (linkEthRawPrice as any).answer!.toString() /
-              Math.pow(10, linkEthDecimals as any)
-          ).toFixed(4)
+          (linkEthRawPrice as any).answer!.toString() /
+          Math.pow(10, linkEthDecimals as any)
+        ).toFixed(4)
         : 0,
     }
   ];
@@ -105,33 +92,14 @@ const Trade = () => {
     setTabIndex(index);
   };
 
-    // function that fetches prices is used to get the price of each token asynchronously
-  // should change to fetch price every few seconds instead? put into timer maybe?
-  async function fetchPrices() {
-    const data1 = await client2.query(ethPriceQuery, {}).toPromise();
-    setEthPrice(data1.data.bundle.ethPriceUSD);
+  //current tokens available with price variables for each
+  const tokens = [
+    { name: "ETH", price: ethPrice, address: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1" },
+    { name: "BTC", price: btcPrice, address: "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f" },
+    { name: "LINK", price: linkPrice, address: "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4" },
+    { name: "UNI", price: uniPrice, address: "0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0" },
+  ];
 
-    const data2 = await client2.query(btcPriceQuery, {}).toPromise();
-    setBtcPrice(data2.data.pool.token1Price * data2.data.bundle.ethPriceUSD);
-
-    const data3 = await client2.query(linkPriceQuery, {}).toPromise();
-    setLinkPrice(data3.data.pool.token1Price * data3.data.bundle.ethPriceUSD);
-
-    const data4 = await client2.query(uniPriceQuery, {}).toPromise();
-    setUniPrice(data4.data.pool.token1Price * data4.data.bundle.ethPriceUSD);
-  }
-
-    //current tokens available with price variables for each
-    const tokens = [
-      { name: "ETH", price: ethPrice, address: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1" },
-      { name: "BTC", price: btcPrice, address: "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f" },
-      { name: "LINK", price: linkPrice, address: "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4" },
-      { name: "UNI", price: uniPrice, address: "0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0" },
-    ];
-
-  useEffect(() => {
-      fetchPrices();
-  }, []);
 
   return (
     <>
