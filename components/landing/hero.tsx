@@ -126,6 +126,17 @@ export default function Hero() {
           _hover={{ textDecoration: "none" }}
         ><Button variant="secondary">JOIN DISCORD</Button></Link>
       </Flex>
+      <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { duration: 2, delay: 0.5 },
+            },
+          }}
+        >
       <Image
         display={{ base: "none", lg: "block" }}
         pos="absolute"
@@ -146,6 +157,7 @@ export default function Hero() {
         src={colorMode === "dark" ? "/assets/spectra2.svg" : "/assets/spectra2-light.svg"}
         alt="spectra-protocol-logo"
       />
+      </motion.div>
     </Flex>
   )
 }
