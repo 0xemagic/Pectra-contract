@@ -25,7 +25,7 @@ export default function Tickers({ symbols, handleChange }: TickerProps) {
       borderRadius="12px"
       w={{base: "300px", xl: "325px", "2xl": "380px"}}
       minH="50%"
-      maxH="600px"  
+      maxH="400px"  
       >
       <TableContainer
         fontFamily="body"
@@ -48,12 +48,12 @@ export default function Tickers({ symbols, handleChange }: TickerProps) {
                   Last (1D)
                 </Text>
               </Td>
-              <Td>
+              {/* <Td>
                 {" "}
                 <Text fontSize="0.75rem" variant="paragraph">
                   Change (1D)
                 </Text>
-              </Td>
+              </Td> */}
             </Tr>
           </Thead>
           <Tbody>
@@ -72,9 +72,9 @@ export default function Tickers({ symbols, handleChange }: TickerProps) {
                 >
                   <Td fontSize="0.75rem">{symbol1.label}</Td>
                   <Td fontSize="0.75rem">{symbol1.price}</Td>
-                  <Td className="change" color={color} fontSize="0.75rem">
+                  {/* <Td className="change" color={color} fontSize="0.75rem">
                     10%
-                  </Td>
+                  </Td> */}
                 </Tr>
               );
             })}
