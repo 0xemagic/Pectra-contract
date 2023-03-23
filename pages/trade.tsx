@@ -186,10 +186,10 @@ const Trade = () => {
                 border="1px solid rgba(255, 255, 255, 0.2)"
               >
                 <Flex h="full" w="100%" gap={2}>
-                  <Box h="100%" w="70%">
+                  <Box h="100%" w="62.5%">
                     <Charts symb={symbol?.symbol} />
                   </Box>
-                  <Box h="100%" w="30%">
+                  <Box h="100%" w="37.5%">
                     <Tickers symbols={symbols} handleChange={handleSymbolChange} />
                   </Box>
                 </Flex>
