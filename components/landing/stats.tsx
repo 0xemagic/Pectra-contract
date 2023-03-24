@@ -1,19 +1,17 @@
 import { Grid, GridItem, Heading, Image, Text, VStack, useColorMode, Flex } from "@chakra-ui/react";
-import { motion, useAnimation } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-import { useEffect } from "react";
+import { motion, useAnimation, useInView } from "framer-motion";
+import { useEffect, useRef } from "react";
 const Stats = () => {
   const { colorMode } = useColorMode();
   const controls = useAnimation();
-  const { ref, inView } = useInView({
-    triggerOnce: true,
-  });
+  const ref = useRef(null)
+  const isInView = useInView(ref)
 
   useEffect(() => {
-    if (inView) {
+    if (isInView) {
       controls.start("visible");
     }
-  }, [controls, inView]);
+  }, [controls, isInView]);
   const data = [
     {
       label: "TOTAL TRADING VOLUME",

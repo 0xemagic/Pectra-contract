@@ -7,7 +7,6 @@ export default function Hero() {
   const router = useRouter();
   return (
     <Flex direction="column" minH="80vh">
-
       <Flex direction="column" mt={{ base: "4rem", lg: "2rem" }} w="full" justify={{ base: "center", lg: "start" }}>
         {" "}
         <motion.div
@@ -47,16 +46,16 @@ export default function Hero() {
           </Heading>
         </motion.div>
         <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={{
-        hidden: { opacity: 0 },
-        visible: {
-          opacity: 1,
-          transition: { duration: 1, delay: 1 },
-        },
-      }}
-    >
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { duration: 1, delay: 1 },
+            },
+          }}
+        >
           <Text
             variant="paragraph"
             textAlign={{ base: "center", lg: "start" }} mt={{ base: "2.5rem", md: "2rem" }}
@@ -127,36 +126,36 @@ export default function Hero() {
         ><Button variant="secondary">JOIN DISCORD</Button></Link>
       </Flex>
       <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: {
-              opacity: 1,
-              transition: { duration: 2, delay: 0.5 },
-            },
-          }}
-        >
-      <Image
-        display={{ base: "none", lg: "block" }}
-        pos="absolute"
-        right={{ lg: "-7rem", xl: "-2rem", "2xl": "0rem" }}
-        top={{ base: "15%", md: "5%", lg: "5%", xl: "-2%", "2xl": "-1.5%" }}
-        h={{ base: "0px", md: "500px", lg: "400px", xl: "650px", "2xl": "600px" }}
-        minW={{ base: "0px", md: "300px", xl: "400px", "2xl": "500px" }}
-        src={colorMode === "dark" ? "/assets/spectra1.svg" : "/assets/spectra1-light.svg"}
-        alt="spectra-protocol-logo"
-      />
-      <Image
-        display={{ base: "none", lg: "block" }}
-        pos="absolute"
-        right={{ lg: "-9rem", "2xl": "-4rem" }}
-        top={{ lg: "4%", xl: "3%", "2xl": "1%" }}
-        h={{ base: "0px", md: "350px", lg: "450px", xl: "550px", "2xl": "600px" }}
-        minW={{ base: "0px", md: "400px", xl: "800px" }}
-        src={colorMode === "dark" ? "/assets/spectra2.svg" : "/assets/spectra2-light.svg"}
-        alt="spectra-protocol-logo"
-      />
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: { duration: 2, delay: 0.5 },
+          },
+        }}
+      >
+        <Image
+          display={{ base: "none", lg: "block" }}
+          pos="absolute"
+          right={{ lg: "-7rem", xl: "-2rem", "2xl": "0rem" }}
+          top={{ base: "15%", md: "5%", lg: "5%", xl: "-2%", "2xl": "-1.5%" }}
+          h={{ base: "0px", md: "500px", lg: "400px", xl: "650px", "2xl": "600px" }}
+          minW={{ base: "0px", md: "300px", xl: "400px", "2xl": "500px" }}
+          src={colorMode === "dark" ? "/assets/spectra1.svg" : "/assets/spectra1-light.svg"}
+          alt="spectra-protocol-logo"
+        />
+        <Image
+          display={{ base: "none", lg: "block" }}
+          pos="absolute"
+          right={{ lg: "-9rem", "2xl": "-4rem" }}
+          top={{ lg: "4%", xl: "3%", "2xl": "1%" }}
+          h={{ base: "0px", md: "350px", lg: "450px", xl: "550px", "2xl": "600px" }}
+          minW={{ base: "0px", md: "400px", xl: "800px" }}
+          src={colorMode === "dark" ? "/assets/spectra2.svg" : "/assets/spectra2-light.svg"}
+          alt="spectra-protocol-logo"
+        />
       </motion.div>
     </Flex>
   )

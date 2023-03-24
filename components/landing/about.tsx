@@ -1,5 +1,5 @@
 import {
-  Box,
+  VStack,
   Flex,
   Grid,
   GridItem,
@@ -9,23 +9,21 @@ import {
   useColorMode,
 } from "@chakra-ui/react";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
-import { motion, useAnimation } from "framer-motion";
-import { useInView } from "react-intersection-observer";
+import { motion, useAnimation, useInView } from "framer-motion";
 
 const About = () => {
   const { colorMode } = useColorMode();
   const controls = useAnimation();
-  const { ref, inView } = useInView({
-    triggerOnce: true,
-  });
+  const ref = useRef(null)
+  const isInView = useInView(ref)
 
   useEffect(() => {
-    if (inView) {
+    if (isInView) {
       controls.start("visible");
     }
-  }, [controls, inView]);
+  }, [controls, isInView]);
 
   const data = [
     "Go long, short, or remain market neutral through convenient spread trading.",
@@ -33,54 +31,55 @@ const About = () => {
     "Fully composable and self-custodial, building at the intersection of DeFi and NFTs.",
   ];
   return (
-    <Box pt="10rem">
-       <motion.div
-             ref={ref}
-             initial="hidden"
-             animate={controls}
-             variants={{
-               hidden: { opacity: 0, x: -100 },
-               visible: {
-                 opacity: 1,
-                 x: 0,
-                 transition: { duration: 1 },
-               },
-             }}
-           >
-      <Heading fontSize={{ base: "2.1875rem", md: "3.125rem" }} variant="hero">
-        Leveraged Pairs Trading
-      </Heading>
-      <Text
-        w={{ base: "100%", md: "47.6875rem" }}
-        fontFamily="body"
-        fontWeight={500}
-        fontSize="1.375rem"
-        mt="1.8rem"
-        mb="4.125rem"
+    <VStack pt="10rem"
+    >
+      <motion.div
+        ref={ref}
+        initial="hidden"
+        animate={controls}
+        variants={{
+          hidden: { opacity: 0, x: -100 },
+          visible: {
+            opacity: 1,
+            x: 0,
+            transition: { duration: 1, delay: -1 },
+          },
+        }}
       >
-        Trade assets like BTC and ETH against one another in a single trade.
-      </Text>
+        <Heading fontSize={{ base: "2.1875rem", md: "3.125rem" }} variant="hero">
+          Leveraged Pairs Trading
+        </Heading>
+        <Text
+          w={{ base: "100%", md: "47.6875rem" }}
+          fontFamily="body"
+          fontWeight={500}
+          fontSize="1.375rem"
+          mt="1.8rem"
+          mb="4.125rem"
+        >
+          Trade assets like BTC and ETH against one another in a single trade.
+        </Text>
       </motion.div>
       <Grid
         w="full"
         gap="1.75rem"
         templateColumns={{ base: "repeat(1, 1fr)", lg: "repeat(3, 1fr)" }}
       >
-          {data.map((item, index) => (
-             <motion.div
-             ref={ref}
-             initial="hidden"
-             animate={controls}
-             variants={{
-               hidden: { opacity: 0, x: 100 },
-               visible: {
-                 opacity: 1,
-                 x: 0,
-                 transition: { duration: 1 },
-               },
-             }}
-             key={index}
-           >
+        {data.map((item, index) => (
+          <motion.div
+            ref={ref}
+            initial="hidden"
+            animate={controls}
+            variants={{
+              hidden: { opacity: 0, x: 100 },
+              visible: {
+                opacity: 1,
+                x: 0,
+                transition: { duration: 1, delay: 0.5 },
+              },
+            }}
+            key={index}
+          >
             <GridItem
               py="1.3125rem"
               px="1.875rem"
@@ -105,10 +104,10 @@ const About = () => {
                 </Flex>
               </Flex>
             </GridItem>
-            </motion.div>
-          ))}
+          </motion.div>
+        ))}
       </Grid>
-    </Box>
+    </VStack>
   );
 };
 
