@@ -250,16 +250,12 @@ export default function Layout({ chains, children }: LayoutProps) {
                 {process.env.NODE_ENV === "development" ? (
                   <Button
                   variant="primary"
-                  w={{ base: "100px", md: "155px" }}
-                  fontSize={{ base: "0.75rem", md: "1.25rem" }}
                   onClick={() => router.push("/trade")}
                 >
                   ENTER
                 </Button>) : (
                    <Button
                    variant="primary"
-                   w={{ base: "100px", md: "155px" }}
-                   fontSize={{ base: "0.75rem", md: "1.25rem" }}
                   //  onClick={() => router.push("/trade")}
                  >
                    COMING SOON

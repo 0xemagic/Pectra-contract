@@ -1,4 +1,4 @@
-import { Grid, GridItem, Heading, Image, Text, VStack, useColorMode } from "@chakra-ui/react";
+import { Grid, GridItem, Heading, Image, Text, VStack, useColorMode, Flex } from "@chakra-ui/react";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
@@ -80,7 +80,7 @@ const Stats = () => {
       >
         <Grid
           w="full"
-          minW="100%"
+          minW="90vw"
           gap="0.75rem"
           templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(3, 1fr)" }}
         >
