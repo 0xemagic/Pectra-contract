@@ -5,6 +5,7 @@ import Links from "./links";
 import About from "./about";
 import Stats from "./stats";
 import Hero from "./hero";
+import TeamPectra from "./team";
 
 const LandingPage = () => {
   return (
@@ -12,6 +13,7 @@ const LandingPage = () => {
       <Hero/>
       <About />
         <Stats />
+        <TeamPectra />
         <Links />
     </Stack>
   );

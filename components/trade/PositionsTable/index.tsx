@@ -10,10 +10,15 @@ import {
   Button,
   Thead,
   Tr,
+  useDisclosure
 } from "@chakra-ui/react";
 import CircleIcon from "../../UI/CircleIcon";
 
-const OpenPositions = () => {
+import ClosePositionModal from "../../modals/closePositionModal";
+
+const OpenPositions = ({tabIndex, tokens}: any) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const marketPositions = [
     {
       collateral: "700",
@@ -23,6 +28,8 @@ const OpenPositions = () => {
       leverage: "2x",
       entry: "1,300",
       liquidation: "800",
+      pnl: "+100",
+      netvalue: "500",
     },
     {
       collateral: "200",
@@ -32,6 +39,8 @@ const OpenPositions = () => {
       leverage: "2x",
       entry: "1,600",
       liquidation: "1,800",
+      pnl: "+200",
+      netvalue: "500",
     },
     {
       collateral: "1,500",
@@ -41,9 +50,10 @@ const OpenPositions = () => {
       leverage: "2x",
       entry: "1,200",
       liquidation: "1,700",
+      pnl: "+100",
+      netvalue: "500"
     },
   ];
-
   return (
     <Flex
       bg="#202020"
@@ -61,7 +71,7 @@ const OpenPositions = () => {
         fontSize="0.875rem"
         w="100%"
       >
-        <Table variant="simple">
+        <Table variant="simple" size={tabIndex === 0 ? "sm" : "md"} w="100%">
           <Thead fontSize="1.1rem" fontFamily="body">
             <Tr>
               <Td>
@@ -99,8 +109,27 @@ const OpenPositions = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {marketPositions.map((position, key) => (
+            {marketPositions.map((position, key) => {
+              const longPrice = tokens?.find((name: string) => name === position.long)             
+              return (
               <Tr key={key} my={2} bg="#252525" borderRadius="7px">
+                <ClosePositionModal
+                  isOpen={isOpen}
+                  onClose={onClose}
+                  onOpen={onOpen}
+                  size={position.size}
+                  liquidation={position.liquidation}
+                  netvalue={position.netvalue}
+                  pnl={position.pnl}
+                  leverage={position.leverage}
+                  collateral={position.collateral}
+                  long={position.long}
+                  short={position.short}
+                  entry={position.entry}
+                  shortPrice={tokens?.find((name: string) => name === position.short)}
+                  longPrice={tokens?.find((name: string) => name === position.long)}                  
+                />
+
                 <Td>{position.collateral} USDC</Td>
                 <Td>
                   <Flex>
@@ -130,13 +159,14 @@ const OpenPositions = () => {
                 <Td>{position.leverage}</Td>
                 <Td>{position.entry}</Td>
                 <Td>{position.liquidation}</Td>
-                <Td></Td>
-                <Td></Td>
+                <Td color={position.pnl.includes("-") ? "#FF7272" : "brand"}>{position.pnl}</Td>
+                <Td>{position.netvalue}</Td>
                 <Td>
                   <Flex align="center" gap="0.5rem">
                     <Button variant="tertiary" width="5rem" height="1.5rem" fontSize="1rem"
                            borderColor="#B8B8B8"
                            borderWidth="1px"
+                           onClick={() => onOpen()}
                     >
                       Close
                     </Button>
@@ -144,10 +174,12 @@ const OpenPositions = () => {
                   </Flex>
                 </Td>
               </Tr>
-            ))}
+            )})}
           </Tbody>
         </Table>
       </TableContainer>
+
+
     </Flex>
   );
 };

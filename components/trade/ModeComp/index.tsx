@@ -3,22 +3,31 @@ import {
   TabList,
   TabPanel,
   TabPanels,
-  Tabs
+  Tabs,
+  Flex,
+  Box
 } from "@chakra-ui/react";
 import OpenComp from "../OpenComp";
 import OpenPositions from "../PositionsTable";
 
+type SymbolProps = {
+  label: string;
+  symbol: string;
+};
+
 type ModeCompProps = {
   handleTabsChange: (index: number) => void;
   tabIndex: number;
+  handleSymbolChange: (selectedValue: string) => void;
+  symbols: any;
+  tokens: any;
+  symbol: SymbolProps;
 }
 
-const ModeComp = ({handleTabsChange, tabIndex}: ModeCompProps) => {
-
-
+const ModeComp = ({handleTabsChange, tabIndex, handleSymbolChange, symbols, tokens, symbol}: ModeCompProps) => {
   return (
-    <>
-      <Tabs borderRadius="2xl" isFitted variant="unstyled" index={tabIndex} onChange={handleTabsChange} >
+    <Flex >
+      <Tabs w="fit-content" borderRadius="2xl" isFitted variant="unstyled" index={tabIndex} onChange={handleTabsChange}>
         <TabList borderRadius="7px" bg="#303030" w={tabIndex === 0 ? "100%" : "400px" }>
           <Tab
             _selected={{
@@ -47,20 +56,23 @@ const ModeComp = ({handleTabsChange, tabIndex}: ModeCompProps) => {
             border="1px solid rgba(255, 255, 255, 0.2)"
             borderLeft="none"
             borderRightRadius="7px"
+            w="100%"
           >
             POSITIONS
           </Tab>
         </TabList>
-        <TabPanels>
+        <TabPanels >
           <TabPanel>
-            <OpenComp />
+            <OpenComp handleSymbolChange={handleSymbolChange} symbols={symbols} tokens={tokens} symbol={symbol} />
           </TabPanel>
-          <TabPanel>
-            <OpenPositions />
+          <TabPanel >
+            <Box w="100%">
+            <OpenPositions tabIndex={tabIndex} tokens={tokens} />
+            </Box>
           </TabPanel>
         </TabPanels>
       </Tabs>
-    </>
+    </Flex>
   );
 };
 

@@ -21,22 +21,18 @@ import {
 } from "@chakra-ui/react";
 
 import { useWriteOpenPosition } from "@/components/hooks/useContract";
-import {
-  btcPriceQuery,
-  client2,
-  ethPriceQuery,
-  linkPriceQuery,
-  maticPriceQuery,
-  truncate,
-  uniPriceQuery,
-} from "@/components/utils";
+
 import { commify } from "ethers/lib/utils";
 import OpenPositionModal from "@/components/modals/openPositionModal";
 import ErrorModal from "@/components/modals/errorModal";
 
 import { useBalance, useAccount } from "wagmi";
 
-const OpenComp = () => {
+import {
+  truncate,
+} from "@/components/utils";
+
+const OpenComp = ({ handleSymbolChange, symbols, tokens, symbol }: any) => {
   const labelStyles = {
     mt: "3",
     ml: "-1.5",
@@ -48,11 +44,6 @@ const OpenComp = () => {
   const [amount, setAmount] = useState<string>("0");
   const [longToken, setLongToken] = useState("ETH");
   const [shortToken, setShortToken] = useState("BTC");
-  const [ethPrice, setEthPrice] = useState(0);
-  const [btcPrice, setBtcPrice] = useState(0);
-  const [linkPrice, setLinkPrice] = useState(0);
-  const [uniPrice, setUniPrice] = useState(0);
-  const [maticPrice, setMaticPrice] = useState(0);
 
   const [error, setError] = useState(false);
   const [noAmount, setNoAmount] = useState(false);
@@ -70,8 +61,10 @@ const OpenComp = () => {
     "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
   ];
 
-  // smart contract / wagmi STUFF
+  //smart contract interaction
   const { data, isLoading, isSuccess, write } = useWriteOpenPosition(args);
+
+  // wagmi user data fetching
   const { address, isConnecting, isDisconnected } = useAccount();
   const {
     data: tokenBalance,
@@ -89,61 +82,48 @@ const OpenComp = () => {
     onClose: onErrorClose,
   } = useDisclosure();
 
-   //current tokens available with price variables for each
-  const tokens = [
-    { name: "ETH", price: ethPrice },
-    { name: "BTC", price: btcPrice },
-    // { name: "MATIC", price: maticPrice },
-    // { name: "LINK", price: linkPrice },
-    // { name: "UNI", price: uniPrice },
-  ];
-
-  // functions that fetchETHPrice and fetchBTCPrice are used to get the price of each token asynchronously
-  // should change to fetch price every few seconds instead? put into timer maybe?
-  async function fetchETHPrice() {
-    const data = await client2.query(ethPriceQuery, {}).toPromise();
-    setEthPrice(data.data.bundle.ethPriceUSD);
+  // function that changes the symbols for the charts
+  function getSymbol(shortToken: any, longToken: any) {
+    const shortTokenInfo = tokens.find((token: any) => token.name === shortToken);
+    const longTokenInfo = tokens.find((token: any) => token.name === longToken);
+    if (shortTokenInfo && longTokenInfo) {
+      const selectedLabel = `${longTokenInfo.name}/${shortTokenInfo.name}`;
+      const symb = symbols.find(
+        (sym: any) =>
+          sym.label === selectedLabel
+      );
+      if (symb) {
+        handleSymbolChange(symb.label);
+      }
+    }
+    return null;
   }
-
-  async function fetchBTCPrice() {
-    const data = await client2.query(btcPriceQuery, {}).toPromise();
-    setBtcPrice(data.data.pool.token1Price * data.data.bundle.ethPriceUSD);
-  }
-
-  // async function fetchLinkPrice() {
-  //   const data = await client2.query(linkPriceQuery, {}).toPromise();
-  //   setLinkPrice(data.data.pool.token1Price * data.data.bundle.ethPriceUSD);
-  // }
-
-  // async function fetchUniPrice() {
-  //   const data = await client2.query(uniPriceQuery, {}).toPromise();
-  //   setUniPrice(data.data.pool.token1Price * data.data.bundle.ethPriceUSD);
-  // }
-
-  // async function fetchMaticrice() {
-  //   const data = await client2.query(maticPriceQuery, {}).toPromise();
-  //   setMaticPrice(data.data.pool.token1Price * data.data.bundle.ethPriceUSD);
-  // }
-
-  const shortPrice = tokens.find(({ name }) => name === shortToken);
-  const longPrice = tokens.find(({ name }) => name === longToken);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      fetchETHPrice();
-      fetchBTCPrice();
-      // fetchLinkPrice();
-      // fetchUniPrice();
-      // fetchMaticrice();
-    }, 2000);
+    getSymbol(shortToken, longToken);
+  }, [shortToken, longToken]);
 
-    return () => {
-      console.log('Component unmounted');
-      clearInterval(intervalId);
-    };
-  }, []);
+  const getTokensFromSymbol = (symb: any) => {
+    const tokens = symb !== undefined ? symb.label.split('/').filter((t: any) => t !== '') : ["ETH", "BTC"];
+    return { longToken1: tokens[0], shortToken1: tokens[1] };
+  };
 
-    useEffect(() => {
+  useEffect(() => {
+    const { longToken1, shortToken1 } = getTokensFromSymbol(symbol);
+    if (shortToken1 !== shortToken) {
+      setShortToken(shortToken1);
+    }
+
+    if (longToken !== longToken1) {
+      setLongToken(longToken1);
+    }
+  }, [symbol]);
+
+
+  const shortPrice = tokens.find(({ name }: any) => name === shortToken);
+  const longPrice = tokens.find(({ name }: any) => name === longToken);
+
+  useEffect(() => {
     if (sameToken) {
       setError(true);
       onErrorOpen();
@@ -207,20 +187,20 @@ const OpenComp = () => {
                 isInvalid={sameToken}
                 mb="0.25rem"
               >
-                {tokens.map((token, index) => {
-                  return <option key={index}>{token.name}</option>;
+                {tokens.map((token: any, index: number) => {
+                  return <option key={index} selected={token.name === longToken}>{token.name}</option>;
                 })}
               </Select>
 
               <Flex ml="auto" justify="end" mr={0} fontSize="0.875rem">
-          <Text mr={2} fontWeight={300}>
-              current price:
-            </Text>
-            <Text fontWeight={600}>
-              ${truncate(commify(longPrice!.price.toString()), 2)}
-            </Text>
-          </Flex>
-          </Flex>
+                <Text mr={2} fontWeight={300}>
+                  current price:
+                </Text>
+                <Text fontWeight={600}>
+                  ${truncate(commify(longPrice!.price.toString()), 2)}
+                </Text>
+              </Flex>
+            </Flex>
           </Flex>
         </Box>
         <Box
@@ -238,7 +218,12 @@ const OpenComp = () => {
             alignItems="center"
             w="full"
           >
-            <Text fontWeight={600} fontFamily="heading" fontSize="0.9rem" justifySelf="center">
+            <Text
+              fontWeight={600}
+              fontFamily="heading"
+              fontSize="0.9rem"
+              justifySelf="center"
+            >
               Short
             </Text>
             <Flex flexDir="column">
@@ -255,20 +240,20 @@ const OpenComp = () => {
                 isInvalid={sameToken}
                 mb="0.25rem"
               >
-                {tokens.map((token, index) => {
-                  return <option key={index}>{token.name}</option>;
+                {tokens.map((token: any, index: number) => {
+                  return <option key={index} selected={token.name === shortToken}>{token.name}</option>;
                 })}
               </Select>
-          <Flex ml="auto" justify="end" mr={0} fontSize="0.875rem">
-            <Text mr={2} fontWeight={300}>
-              current price:
-            </Text>
-            <Text fontWeight={600}>
-              ${truncate(commify(shortPrice!.price.toString()), 2)}
-            </Text>
+              <Flex ml="auto" justify="end" mr={0} fontSize="0.875rem">
+                <Text mr={2} fontWeight={300}>
+                  current price:
+                </Text>
+                <Text fontWeight={600}>
+                  ${truncate(commify(shortPrice!.price.toString()), 2)}
+                </Text>
+              </Flex>
             </Flex>
           </Flex>
-        </Flex>
         </Box>
         <Box>
           <Flex
@@ -444,11 +429,12 @@ const OpenComp = () => {
           </Flex>
         </VStack>
         <Button
-          // disabled={!write}
+          disabled={amount === "0" || error}
           onClick={amount !== "0" ? () => onOpen() : () => setNoAmount(true)}
           variant="tertiary"
+
         >
-          Open Position
+          {amount === "0" ? "Enter an amount" : "Open Position"}
         </Button>
       </VStack>
 

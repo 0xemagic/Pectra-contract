@@ -1,8 +1,8 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, memo } from "react";
 
 let tvScriptLoadingPromise: any;
 
-export default function Charts(symb: any) {
+function Charts(symb: any) {
   const onLoadScriptRef: any = useRef();
 
   // @ts-expect-error
@@ -35,7 +35,7 @@ export default function Charts(symb: any) {
         new (window.TradingView as any).widget({
           container_id: "basic-area-chart-demo",
           "autosize": true,
-          "symbol": symb.symb !== undefined ? symb.symb : "BINANCE:ETHBTC",
+          "symbol": symb.symb !== undefined ? symb.symb : "VANTAGE:BTCETH",
           "interval": "D",
           "timezone": "Etc/UTC",
           "theme": "dark",
@@ -57,3 +57,7 @@ export default function Charts(symb: any) {
       <div id="basic-area-chart-demo" style={{height: "100%", width: "100%"}} />
   );
 }
+
+const MemoizedCharts = memo(Charts);
+
+export default MemoizedCharts;
