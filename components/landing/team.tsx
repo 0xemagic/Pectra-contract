@@ -7,14 +7,14 @@ const PectraTeam = () => {
     const { colorMode } = useColorMode();
     const teamMembers = [
         {
-            imageSrc: '/path/to/huf_image.jpg',
+            imageSrc: '/assets/team/huf.svg',
             name: 'Huf',
             role: 'Co-Founder',
             links: [{
                 url: 'https://twitter.com/hufhaus9', icon: <RiTwitterFill
                     color={colorMode === "dark" ? "#FFFFFF" : "#222222"} size="32px" />}],        },
         {
-            imageSrc: '/path/to/math_image.jpg',
+            imageSrc: '/assets/team/math.svg',
             name: 'Math',
             role: 'Co-Founder / CTO',
             links: [{
@@ -26,7 +26,7 @@ const PectraTeam = () => {
             size="32px"/>}],
         },
         {
-            imageSrc: '/path/to/nev_image.jpg',
+            imageSrc: '/assets/team/nev.svg',
             name: 'Nev',
             role: 'Head of Partnerships',
             links: [{
@@ -34,7 +34,7 @@ const PectraTeam = () => {
                     color={colorMode === "dark" ? "#FFFFFF" : "#222222"} size="32px" />}],
         },
         {
-            imageSrc: '/path/to/bob_image.jpg',
+            imageSrc: '/assets/team/bob.svg',
             name: 'Bob',
             role: 'COO',
             links: [{
@@ -64,6 +64,7 @@ const PectraTeam = () => {
                         key={index}
                         direction="column"
                         alignItems="center"
+                        mb={10}
                     >
                         <Circle
                             size="120px"
