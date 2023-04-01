@@ -113,6 +113,7 @@ export default function Layout({ chains, children }: LayoutProps) {
   ];
 
   const isIndex = router.pathname === "/";
+  const isSales = router.pathname === "/sales";
 
   return (
     <RainbowKitProvider
@@ -144,6 +145,7 @@ export default function Layout({ chains, children }: LayoutProps) {
         pb="4rem"
       >
         <Flex
+                display={isSales === true ? "none" : "flex"}
           position="absolute"
           top={0}
           justifyContent="space-between"
