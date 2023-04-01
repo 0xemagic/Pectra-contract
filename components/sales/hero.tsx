@@ -9,7 +9,6 @@ export default function Hero() {
     return (
         <Flex direction="column" minH="80vh" px={{ base: "2rem", md: "4rem" }} align="center">
             <Flex direction="column" w="full" align="center">
-
                 <motion.div
                     initial="hidden"
                     animate="visible"
@@ -21,12 +20,12 @@ export default function Hero() {
                         },
                     }}
                 >
-                                    <Image
-                    src="./assets/spectra-logo-dark.svg"
-                    w="300px"
-                    h="250px"
-                    m="auto"
-                />
+                    <Image
+                        src="./assets/spectra-logo-dark.svg"
+                        w="300px"
+                        h="250px"
+                        m="auto"
+                    />
                     <Flex alignItems="center" wrap="nowrap">
                         <Heading
                             color="#43931E"
@@ -52,6 +51,7 @@ export default function Hero() {
                 <motion.div
                     initial="hidden"
                     animate="visible"
+                    style={{ marginTop: '-1rem' }}
                     variants={{
                         hidden: { opacity: 0 },
                         visible: {
@@ -82,8 +82,19 @@ export default function Hero() {
                 }}
             >
                 <TotalInvestedBar />
+                <Text
+                    variant="paragraph"
+                    textAlign="center"
+                    mt="-1.5rem"
+                    fontWeight="500"
+                >
+                    Token start price will be $0.025 - capped at 100M total public sales + OG holders      </Text>
             </motion.div>
-            <Flex direction={{ base: "column", md: "row" }} justify={{ base: "center", lg: "start" }} align={{ base: "center", md: "start" }} mt={{ base: "1.5rem", md: "3rem" }}>
+            <Flex alignItems="center" wrap="nowrap">
+            <Heading mt="1rem" variant="heading">PUBLIC SALE ENDS IN:</Heading>
+            <Heading mt="1rem" variant="heading" ml="1rem" color="#81FF7E">00D / 00H  / 00M</Heading>
+            </Flex>
+            <Flex direction={{ base: "column", md: "row" }} justify={{ base: "center", lg: "start" }} align={{ base: "center", md: "start" }} mt="2rem">
                 {process.env.NODE_ENV === "development" ? (
                     <Button
                         variant="primary"

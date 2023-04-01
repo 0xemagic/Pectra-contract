@@ -165,23 +165,6 @@ export function Layout({ children }: LayoutProps) {
                         <Button mr="1rem" variant="ghost" onClick={toggleColorMode}>
                             {colorMode === "dark" ? <HiSun /> : <HiMoon />}
                         </Button>
-                        {router.pathname === "/" ? (
-                            <>
-                                {process.env.NODE_ENV === "development" ? (
-                                    <Button
-                                        variant="primary"
-                                        onClick={() => router.push("/trade")}
-                                    >
-                                        ENTER
-                                    </Button>) : (
-                                    <Button
-                                        variant="primary"
-                                    //  onClick={() => router.push("/trade")}
-                                    >
-                                        COMING SOON
-                                    </Button>)}
-                            </>
-                        ) : (
                             <ConnectButton
                                 chainStatus={"none"}
                                 showBalance={{
@@ -193,7 +176,8 @@ export function Layout({ children }: LayoutProps) {
                                     largeScreen: "full",
                                 }}
                             />
-                        )}
+                            <Button mr="0.5rem" variant="secondary">LEARN MORE</Button>
+                            <Button  variant="secondary">SALES DECK</Button>
                     </Flex>
                 </Flex>
             </Flex>

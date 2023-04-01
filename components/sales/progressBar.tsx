@@ -60,17 +60,17 @@ export default function TotalInvestedBar() {
                         onMouseLeave={() => setPrivateLabel(false)}
                         onClick={() => setPrivateLabel(true)}
                     >
-                        <Text textAlign="center" fontWeight="bold" size="xs">{`${(
+                        <Text color="#222222" textAlign="center" fontWeight="bold" size="xs">{`${(
                             (privateAmount / 2500000) *
                             100
                         ).toFixed(1)}%`}</Text>
-                        <Text size="xs">{`$${millify(privateAmount)}`}</Text>
+                        <Text color="#222222" size="xs">{`$${millify(privateAmount)}`}</Text>
                     </Flex>
                 </Tooltip>
             </Flex>
             <Flex
                 bg={legend[2].color}
-                // w={`${(publicAmount / 1000000) * 100}%`}
+                w={`${(publicAmount / 1000000) * 100}%`}
                 h="3rem"
                 placeContent="center"
                 borderWidth={"1px"}
