@@ -1,12 +1,19 @@
-import { Flex, Heading, Text, Image, Button, Link, useColorMode } from "@chakra-ui/react";
+import { Flex, Heading, Text, Image, Button, Link, useColorMode, useDisclosure } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import TotalInvestedBar from "./progressBar";
+import { useState } from "react";
+
+import BuyTokenModal from "../modals/buyTokenModal";
 
 export default function Hero() {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
     const { colorMode } = useColorMode();
     const router = useRouter();
+
     return (
+        <>
         <Flex direction="column" minH="80vh" px={{ base: "2rem", md: "4rem" }} align="center">
             <Flex direction="column" w="full" align="center">
                 <motion.div
@@ -72,7 +79,7 @@ export default function Hero() {
             <motion.div
                 initial="hidden"
                 animate="visible"
-                style={{ width: '100%' }}
+                style={{ width: '100%', marginTop: "1.25rem" }}
                 variants={{
                     hidden: { opacity: 0 },
                     visible: {
@@ -82,13 +89,13 @@ export default function Hero() {
                 }}
             >
                 <TotalInvestedBar />
-                <Text
+                {/* <Text
                     variant="paragraph"
                     textAlign="center"
                     mt="-1.5rem"
                     fontWeight="500"
                 >
-                    Token start price will be $0.025 - capped at 100M total public sales + OG holders      </Text>
+                    Token start price will be $0.025 - capped at 100M total public sales + OG holders      </Text> */}
             </motion.div>
             <Flex alignItems="center" wrap="nowrap">
             <Heading mt="1rem" variant="heading">PUBLIC SALE ENDS IN:</Heading>
@@ -101,7 +108,8 @@ export default function Hero() {
                         boxShadow={colorMode === "dark" ? "0px -1px 22px #518128" : "none"}
                         mr={{ base: "none", md: "0.5rem" }}
                         mb={{ base: "1rem", md: "none" }}
-                        onClick={() => router.push("/trade")}>
+                        onClick={() => onOpen()}
+                        >
                         INVEST in $PECTRA
                     </Button>
                 ) : (
@@ -120,5 +128,7 @@ export default function Hero() {
                 ><Button variant="secondary">JOIN DISCORD</Button></Link>
             </Flex>
         </Flex>
+        {isOpen && <BuyTokenModal isOpen={isOpen} onClose={onClose} />}
+        </>
     )
 }

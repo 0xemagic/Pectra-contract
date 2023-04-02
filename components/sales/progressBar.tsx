@@ -14,6 +14,35 @@ import { truncate } from "../utils";
 import { useContractReads } from "wagmi";
 import { useState } from "react";
 
+type ProgressBarProps = {
+    percentage: number;
+    borderColor: string;
+    label: string;
+    translateX?: number;
+}
+
+const ProgressBarMark = ({ percentage, label, borderColor, translateX = 0 }: ProgressBarProps) => {
+    return (
+      <Box position="absolute" left={`${percentage}%`} top="0">
+        <Box
+          height="1rem"
+          width="4px"
+          bg={borderColor}
+          transform={`translateX(-50%) translateY(-1.25rem) translateX(${translateX}px)`}
+        />
+        <Text
+          variant="paragraph"
+          fontWeight="bold"
+          color={borderColor}
+          textAlign="center"
+          transform={`translateX(-50%) translateY(-3.75rem) translateX(${translateX}px)`}
+        >
+          {label}
+        </Text>
+      </Box>
+    );
+  };  
+
 export default function TotalInvestedBar() {
     const { colorMode } = useColorMode();
 
@@ -23,8 +52,9 @@ export default function TotalInvestedBar() {
 
     const legend = [
         { name: "Private", color: "#BBFF81" },
-        { name: "Available", color: "white" },
+        { name: "Unsold", color: "white" },
         { name: "Public", color: "#81FF7E" },
+        { name: "Current", color: "red"}
     ];
 
     const privateAmount = 1000000;
@@ -32,17 +62,47 @@ export default function TotalInvestedBar() {
     const publicAmount = 100000;
 
     return (
+        <Flex
+        direction="column"
+        >
         <Flex 
-            alignItems="center" 
+                alignSelf="center"
             direction="row" 
-            my="2rem" w="100%"
+            mt="2rem" w="90%"
             border="4px solid"
             borderColor="#43931E"
             borderRadius="xl"
+            position="relative" // Add this line
         >
+            <ProgressBarMark
+                percentage={((publicAmount + privateAmount) / 2500000) * 100}
+                label={`${millify(publicAmount + privateAmount)}`}
+                borderColor="red"
+                translateX={-2} // To align the mark with the end of the bar
+            />
+        <ProgressBarMark
+            percentage={25}
+            label="625K"
+            borderColor="#43931E"
+        />
+        <ProgressBarMark
+            percentage={50}
+            label="1.25M"
+            borderColor="#43931E"
+        />
+        <ProgressBarMark
+            percentage={75}
+            label="1.875M"
+            borderColor="#43931E"
+        />
+        <ProgressBarMark
+            percentage={100 * (1000000 / 2500000)} // Calculate the percentage for the 1MM mark
+            label="1M"
+            borderColor="#43931E"
+        />
             <Flex
                 bg={legend[0].color}
-                w={`${(privateAmount / 1000000) * 100}%`}
+                w={`${(privateAmount / 1000000) * 90}%`}
                 h="3rem"
                 placeContent="center"
                 justifyItems="center"
@@ -70,10 +130,11 @@ export default function TotalInvestedBar() {
             </Flex>
             <Flex
                 bg={legend[2].color}
-                w={`${(publicAmount / 1000000) * 100}%`}
+                w={`${(publicAmount / 1000000) * 90}%`}
                 h="3rem"
                 placeContent="center"
                 borderWidth={"1px"}
+                borderRightColor="red"
             >
                 <Tooltip
                     label={`Public Token Sales: ${commify(
@@ -131,31 +192,32 @@ export default function TotalInvestedBar() {
                     </Flex>
                 </Tooltip>
             </Flex>
-            {/* <Flex my="1rem" justifyContent="space-between">
-          {legend.map((item, i) => (
-            <Box mr="24px" textAlign="center" display="inline-block" key={i}>
-              <HStack spacing="8px">
-                <Box
-                  display="inline-block"
-                  borderRadius="4px"
-                  w="16px"
-                  h="16px"
-                  fontSize="25px"
-                  verticalAlign="middle"
-                  bgColor={item.color}
-                  border="1px solid black"
-                >
-                  {" "}
-                </Box>{" "}
-                <Text
-                  textAlign="center"
-                >
-                  {item.name}
-                </Text>
-              </HStack>
-            </Box>
-          ))}
-        </Flex> */}
+        </Flex>
+             <Flex mt="1rem" justifyContent="space-between" alignSelf="center" w={{base: "80%", lg: "50%"}}>
+             {legend.map((item, i) => (
+               <Box mr="24px" textAlign="center" display="inline-block" key={i}>
+                 <HStack spacing="8px">
+                   <Box
+                     display="inline-block"
+                     borderRadius="4px"
+                     w="16px"
+                     h="16px"
+                     fontSize="25px"
+                     verticalAlign="middle"
+                     bgColor={item.color}
+                     border="1px solid black"
+                   >
+                     {" "}
+                   </Box>{" "}
+                   <Text
+                     textAlign="center"
+                   >
+                     {item.name}
+                   </Text>
+                 </HStack>
+               </Box>
+             ))}
+           </Flex>
         </Flex>
     );
 };
