@@ -102,7 +102,6 @@ export default function Hero() {
             <Heading mt="1rem" variant="heading" ml="1rem" color="#81FF7E">00D / 00H  / 00M</Heading>
             </Flex>
             <Flex direction={{ base: "column", md: "row" }} justify={{ base: "center", lg: "start" }} align={{ base: "center", md: "start" }} mt="2rem">
-                {process.env.NODE_ENV === "development" ? (
                     <Button
                         variant="primary"
                         boxShadow={colorMode === "dark" ? "0px -1px 22px #518128" : "none"}
@@ -112,15 +111,6 @@ export default function Hero() {
                         >
                         INVEST in $PECTRA
                     </Button>
-                ) : (
-                    <Button
-                        variant="primary"
-                        boxShadow={colorMode === "dark" ? "0px -1px 22px #518128" : "none"}
-                        mr={{ base: "none", md: "0.5rem" }}
-                        mb={{ base: "1rem", md: "none" }}
-                    >
-                        COMING SOON
-                    </Button>)}
                 <Link
                     href="https://discord.gg/RKNRDVeFwG"
                     isExternal
