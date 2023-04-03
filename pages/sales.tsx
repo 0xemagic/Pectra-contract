@@ -10,16 +10,9 @@ import {
 } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import React from "react";
-import {
-    lightTheme,
-    darkTheme,
-    RainbowKitProvider,
-} from "@rainbow-me/rainbowkit";
 
 import {
-    RiInstagramFill,
     RiTwitterFill,
-    RiTelegramFill,
     RiGithubFill,
 } from "react-icons/ri";
 import { HiSun, HiMoon } from "react-icons/hi";
@@ -27,6 +20,7 @@ import { FaDiscord } from "react-icons/fa";
 import { SiMedium } from "react-icons/si";
 import { useRouter } from "next/router";
 import Hero from "../components/sales/hero";
+import { NextSeo } from "next-seo";
 
 interface LayoutProps {
     children: JSX.Element;
@@ -235,9 +229,27 @@ export function Layout({ children }: LayoutProps) {
 
 function Sales() {
     return (
+        <>
+        <NextSeo
+        title="Pectra Public Sales"
+        description="Public sales of $PECTRA token."
+        openGraph={{
+          title: "Pectra Protocol",
+          description: "Pair trading made easy.",
+          images: [
+            {
+              url: "https://www.spectra.garden/spectra-protocol.svg",
+              width: 800,
+              height: 600,
+              alt: "Pectra Protocol",
+            },
+          ],
+        }}
+      />
         <Layout>
             <Hero />
         </Layout>
+        </>
     )
 }
 
