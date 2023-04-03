@@ -15,7 +15,7 @@ import { AiOutlineInfoCircle } from 'react-icons/ai'
 
 type ProgressBarProps = {
     percentage: number;
-    borderColor: string;
+    borderColor?: string;
     label: string;
     translateX?: number;
 }
@@ -34,8 +34,8 @@ export default function TotalInvestedBar() {
 
     const legend = [
         { name: "Private", color: "#BBFF81" },
-        { name: "Unsold", color: "white" },
         { name: "Public", color: "#81FF7E" },
+        { name: "Unsold", color: "white" },
         { name: "Current", color: "red" }
     ];
 
@@ -43,7 +43,7 @@ export default function TotalInvestedBar() {
     const publicAmount = 100000;
     const available = 2500000 - (publicAmount + privateAmount);
 
-    const ProgressBarMark = ({ percentage, label, borderColor, translateX = 0 }: ProgressBarProps) => {
+    const ProgressBarMark = ({ percentage, label, borderColor="#43931E", translateX = 0 }: ProgressBarProps) => {
         return (
             <Box position="absolute" left={`${percentage}%`} top="0">
                 <Box
@@ -55,7 +55,7 @@ export default function TotalInvestedBar() {
                 {translateX !== 0 ?
                     (
                         <Tooltip
-                            label="1MM raised through private sale / start of public sales"
+                            label={`${millify(privateAmount)} raised through private sale + ${millify(publicAmount)} of public sales`}
                             isOpen={alreadySoldLabel}
                         >
                             <Flex
@@ -129,9 +129,8 @@ export default function TotalInvestedBar() {
                     border="4px solid"
                     borderColor="#43931E"
                     borderRadius="xl"
-                    position="relative" // Add this line
+                    position="relative"
                 >
-
                     <ProgressBarMark
                         percentage={((publicAmount + privateAmount) / 2500000) * 100}
                         label={`${millify(publicAmount + privateAmount)}`}
@@ -141,25 +140,19 @@ export default function TotalInvestedBar() {
                     <ProgressBarMark
                         percentage={25}
                         label="625K"
-                        borderColor="#43931E"
                     />
                     <ProgressBarMark
                         percentage={50}
                         label="1.25M"
-                        borderColor="#43931E"
                     />
                     <ProgressBarMark
                         percentage={75}
                         label="1.875M"
-                        borderColor="#43931E"
                     />
-
                     <ProgressBarMark
                         percentage={100 * (1000000 / 2500000)}
                         label="1M"
-                        borderColor="#43931E"
                     />
-
                     <Flex
                         bg={legend[0].color}
                         w={`${(privateAmount / 1000000) * 90}%`}
@@ -189,11 +182,10 @@ export default function TotalInvestedBar() {
                         </Tooltip>
                     </Flex>
                     <Flex
-                        bg={legend[2].color}
+                        bg={legend[1].color}
                         w={`${(publicAmount / 1000000) * 90}%`}
                         h="3rem"
                         placeContent="center"
-                        borderWidth={"1px"}
                     >
                         <Tooltip
                             label={`Public Token Sales: ${commify(
@@ -220,7 +212,7 @@ export default function TotalInvestedBar() {
                         maxH="3rem"
                         placeContent="center"
                         direction="column"
-                        bg={legend[1].color}
+                        bg={legend[2].color}
                         borderWidth={"1px"}
                         borderRightRadius={"lg"}
                     >
@@ -259,7 +251,6 @@ export default function TotalInvestedBar() {
                     <Flex
                         alignItems="center"
                         justifyContent="center"
-
                         mt="1.75rem"
                         ml="0.5rem"
                         color="#43931E"
@@ -267,7 +258,9 @@ export default function TotalInvestedBar() {
                         onMouseLeave={() => setEndLabel(false)}
                         onClick={() => setEndLabel(true)}
                     >
-                        <Text variant="paragraph" mr="0.15rem"
+                        <Text 
+                            variant="paragraph" 
+                            mr="0.15rem"
                             fontWeight="bold"
                             textAlign="center"
                             color="#43931E"
