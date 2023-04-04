@@ -4,31 +4,32 @@ pragma solidity ^0.8.13;
 import "../GMX/interfaces/IERC20.sol";
 import "../GMX/interfaces/IRouter.sol";
 import "../GMX/interfaces/IPositionRouter.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract GMXAdapter {
+contract GMXAdapter is AccessControl {
 
-    address public OWNER;
+    bytes32 public constant USER_ROLE = keccak256("USER");
+
     address public ROUTER;
     address public POSITION_ROUTER;
     
-    constructor(address _router, address _positionRouter) {
-        OWNER = msg.sender;
+    constructor(address _router, address _positionRouter, address _user) {
         ROUTER = _router;
         POSITION_ROUTER = _positionRouter;
+
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setRoleAdmin(USER_ROLE, DEFAULT_ADMIN_ROLE);
+        grantRole(USER_ROLE, msg.sender);
+        grantRole(USER_ROLE, _user);
     }
 
-    modifier onlyOwner() {
-        require(OWNER == msg.sender, "caller is not the owner");
-        _;
-    }
-    
     receive() external payable {}
 
-    function approve(address token, address spender, uint256 amount) external onlyOwner returns (bool) {
+    function approve(address token, address spender, uint256 amount) external onlyRole(USER_ROLE) returns (bool) {
         return IERC20(token).approve(spender, amount);
     }
 
-    function approvePlugin(address _plugin) external onlyOwner {
+    function approvePlugin(address _plugin) external onlyRole(USER_ROLE) {
         IRouter(ROUTER).approvePlugin(_plugin);
     }
 
@@ -43,7 +44,7 @@ contract GMXAdapter {
         uint256 _executionFee,
         bytes32 _referralCode,
         address _callbackTarget
-    ) external payable onlyOwner returns (bytes32) {
+    ) external payable onlyRole(USER_ROLE) returns (bytes32) {
         return IPositionRouter(POSITION_ROUTER).createIncreasePosition(_path, _indexToken, _amountIn, _minOut, _sizeDelta, _isLong, _acceptablePrice, _executionFee, _referralCode, _callbackTarget);
     }
 
@@ -57,7 +58,7 @@ contract GMXAdapter {
         uint256 _executionFee,
         bytes32 _referralCode,
         address _callbackTarget
-    ) external payable returns (bytes32) {
+    ) external payable onlyRole(USER_ROLE) returns (bytes32) {
         return IPositionRouter(POSITION_ROUTER).createIncreasePositionETH{value: msg.value}(_path, _indexToken, _minOut, _sizeDelta, _isLong, _acceptablePrice, _executionFee, _referralCode, _callbackTarget);
     }
     
@@ -73,43 +74,15 @@ contract GMXAdapter {
         uint256 _executionFee,
         bool _withdrawETH,
         address _callbackTarget
-    ) external payable returns (bytes32) {
+    ) external payable onlyRole(USER_ROLE) returns (bytes32) {
         return IPositionRouter(POSITION_ROUTER).createDecreasePosition(_path, _indexToken, _collateralDelta, _sizeDelta, _isLong, _receiver, _acceptablePrice, _minOut, _executionFee, _withdrawETH, _callbackTarget);
     }
     
-    function cancelIncreasePosition(bytes32 _key, address payable _executionFeeReceiver) external onlyOwner returns (bool) {
-        return IPositionRouter(POSITION_ROUTER).cancelIncreasePosition(_key, _executionFeeReceiver);
-    }
-
-    function cancelDecreasePosition(bytes32 _key, address payable _executionFeeReceiver) external returns (bool) {
-        return IPositionRouter(POSITION_ROUTER).cancelDecreasePosition(_key, _executionFeeReceiver);
-    }
-    
-    function executeDecreasePosition(bytes32 _key, address payable _executionFeeReceiver) external returns (bool) {
-        return IPositionRouter(POSITION_ROUTER).executeDecreasePosition(_key, _executionFeeReceiver);
-    }
-
-    function executeIncreasePosition(bytes32 _key, address payable _executionFeeReceiver) external onlyOwner returns (bool) {
-        return IPositionRouter(POSITION_ROUTER).executeIncreasePosition(_key, _executionFeeReceiver);
-    }
-
-    function swap(address[] memory _path, uint256 _amountIn, uint256 _minOut, address _receiver) external onlyOwner {
-        IRouter(ROUTER).swap(_path, _amountIn, _minOut, _receiver);
-    }
-    
-    function swapETHToTokens(address[] memory _path, uint256 _minOut, address _receiver) external payable onlyOwner {
-        IRouter(ROUTER).swapETHToTokens{value: msg.value}(_path, _minOut, _receiver);
-    }
-    
-    function swapTokensToETH(address[] memory _path, uint256 _amountIn, uint256 _minOut, address payable _receiver) external onlyOwner {
-        IRouter(ROUTER).swapTokensToETH(_path, _amountIn, _minOut, _receiver);
-    }
-
-    function withdrawToken(address token, address to, uint256 amount) external onlyOwner returns (bool) {
+    function withdrawToken(address token, address to, uint256 amount) external onlyRole(USER_ROLE) returns (bool) {
         return IERC20(token).transfer(to, amount);
     }
 
-    function withdrawEth(address to, uint256 amount) external onlyOwner returns (bool) {
+    function withdrawEth(address to, uint256 amount) external onlyRole(USER_ROLE) returns (bool) {
         (bool success,) = to.call{ value: amount}("");
         require(success, "Transfer failed!");
         return success;
