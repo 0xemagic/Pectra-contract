@@ -162,7 +162,7 @@ export default function TotalInvestedBar() {
                         borderLeftRadius={"lg"}
                     >
                         <Tooltip
-                            label={`Private Token Sales ${commify(
+                            label={`Private Token Sale ${commify(
                                 privateAmount
                             )} (${truncate(commify(privateAmount), 2)} USDC)`}
                             isOpen={privateLabel}
@@ -188,7 +188,7 @@ export default function TotalInvestedBar() {
                         placeContent="center"
                     >
                         <Tooltip
-                            label={`Public Token Sales: ${commify(
+                            label={`Public Token Sale: ${commify(
                                 publicAmount
                             )} (${truncate(commify(publicAmount), 2)} USDC)`}
                             isOpen={publicLabel}

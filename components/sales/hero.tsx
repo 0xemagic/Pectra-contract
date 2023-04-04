@@ -89,13 +89,6 @@ export default function Hero() {
                 }}
             >
                 <TotalInvestedBar />
-                {/* <Text
-                    variant="paragraph"
-                    textAlign="center"
-                    mt="-1.5rem"
-                    fontWeight="500"
-                >
-                    Token start price will be $0.025 - capped at 100M total public sales + OG holders      </Text> */}
             </motion.div>
             <Flex alignItems="center" wrap="nowrap">
             <Heading mt="1rem" variant="heading">PUBLIC SALE ENDS IN:</Heading>

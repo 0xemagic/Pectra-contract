@@ -231,8 +231,8 @@ function Sales() {
     return (
         <>
         <NextSeo
-        title="Pectra Public Sales"
-        description="Public sales of $PECTRA token."
+        title="Pectra Public Sale"
+        description="Public sale of $PECTRA token."
         openGraph={{
           title: "Pectra Protocol",
           description: "Pair trading made easy.",

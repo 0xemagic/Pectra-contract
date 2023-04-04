@@ -18,12 +18,14 @@ import {
     NumberInput,
     NumberInputField,
     NumberInputStepper,
+    Image
 } from '@chakra-ui/react'
 
 import { MdCheckCircle } from 'react-icons/md'
 import { useState } from 'react'
 import { truncate } from '../utils'
 import { useBalance, useAccount } from "wagmi";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export default function BuyTokenModal({ isOpen, onClose }: any) {
 
@@ -48,7 +50,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
             <ModalContent bgColor="#2B3226">
                 <ModalHeader>
                     <Flex direction="row" justify="center">
-                        <Heading fontSize="25px" variant="heading" color="#BBFF81" mr="0.25rem">$PECTRA</Heading><Heading fontSize="25px" variant="heading">{step === 1 ? "Token Public Sales Terms" : "Token Invest"}</Heading>
+                        <Heading fontSize="25px" variant="heading" color="#BBFF81" mr="0.25rem">$PECTRA</Heading><Heading fontSize="25px" variant="heading">{step === 1 ? "Token Public Sale Terms" : "Token Invest"}</Heading>
                     </Flex>
                 </ModalHeader>
                 <ModalCloseButton />
@@ -57,13 +59,16 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                         <List spacing={5}>
                             <ListItem>
                                 <ListIcon as={MdCheckCircle} color='#43931E' />
-                                Vesting term is 12 months - until then, your tokens will be locked in the contract (untradable)                        </ListItem>
+                                The public sale is priced at $0.025 per $PECTRA token
+                            </ListItem>
                             <ListItem>
                                 <ListIcon as={MdCheckCircle} color='#43931E' />
-                                Public sales initial price starts at $0.025 per $PECTRA token                        </ListItem>
+                                The token quantity is capped at 100M, equating to a raise of $2.5M
+                            </ListItem>
                             <ListItem>
                                 <ListIcon as={MdCheckCircle} color='#43931E' />
-                                Token quantity is capped at 100M - capped raise is at $1,250,000                        </ListItem>
+                                The public sale vesting terms include a 12 month cliff, followed by a 12 month linear vest
+                            </ListItem>
                         </List> :
                         (
                             <>
@@ -76,7 +81,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                                 >
                                     <Flex
                                         gap="0.75rem"
-                                        flexDir="column"
+                                        flexDir="row"
                                         justifyContent="flex-end"
                                         mb="0.25rem"
                                     >
@@ -84,7 +89,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                                             as={Flex}
                                             placeholder={"0.0"}
                                             min={0}
-                                            step={100}
+                                            step={1000}
                                             flex={1}
                                             value={truncate(amount, 2)}
                                             onChange={setAmount}
@@ -108,14 +113,29 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                                                 color="#FFFFFF"
                                                 opacity="0.7"
                                             />
-                                            <Text fontSize="1.5rem" mr="1.5rem">
-                                                USDC
-                                            </Text>
                                             <NumberInputStepper>
                                                 <NumberIncrementStepper />
                                                 <NumberDecrementStepper />
                                             </NumberInputStepper>
                                         </NumberInput>
+                                        <Flex
+                                         bg="#171717"
+                                         w="fit-content"
+                                         borderWidth="2px"
+                                         borderRadius="7px"
+                                         align="center"
+                                         justifyContent="center"
+                                         px="1rem"
+                                        >
+                                             <Image
+                                               src="./icons/usdc.svg" 
+                                               w="1.5rem"
+                                               mr="0.25rem"
+                                               />
+                                        <Text fontSize="1.5rem" textAlign="center">
+                                               USDC
+                                        </Text>
+                                        </Flex>
                                     </Flex>
                                     <Text
                                         variant="paragraph"
@@ -134,22 +154,22 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                                         USDC
                                     </Text>
                                 </Flex>
-                                <Flex                                             px="1.25rem"
->
-                                <Text mr="0.25rem" variant="paragraph">
-                                    You will receive
-                                </Text>
-                                <Text variant="paragraph" color="#BBFF81">
-                                <b>{+amount * 0.025}</b> $PECTRA
-                                </Text>
+                                <Flex px="1.25rem"
+                                >
+                                    <Text mr="0.25rem" variant="paragraph">
+                                        You will receive
+                                    </Text>
+                                    <Text variant="paragraph" color="#BBFF81">
+                                        <b>{+amount * 0.025}</b> $PECTRA
+                                    </Text>
                                 </Flex>
                                 <Flex mt="0.5rem" px="1.25rem">
-                                <Text mr="0.25rem" variant="paragraph">
-                                    Vest unlock date
-                                </Text>
-                                <Text variant="paragraph" color="#BBFF81">
-                                <b>25 / 05 / 2024</b>
-                                </Text>
+                                    <Text mr="0.25rem" variant="paragraph">
+                                        Vest unlock date
+                                    </Text>
+                                    <Text variant="paragraph" color="#BBFF81">
+                                        <b>25 / 05 / 2024</b>
+                                    </Text>
                                 </Flex>
                             </>
                         )
@@ -157,10 +177,19 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                 </ModalBody>
                 <ModalFooter mt="1.5rem" >
                     <Flex w="full" direction="row" justify="center">
+                        {address !== undefined ?
 
-                        <Button variant="primary" w="fit-content" mr={3} onClick={() => setStep(2)}>
-                            {step === 1 ? 'Accept Terms' : 'Invest in $PECTRA'}
-                        </Button>
+                            <Button variant="primary" w="fit-content" mr={3} onClick={() => setStep(2)}>
+                                {step === 1 ? 'Accept Terms' : 'Invest in $PECTRA'}
+                            </Button>
+
+                            :
+                            <Button variant="primary" w="fit-content" mr={3}>
+                                <ConnectButton
+                                />
+                            </Button>
+                        }
+
                         <Button variant="secondary" w="fit-content">Public Sales Deck</Button>
                     </Flex>
                 </ModalFooter>
