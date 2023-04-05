@@ -280,6 +280,7 @@ export default function TotalInvestedBar() {
                 </Tooltip>
             </Flex>
             <Flex
+                   display={{base: "flex", "3xl": "none"}}
                         mt='0.25rem'
                 direction="row"
                 alignItems="center"
@@ -293,6 +294,33 @@ export default function TotalInvestedBar() {
             </Link>
 <HiOutlineExternalLink />
                 </Flex>
+
+                <Flex display={{base: "none", "3xl": "flex"}} pb="1rem" justifyContent="space-between" alignSelf="center">
+                {legend.map((item, i) => (
+                    <Box mr="24px" mt="1rem" textAlign="center" display="inline-block" key={i}>
+                        <HStack spacing="8px">
+                            <Box
+                                display="inline-block"
+                                borderRadius="4px"
+                                w="16px"
+                                h="16px"
+                                fontSize="25px"
+                                verticalAlign="middle"
+                                bgColor={item.color}
+                                border="1px solid black"
+                            >
+                                {" "}
+                            </Box>{" "}
+                            <Text
+                                textAlign="start"
+                                w="full"
+                            >
+                                {item.name}
+                            </Text>
+                        </HStack>
+                    </Box>
+                ))}
+            </Flex>
      
             <Modal isOpen={isOpen} onClose={onClose} isCentered>
                 <ModalOverlay />
