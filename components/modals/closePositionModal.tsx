@@ -203,14 +203,14 @@ const OpenPositionModal = ({
                     5
                   )}`}
                 /> */}{" "}
-                 <Boxes
-              bg="#404040"
-              border="none"
-              usdcValue={+netvalue + +pnl}
-              tokenValue={+netvalue + +pnl}
-              token={"USDC"}
-              title="Receive"
-            />
+              <Boxes
+                bg="#404040"
+                border="none"
+                usdcValue={+netvalue + +pnl}
+                tokenValue={+netvalue + +pnl}
+                token={"USDC"}
+                title="Receive"
+              />
             </Flex>
 
             <Button variant="secondary" onClick={() => console.log(longPrice

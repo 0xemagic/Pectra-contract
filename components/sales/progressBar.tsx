@@ -6,12 +6,21 @@ import {
     Text,
     Tooltip,
     useColorMode,
+    useDisclosure,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalBody,
+    ModalCloseButton,
+    ModalHeader,
+    Link
 } from "@chakra-ui/react";
 import { commify } from "ethers/lib/utils.js";
 import millify from "millify";
 import { truncate } from "../utils";
 import { useState } from "react";
 import { AiOutlineInfoCircle } from 'react-icons/ai'
+import { HiOutlineExternalLink } from 'react-icons/hi'
 
 type ProgressBarProps = {
     percentage: number;
@@ -23,6 +32,7 @@ type ProgressBarProps = {
 
 export default function TotalInvestedBar() {
     const { colorMode } = useColorMode();
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     const [privateLabel, setPrivateLabel] = useState(false);
     const [publicLabel, setPublicLabel] = useState(false);
@@ -33,10 +43,10 @@ export default function TotalInvestedBar() {
     const [alreadySoldLabel, setAlreadySoldLabel] = useState(false);
 
     const legend = [
-        { name: "Private", color: "#BBFF81" },
-        { name: "Public", color: "#81FF7E" },
-        { name: "Unsold", color: "white" },
-        { name: "Current", color: "red" }
+        { name: "Private", description: "How much has been sold through private sale", color: "#BBFF81" },
+        { name: "Public", description: "How much has been sold through public sale", color: "#81FF7E" },
+        { name: "Unsold", description: "How much is available for public sale", color: "white" },
+        { name: "Current", description: "How much it's been sold so far (private + public sale)", color: "red" }
     ];
 
     const privateAmount = 1000000;
@@ -47,10 +57,10 @@ export default function TotalInvestedBar() {
         return (
             <Box position="absolute" left={`${percentage}%`} top="0">
                 <Box
-                    height="1rem"
+                    height="0.5rem"
                     width="4px"
                     bg={borderColor}
-                    transform={`translateX(-50%) translateY(-1.25rem) translateX(${translateX}px)`}
+                    transform={`translateX(-50%) translateY(-0.75rem) translateX(${translateX}px)`}
                 />
                 {translateX !== 0 ?
                     (
@@ -61,7 +71,7 @@ export default function TotalInvestedBar() {
                             <Flex
                                 alignItems="center"
                                 justifyContent="center"
-                                transform={`translateX(-50%) translateY(-3.75rem) translateX(${translateX}px)`}
+                                transform={`translateX(-50%) translateY(-2.75rem) translateX(${translateX}px)`}
                                 onMouseEnter={() => setAlreadySoldLabel(true)}
                                 onMouseLeave={() => setAlreadySoldLabel(false)}
                                 onClick={() => setAlreadySoldLabel(true)}
@@ -85,7 +95,7 @@ export default function TotalInvestedBar() {
                         fontWeight="bold"
                         color={borderColor}
                         textAlign="center"
-                        transform={`translateX(-50%) translateY(-3.75rem) translateX(${translateX}px)`}
+                        transform={`translateX(-50%) translateY(-2.75rem) translateX(${translateX}px)`}
                     >
                         {label}
                     </Text>
@@ -269,9 +279,30 @@ export default function TotalInvestedBar() {
                     </Flex>
                 </Tooltip>
             </Flex>
-            <Flex mt="1rem" justifyContent="space-between" alignSelf="center" w={{ base: "80%", lg: "50%" }}>
+            <Flex
+                        mt='0.25rem'
+                direction="row"
+                alignItems="center"
+                alignSelf="center"
+                >
+       <Link
+            onClick={() => onOpen()}
+            mr='0.25rem'
+            >
+                Legend
+            </Link>
+<HiOutlineExternalLink />
+                </Flex>
+     
+            <Modal isOpen={isOpen} onClose={onClose} isCentered>
+                <ModalOverlay />
+                <ModalContent bgColor="#2B3226">
+                    <ModalHeader >Progress Bar Legend</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <Flex direction="column" pb="1rem" justifyContent="space-between" alignSelf="center">
                 {legend.map((item, i) => (
-                    <Box mr="24px" textAlign="center" display="inline-block" key={i}>
+                    <Box mr="24px" mt="1rem" textAlign="center" display="inline-block" key={i}>
                         <HStack spacing="8px">
                             <Box
                                 display="inline-block"
@@ -286,14 +317,18 @@ export default function TotalInvestedBar() {
                                 {" "}
                             </Box>{" "}
                             <Text
-                                textAlign="center"
+                                textAlign="start"
+                                w="full"
                             >
-                                {item.name}
+                                <b>{item.name}</b> = {item.description}
                             </Text>
                         </HStack>
                     </Box>
                 ))}
             </Flex>
+                    </ModalBody>
+                    </ModalContent>
+            </Modal>
         </Flex>
     );
 };
