@@ -19,7 +19,7 @@ import { HiSun, HiMoon } from "react-icons/hi";
 import { FaDiscord } from "react-icons/fa";
 import { SiMedium } from "react-icons/si";
 import { useRouter } from "next/router";
-import Hero from "../components/sales/hero";
+import Front from "../components/sales/front";
 import { NextSeo } from "next-seo";
 
 interface LayoutProps {
@@ -116,6 +116,8 @@ export function Layout({ children }: LayoutProps) {
                     <Flex
                         display={{ base: "none", md: "flex" }}
                         justifySelf="center"
+                        alignSelf="center"
+                        align="center"
                         justify="center"
                         m="auto"
                         mr="1rem"
@@ -247,7 +249,7 @@ function Sales() {
         }}
       />
         <Layout>
-            <Hero />
+            <Front />
         </Layout>
         </>
     )
