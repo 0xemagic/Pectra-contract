@@ -170,7 +170,7 @@ export function Layout({ children }: LayoutProps) {
                                     largeScreen: "full",
                                 }}
                             />
-                            <Button mr="0.5rem" variant="secondary">LEARN MORE</Button>
+                            <Button ml="1rem" mr="0.5rem" variant="secondary">LEARN MORE</Button>
                             <Button  variant="secondary">SALES DECK</Button>
                     </Flex>
                 </Flex>
