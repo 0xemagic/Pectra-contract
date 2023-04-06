@@ -2,12 +2,9 @@ import {
     Box,
     HStack,
     Flex,
-    Skeleton,
     Text,
     Tooltip,
     useColorMode,
-    useDisclosure,
-    Link
 } from "@chakra-ui/react";
 import { commify } from "ethers/lib/utils.js";
 import millify from "millify";

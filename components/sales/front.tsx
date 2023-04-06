@@ -69,17 +69,29 @@ export default function Front() {
                         hidden: { opacity: 0 },
                         visible: {
                             opacity: 1,
-                            transition: { duration: 1, delay: 1 },
+                            transition: { duration: 1, delay: 1.5 },
                         },
                     }}
                 >
                     <TotalInvestedBar />
                 </motion.div>
+                <Flex alignItems="center" justifyItems="center">
+                <motion.div
+                    initial="hidden"
+                    animate="visible"
+                    style={{ width: '100%', marginTop: "1.25rem" }}
+                    variants={{
+                        hidden: { opacity: 0 },
+                        visible: {
+                            opacity: 1,
+                            transition: { duration: 1, delay: 1.5 },
+                        },
+                    }}>
                 <Flex alignItems="center" wrap="nowrap" mt={{base: "0rem", "3xl": "2rem"}}>
                     <Heading mt="1rem" variant="heading" fontSize={{base: "1.5rem", "3xl": "2rem"}}>PUBLIC SALE ENDS IN:</Heading>
                     <Heading mt="1rem" variant="heading" ml="1rem" fontSize={{base: "1.5rem", "3xl": "2rem"}} color="#81FF7E">00D / 00H  / 00M</Heading>
                 </Flex>
-                <Flex direction={{ base: "column", md: "row" }} justify={{ base: "center", lg: "start" }} align={{ base: "center", md: "start" }} mt={{base: "2rem", "3xl": "4rem"}}>
+                <Flex w="full" justify="center" mt={{base: "2rem", "3xl": "4rem"}}>
                     <Button
                         variant="primary"
                         boxShadow={colorMode === "dark" ? "0px -1px 22px #518128" : "none"}
@@ -94,6 +106,8 @@ export default function Front() {
                         isExternal
                         _hover={{ textDecoration: "none" }}
                     ><Button variant="secondary">JOIN DISCORD</Button></Link>
+                </Flex>
+                </motion.div>
                 </Flex>
             </Flex>
             {isOpen && <BuyTokenModal isOpen={isOpen} onClose={onClose} />}
