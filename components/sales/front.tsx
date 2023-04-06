@@ -1,8 +1,6 @@
 import { Flex, Heading, Text, Image, Button, Link, useColorMode, useDisclosure } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import TotalInvestedBar from "./progressBar";
-import { useState } from "react";
 
 import BuyTokenModal from "../modals/buyTokenModal";
 
@@ -31,27 +29,16 @@ export default function Front() {
                             h={{base: "250px", "3xl": "350px"}}
                             m="auto"
                         />
-                        <Flex alignItems="center" wrap="nowrap">
                             <Heading
-                                color="#43931E"
-                                fontSize={{ base: "2rem", md: "4rem" }}
+                                color="#ACE075"
+                                fontSize={{ base: "2rem", md: "3.5rem" }}
                                 variant="colored"
                                 mt="-0.5rem"
                                 textAlign={{ base: "center", lg: "start" }}
                                 mr="1rem"
                             >
-                                Pectra
+                                Pectra Protocol
                             </Heading>
-                            <Heading
-                                color="#ACE075"
-                                fontSize={{ base: "2rem", md: "4rem" }}
-                                variant="colored"
-                                mt="-0.5rem"
-                                textAlign={{ base: "center", lg: "start" }}
-                            >
-                                Protocol
-                            </Heading>
-                        </Flex>
                     </motion.div>
                     <motion.div
                         initial="hidden"
@@ -89,8 +76,8 @@ export default function Front() {
                     <TotalInvestedBar />
                 </motion.div>
                 <Flex alignItems="center" wrap="nowrap" mt={{base: "0rem", "3xl": "2rem"}}>
-                    <Heading mt="1rem" variant="heading">PUBLIC SALE ENDS IN:</Heading>
-                    <Heading mt="1rem" variant="heading" ml="1rem" color="#81FF7E">00D / 00H  / 00M</Heading>
+                    <Heading mt="1rem" variant="heading" fontSize={{base: "1.5rem", "3xl": "2rem"}}>PUBLIC SALE ENDS IN:</Heading>
+                    <Heading mt="1rem" variant="heading" ml="1rem" fontSize={{base: "1.5rem", "3xl": "2rem"}} color="#81FF7E">00D / 00H  / 00M</Heading>
                 </Flex>
                 <Flex direction={{ base: "column", md: "row" }} justify={{ base: "center", lg: "start" }} align={{ base: "center", md: "start" }} mt={{base: "2rem", "3xl": "4rem"}}>
                     <Button

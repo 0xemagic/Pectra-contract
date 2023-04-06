@@ -28,8 +28,6 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
     const { colorMode, toggleColorMode } = useColorMode();
-    const router = useRouter();
-
     const links = [
         {
             icon: (
@@ -69,20 +67,16 @@ export function Layout({ children }: LayoutProps) {
         },
     ];
 
-    const isIndex = router.pathname === "/";
+    const router = useRouter();
 
     return (
         <Flex
             minH={"100vh"}
             h="full"
             bg={
-                isIndex
-                    ? colorMode === "dark"
+ colorMode === "dark"
                         ? "linear-gradient(180deg, #0C1506 0%, #151D10 100%)"
                         : "linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 100%)"
-                    : colorMode === "dark"
-                        ? "#101010"
-                        : "#FFFFFF"
             }
             direction="column"
             pb="4rem"
@@ -135,11 +129,9 @@ export function Layout({ children }: LayoutProps) {
                                         w="3.5rem"
                                         h="3.5rem"
                                         bg={
-                                            isIndex
-                                                ? colorMode === "dark"
+                                         colorMode === "dark"
                                                     ? "#22291C"
                                                     : "#F5F5F5"
-                                                : "none"
                                         }
                                         alignItems={"center"}
                                         justifyContent="center"
@@ -185,46 +177,6 @@ export function Layout({ children }: LayoutProps) {
             >
                 {children}
             </Box>
-            {!isIndex && (
-                <Flex
-                    display={{ base: "flex", md: "none" }}
-                    gap="0.5rem"
-                    alignSelf="start"
-                    px={{ base: "2rem", md: "4rem" }}
-                >
-                    {links.map((link) => {
-                        return (
-                            <Link href={link.href} key={link.href} isExternal>
-                                <Flex
-                                    w="3rem"
-                                    h="3rem"
-                                    bg={
-                                        isIndex
-                                            ? colorMode === "dark"
-                                                ? "#22291C"
-                                                : "#F5F5F5"
-                                            : "none"
-                                    }
-                                    alignItems={"center"}
-                                    justifyContent="center"
-                                    borderRadius="12px"
-                                    _hover={{
-                                        bg: isIndex
-                                            ? colorMode === "dark"
-                                                ? "#2C3327"
-                                                : ""
-                                            : colorMode === "dark"
-                                                ? "#242323"
-                                                : "",
-                                    }}
-                                >
-                                    {link.icon}
-                                </Flex>
-                            </Link>
-                        );
-                    })}
-                </Flex>
-            )}
         </Flex>
     );
 }
