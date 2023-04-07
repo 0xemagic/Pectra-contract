@@ -10,7 +10,7 @@ export default function Front() {
 
     return (
         <>
-            <Flex direction="column" minH="80vh" px={{ base: "2rem", md: "4rem" }} align="center">
+            <Flex direction="column" minH="80vh" px={{ base: "1rem", md: "4rem" }} align="center">
                 <Flex direction="column" w="full" align="center" mb={{base: "0rem", "3xl": "2rem"}}>
                     <motion.div
                         initial="hidden"
@@ -87,11 +87,11 @@ export default function Front() {
                             transition: { duration: 1, delay: 1.5 },
                         },
                     }}>
-                <Flex alignItems="center" wrap="nowrap" mt={{base: "0rem", "3xl": "2rem"}}>
+                <Flex direction={{base: "column", md: "row"}} alignItems="center" wrap="nowrap" mt={{base: "0rem", "3xl": "2rem"}}>
                     <Heading mt="1rem" variant="heading" fontSize={{base: "1.5rem", "3xl": "2rem"}}>PUBLIC SALE ENDS IN:</Heading>
                     <Heading mt="1rem" variant="heading" ml="1rem" fontSize={{base: "1.5rem", "3xl": "2rem"}} color="#81FF7E">00D / 00H  / 00M</Heading>
                 </Flex>
-                <Flex w="full" justify="center" mt={{base: "2rem", "3xl": "4rem"}}>
+                <Flex direction={{base: "column", md: "row"}} alignItems="center" w="full" justify="center" mt={{base: "2rem", "3xl": "4rem"}}>
                     <Button
                         variant="primary"
                         boxShadow={colorMode === "dark" ? "0px -1px 22px #518128" : "none"}

@@ -44,7 +44,7 @@ export default function TotalInvestedBar() {
     const publicAmount = 100000;
     const available = 2500000 - (publicAmount + privateAmount);
 
-    const ProgressBarMark = ({ percentage, label, borderColor = "#43931E", translateX = 0, bottomLabel = "-2.75rem", bottomBox = "-0.75rem"}: ProgressBarProps) => {
+    const ProgressBarMark = ({ percentage, label, borderColor = "#43931E", translateX = 0, bottomLabel = "-2.75rem", bottomBox = "-0.75rem" }: ProgressBarProps) => {
         return (
             <Box position="absolute" left={`${percentage}%`} top="0">
                 <Box
@@ -100,11 +100,18 @@ export default function TotalInvestedBar() {
         <Flex
             direction="column"
         >
-            <Flex alignItems="center">
-                <Tooltip
-                    label="Start of private sale"
-                    isOpen={startLabel}
-                >
+            <Flex
+            // alignSelf="center"
+            // direction="row"
+            // mt="2rem" w={{ base: "80%", md: "90%" }}
+            // border="4px solid"
+            // borderColor="#43931E"
+            // borderRadius="xl"
+            // position="relative"
+            >                <Tooltip
+                label="Start of private sale"
+                isOpen={startLabel}
+            >
                     <Flex
                         alignItems="center"
                         justifyContent="center"
@@ -159,7 +166,7 @@ export default function TotalInvestedBar() {
                     <Flex
                         bg={legend[0].color}
                         w={`${(privateAmount / 1000000) * 100}%`}
-                        h="2rem"
+                        h={{ base: "3rem", md: "2rem" }}
                         direction="column"
                         justify="center"
                         align="center"
@@ -188,7 +195,7 @@ export default function TotalInvestedBar() {
                     <Flex
                         bg={legend[1].color}
                         w={`${(publicAmount / 1000000) * 100}%`}
-                        h="2rem"
+                        h={{ base: "3rem", md: "2rem" }}
                         direction="column"
                         justify="center"
                         align="center"
@@ -215,7 +222,7 @@ export default function TotalInvestedBar() {
                     </Flex>
                     <Flex
                         w={`${(available / 1000000) * 100}%`}
-                        maxH="2rem"
+                        maxH={{ base: "3rem", md: "2rem" }}
                         bg={legend[2].color}
                         borderWidth={"1px"}
                         borderRightRadius={"lg"}
@@ -278,9 +285,15 @@ export default function TotalInvestedBar() {
                 </Tooltip>
             </Flex>
 
-            <Flex pb="1rem" justifyContent="space-between" alignSelf="start" px="4rem">
+            <Flex pb="1rem" justifyContent="space-between" alignSelf={{base: "center", md: "start" }} px={{ base: "1rem", md: "4rem" }}>
                 {legend.map((item, i) => (
-                    <Flex direction="row" mr="24px" mt="0.5rem" textAlign="start" display="inline-block" key={i}>
+                    <Flex 
+                    direction="row" 
+                    mr="24px" 
+                    mt={{ base: "2rem", md: "0.5rem" }} 
+                    textAlign="start" 
+                    display="inline-block"
+                    key={i}>
                         <HStack spacing="8px">
                             <Box
                                 display="inline-block"
@@ -297,6 +310,7 @@ export default function TotalInvestedBar() {
                             <Text
                                 textAlign="start"
                                 w="full"
+                                fontSize={{ base: "xs", md: "md" }}
                             >
                                 {item.name}
                             </Text>

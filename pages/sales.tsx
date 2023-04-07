@@ -149,7 +149,7 @@ export function Layout({ children }: LayoutProps) {
                         })}
                     </Flex>
 
-                    <Flex alignItems="center">
+                    <Flex alignItems="center" alignContent={{base: "end", md: "center"}}>
                         <Button mr="1rem" variant="ghost" onClick={toggleColorMode}>
                             {colorMode === "dark" ? <HiSun /> : <HiMoon />}
                         </Button>
@@ -164,8 +164,8 @@ export function Layout({ children }: LayoutProps) {
                                     largeScreen: "full",
                                 }}
                             />
-                            <Button ml="1rem" mr="0.5rem" variant="secondary">LEARN MORE</Button>
-                            <Button  variant="secondary">SALES DECK</Button>
+                            <Button display={{base: "none", md: "block"}} ml="1rem" mr="0.5rem" variant="secondary">LEARN MORE</Button>
+                            <Button  display={{base: "none", md: "block"}} variant="secondary">SALES DECK</Button>
                     </Flex>
                 </Flex>
             </Flex>
