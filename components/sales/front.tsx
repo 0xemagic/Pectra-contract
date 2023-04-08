@@ -28,14 +28,15 @@ export default function Front() {
                             w={{base: "225px", md: "300px", "3xl": "400px"}}
                             h={{base: "150px", md: "250px", "3xl": "350px"}}
                             m="auto"
+                            alignSelf="center"
+                            justifySelf="center"
                         />
                             <Heading
                                 color="#ACE075"
                                 fontSize={{ base: "2rem", md: "3.5rem" }}
                                 variant="colored"
-                                mt="-0.5rem"
+                                mt="1rem"
                                 textAlign={{ base: "center", lg: "start" }}
-                                mr="1rem"
                             >
                                 Pectra Protocol
                             </Heading>

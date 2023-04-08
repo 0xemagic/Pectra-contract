@@ -101,11 +101,11 @@ export default function TotalInvestedBar() {
             direction="column"
         >
             <Flex
-            alignSelf="center"
-            alignItems="center"
-            justifyContent="center"
-            justifyItems="center"
-            w="full"
+                alignSelf="center"
+                alignItems="center"
+                justifyContent="center"
+                justifyItems="center"
+                w="full"
             // direction="row"
             // mt="2rem" w={{ base: "80%", md: "90%" }}
             // border="4px solid"
@@ -117,7 +117,7 @@ export default function TotalInvestedBar() {
                 isOpen={startLabel}
             >
                     <Flex
-                        display={{base: "none", md: "flex"}}
+                        display={{ base: "none", md: "flex" }}
                         alignItems="center"
                         justifyContent="center"
                         mt="1.75rem"
@@ -213,16 +213,19 @@ export default function TotalInvestedBar() {
                             isOpen={publicLabel}
                         >
                             <Flex
-                                direction="row"
+                                direction={{ base: "column", md: "row" }}
                                 onMouseEnter={() => setPublicLabel(true)}
                                 onMouseLeave={() => setPublicLabel(false)}
                                 onClick={() => setPublicLabel(true)}
+                                alignContent="center"
                             >
-                                <Text color="#222222" textAlign="center" size="xs" fontWeight="bold" mr="0.5rem">{`${(
-                                    (publicAmount / 2900000) *
-                                    100
-                                ).toFixed(1)}%`}</Text>
-                                <Text color="#222222" size="xs">{`($${millify(publicAmount)})`}</Text>
+                                <Text color="#222222" textAlign="center" fontSize={{ base: "0.75rem", md: "1rem" }}
+                                    fontWeight="bold" mr={{base: "0rem", md: "0.5rem"}}>{`${(
+                                        (publicAmount / 2900000) *
+                                        100
+                                    ).toFixed(1)}%`}</Text>
+                                <Text color="#222222" fontSize={{ base: "0.75rem", md: "1rem" }}
+                                >{`($${millify(publicAmount)})`}</Text>
                             </Flex>
                         </Tooltip>
                     </Flex>
@@ -244,22 +247,19 @@ export default function TotalInvestedBar() {
                             isOpen={availableLabel}
                         >
                             <Flex
-                                direction="row"
+                                direction={{ base: "column", md: "row" }}
                                 onMouseEnter={() => setAvailableLabel(true)}
                                 onMouseLeave={() => setAvailableLabel(false)}
                                 onClick={() => setAvailableLabel(true)}
                             >
                                 <Text
                                     color={colorMode === "dark" ? "black" : "black"}
-                                    textAlign="center"
                                     fontWeight="bold"
-                                    size="xs"
-                                    mr="0.5rem"
-                                >{`${((available / 2900000) * 100).toFixed(1)}%`}</Text>
+                                    textAlign="center" fontSize={{ base: "0.75rem", md: "1rem" }}                                >{`${((available / 2900000) * 100).toFixed(1)}%`}</Text>
                                 <Text
                                     color={colorMode === "dark" ? "black" : "black"}
                                     textAlign="center"
-                                    size="xs"
+                                    fontSize={{ base: "0.75rem", md: "1rem" }}
                                 >{`($${millify(available)})`}</Text>
                             </Flex>
                         </Tooltip>
@@ -270,7 +270,7 @@ export default function TotalInvestedBar() {
                     isOpen={endLabel}
                 >
                     <Flex
-                        display={{base: "none", md: "flex"}}
+                        display={{ base: "none", md: "flex" }}
                         alignItems="center"
                         justifyContent="center"
                         mt="1.75rem"
@@ -292,11 +292,11 @@ export default function TotalInvestedBar() {
                 </Tooltip>
             </Flex>
 
-            <Flex 
-            pb={{base: "0rem", md: "1rem" }}
-            justifyContent="space-between" 
-            alignSelf={{ base: "center", md: "start" }} 
-            px={{ base: "1rem", md: "4rem" }}>
+            <Flex
+                pb={{ base: "0rem", md: "1rem" }}
+                justifyContent="space-between"
+                alignSelf={{ base: "center", md: "start" }}
+                px={{ base: "1rem", md: "4rem" }}>
                 {legend.map((item, i) => (
                     <Flex
                         direction="row"
