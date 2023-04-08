@@ -25,8 +25,8 @@ export default function Front() {
                     >
                         <Image
                             src="./assets/spectra-logo-dark.svg"
-                            w={{base: "300px", "3xl": "400px"}}
-                            h={{base: "250px", "3xl": "350px"}}
+                            w={{base: "225px", md: "300px", "3xl": "400px"}}
+                            h={{base: "150px", md: "250px", "3xl": "350px"}}
                             m="auto"
                         />
                             <Heading
@@ -79,7 +79,7 @@ export default function Front() {
                 <motion.div
                     initial="hidden"
                     animate="visible"
-                    style={{ width: '100%', marginTop: "1.25rem" }}
+                    style={{ width: '100%', marginTop: "0rem" }}
                     variants={{
                         hidden: { opacity: 0 },
                         visible: {
@@ -88,15 +88,15 @@ export default function Front() {
                         },
                     }}>
                 <Flex direction={{base: "column", md: "row"}} alignItems="center" wrap="nowrap" mt={{base: "0rem", "3xl": "2rem"}}>
-                    <Heading mt="1rem" variant="heading" fontSize={{base: "1.5rem", "3xl": "2rem"}}>PUBLIC SALE ENDS IN:</Heading>
-                    <Heading mt="1rem" variant="heading" ml="1rem" fontSize={{base: "1.5rem", "3xl": "2rem"}} color="#81FF7E">00D / 00H  / 00M</Heading>
+                    <Heading mt="1rem" variant="heading" fontSize={{base: "1.5rem", md: "2rem"}}>PUBLIC SALE ENDS IN:</Heading>
+                    <Heading mt="1rem" variant="heading" ml="1rem" fontSize={{base: "1.5rem", md: "2rem"}} color="#81FF7E">00D / 00H  / 00M</Heading>
                 </Flex>
-                <Flex direction={{base: "column", md: "row"}} alignItems="center" w="full" justify="center" mt={{base: "2rem", "3xl": "4rem"}}>
+                <Flex direction={{base: "column", md: "row"}} alignItems="center" w="full" justifyContent="center" mt={{base: "2.5rem", "3xl": "4rem"}}>
                     <Button
                         variant="primary"
                         boxShadow={colorMode === "dark" ? "0px -1px 22px #518128" : "none"}
                         mr={{ base: "none", md: "0.5rem" }}
-                        mb={{ base: "1rem", md: "none" }}
+                        mb={{ base: "1rem", md: "0rem" }}
                         onClick={() => onOpen()}
                     >
                         INVEST in $PECTRA

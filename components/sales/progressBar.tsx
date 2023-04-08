@@ -34,15 +34,15 @@ export default function TotalInvestedBar() {
     const [alreadySoldLabel, setAlreadySoldLabel] = useState(false);
 
     const legend = [
-        { name: "Private", description: "How much has been sold through private sale", color: "#BBFF81" },
+        // { name: "Private", description: "How much has been sold through private sale", color: "#BBFF81" },
         { name: "Public", description: "How much has been sold through public sale", color: "#81FF7E" },
         { name: "Unsold", description: "How much is available for public sale", color: "white" },
-        { name: "Current", description: "How much it's been sold so far (private + public sale)", color: "red" }
+        // { name: "Current", description: "How much it's been sold so far (private + public sale)", color: "red" }
     ];
 
-    const privateAmount = 1050000;
+    // const privateAmount = 1050000;
     const publicAmount = 100000;
-    const available = 2500000 - (publicAmount + privateAmount);
+    const available = 2900000 - publicAmount;
 
     const ProgressBarMark = ({ percentage, label, borderColor = "#43931E", translateX = 0, bottomLabel = "-2.75rem", bottomBox = "-0.75rem" }: ProgressBarProps) => {
         return (
@@ -56,7 +56,7 @@ export default function TotalInvestedBar() {
                 {translateX !== 0 ?
                     (
                         <Tooltip
-                            label={`${millify(privateAmount)} raised through private sale + ${millify(publicAmount)} of public sales`}
+                            label={`${millify(publicAmount)} of public sales`}
                             isOpen={alreadySoldLabel}
                         >
                             <Flex
@@ -101,7 +101,11 @@ export default function TotalInvestedBar() {
             direction="column"
         >
             <Flex
-            // alignSelf="center"
+            alignSelf="center"
+            alignItems="center"
+            justifyContent="center"
+            justifyItems="center"
+            w="full"
             // direction="row"
             // mt="2rem" w={{ base: "80%", md: "90%" }}
             // border="4px solid"
@@ -113,6 +117,7 @@ export default function TotalInvestedBar() {
                 isOpen={startLabel}
             >
                     <Flex
+                        display={{base: "none", md: "flex"}}
                         alignItems="center"
                         justifyContent="center"
                         mt="1.75rem"
@@ -133,37 +138,38 @@ export default function TotalInvestedBar() {
                 <Flex
                     alignSelf="center"
                     direction="row"
-                    mt="2rem" w="90%"
+                    mt="2rem"
+                    w="90%"
                     border="4px solid"
                     borderColor="#43931E"
                     borderRadius="xl"
                     position="relative"
                 >
-                    <ProgressBarMark
-                        percentage={((publicAmount + privateAmount) / 2500000) * 100}
-                        label={`${millify(publicAmount + privateAmount)}`}
+                    {/* <ProgressBarMark
+                        percentage={((publicAmount) / 2900000) * 100}
+                        label={`${millify(publicAmount)}`}
                         borderColor="red"
-                        translateX={32}
+                        translateX={65}
                         bottomLabel="2.5rem"
                         bottomBox="2.25rem"
+                    /> */}
+                    <ProgressBarMark
+                        percentage={100 * (725000 / 2900000)}
+                        label="725K"
                     />
                     <ProgressBarMark
-                        percentage={100 * (625000 / 2500000)}
-                        label="625K"
+                        percentage={100 * (1450000 / 2900000)}
+                        label="1.45M"
                     />
                     <ProgressBarMark
-                        percentage={100 * (1250000 / 2500000)}
-                        label="1.25M"
-                    />
-                    <ProgressBarMark
-                        percentage={100 * (1875000 / 2500000)}
-                        label="1.875M"
+                        percentage={100 * (2175000 / 2900000)}
+                        label="2.175M"
                     />
                     {/* <ProgressBarMark
                         percentage={100 * (1000000 / 2500000)}
                         label="1M"
                     /> */}
-                    <Flex
+                    {/* <Flex
                         bg={legend[0].color}
                         w={`${(privateAmount / 1000000) * 100}%`}
                         h={{ base: "3rem", md: "2rem" }}
@@ -191,11 +197,11 @@ export default function TotalInvestedBar() {
                                 <Text color="#222222" size="xs">{`($${millify(privateAmount)})`}</Text>
                             </Flex>
                         </Tooltip>
-                    </Flex>
+                    </Flex> */}
                     <Flex
-                        bg={legend[1].color}
+                        bg={legend[0].color}
                         w={`${(publicAmount / 1000000) * 100}%`}
-                        h={{ base: "3rem", md: "2rem" }}
+                        h={{ base: "3rem", md: "2.5rem" }}
                         direction="column"
                         justify="center"
                         align="center"
@@ -222,8 +228,8 @@ export default function TotalInvestedBar() {
                     </Flex>
                     <Flex
                         w={`${(available / 1000000) * 100}%`}
-                        maxH={{ base: "3rem", md: "2rem" }}
-                        bg={legend[2].color}
+                        h={{ base: "3rem", md: "2.5rem" }}
+                        bg={legend[1].color}
                         borderWidth={"1px"}
                         borderRightRadius={"lg"}
                         direction="column"
@@ -249,7 +255,7 @@ export default function TotalInvestedBar() {
                                     fontWeight="bold"
                                     size="xs"
                                     mr="0.5rem"
-                                >{`${((available / 2500000) * 100).toFixed(1)}%`}</Text>
+                                >{`${((available / 2900000) * 100).toFixed(1)}%`}</Text>
                                 <Text
                                     color={colorMode === "dark" ? "black" : "black"}
                                     textAlign="center"
@@ -264,6 +270,7 @@ export default function TotalInvestedBar() {
                     isOpen={endLabel}
                 >
                     <Flex
+                        display={{base: "none", md: "flex"}}
                         alignItems="center"
                         justifyContent="center"
                         mt="1.75rem"
@@ -279,21 +286,25 @@ export default function TotalInvestedBar() {
                             fontWeight="bold"
                             textAlign="center"
                             color="#43931E"
-                        >2.5M</Text>
+                        >2.9M</Text>
                         <AiOutlineInfoCircle />
                     </Flex>
                 </Tooltip>
             </Flex>
 
-            <Flex pb="1rem" justifyContent="space-between" alignSelf={{base: "center", md: "start" }} px={{ base: "1rem", md: "4rem" }}>
+            <Flex 
+            pb={{base: "0rem", md: "1rem" }}
+            justifyContent="space-between" 
+            alignSelf={{ base: "center", md: "start" }} 
+            px={{ base: "1rem", md: "4rem" }}>
                 {legend.map((item, i) => (
-                    <Flex 
-                    direction="row" 
-                    mr="24px" 
-                    mt={{ base: "2rem", md: "0.5rem" }} 
-                    textAlign="start" 
-                    display="inline-block"
-                    key={i}>
+                    <Flex
+                        direction="row"
+                        mr="24px"
+                        mt="0.5rem"
+                        textAlign="start"
+                        display="inline-block"
+                        key={i}>
                         <HStack spacing="8px">
                             <Box
                                 display="inline-block"
