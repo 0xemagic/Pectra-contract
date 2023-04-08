@@ -32,7 +32,7 @@ export default function Front() {
                             justifySelf="center"
                         />
                             <Heading
-                                color="#ACE075"
+                                color={colorMode === "dark" ? "#ACE075" : "#43931E"}
                                 fontSize={{ base: "2rem", md: "3.5rem" }}
                                 variant="colored"
                                 mt="1rem"

@@ -96,6 +96,7 @@ export function Layout({ children }: LayoutProps) {
                 <Flex onClick={() => router.push("/")} _hover={{ cursor: "pointer" }}>
                     <Image src="/icons/spectra.svg" alt="spectra-protocol-logo" h="2.25rem" />
                     <Heading
+                        display={{base: "none", md: "flex"}}
                         ml="1rem"
                         variant="heading"
                         fontSize={{ base: "2rem", md: "2.25rem" }}
