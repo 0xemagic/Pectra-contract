@@ -200,7 +200,7 @@ export default function TotalInvestedBar() {
                     </Flex> */}
                     <Flex
                         bg={legend[0].color}
-                        w={`${(publicAmount / 1000000) * 100}%`}
+                        w={`${(publicAmount / 1000000) * 110}%`}
                         h={{ base: "3rem", md: "2.5rem" }}
                         direction="column"
                         justify="center"
@@ -219,7 +219,7 @@ export default function TotalInvestedBar() {
                                 onClick={() => setPublicLabel(true)}
                             >
                                 <Text color="#222222" textAlign="center" size="xs" fontWeight="bold" mr="0.5rem">{`${(
-                                    (publicAmount / 2500000) *
+                                    (publicAmount / 2900000) *
                                     100
                                 ).toFixed(1)}%`}</Text>
                                 <Text color="#222222" size="xs">{`($${millify(publicAmount)})`}</Text>
@@ -227,7 +227,7 @@ export default function TotalInvestedBar() {
                         </Tooltip>
                     </Flex>
                     <Flex
-                        w={`${(available / 1000000) * 100}%`}
+                        w={`${(available / 1000000) * 90}%`}
                         h={{ base: "3rem", md: "2.5rem" }}
                         bg={legend[1].color}
                         borderWidth={"1px"}
