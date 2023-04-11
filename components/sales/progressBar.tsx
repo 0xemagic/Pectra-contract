@@ -205,6 +205,7 @@ export default function TotalInvestedBar() {
                         direction="column"
                         justify="center"
                         align="center"
+                        px={{base: "2rem", md: "1rem"}}
                     >
                         <Tooltip
                             label={`Public Token Sale: ${commify(
@@ -213,7 +214,7 @@ export default function TotalInvestedBar() {
                             isOpen={publicLabel}
                         >
                             <Flex
-                                direction={{ base: "column", md: "row" }}
+                                direction={{ base: "column", "2xl": "row" }}
                                 onMouseEnter={() => setPublicLabel(true)}
                                 onMouseLeave={() => setPublicLabel(false)}
                                 onClick={() => setPublicLabel(true)}
@@ -292,7 +293,7 @@ export default function TotalInvestedBar() {
                 </Tooltip>
             </Flex>
 
-            <Flex
+            {/* <Flex
                 pb={{ base: "0rem", md: "1rem" }}
                 justifyContent="space-between"
                 alignSelf={{ base: "center", md: "start" }}
@@ -328,7 +329,7 @@ export default function TotalInvestedBar() {
                         </HStack>
                     </Flex>
                 ))}
-            </Flex>
+            </Flex> */}
         </Flex>
     );
 };

@@ -190,7 +190,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                             </Button>
                         }
 
-                        <Button variant="secondary" w="fit-content">Public Sales Deck</Button>
+                        {step === 1 ? <Button variant="secondary" w="fit-content">Public Sale FAQ</Button> : null}
                     </Flex>
                 </ModalFooter>
             </ModalContent>

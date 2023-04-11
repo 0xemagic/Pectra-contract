@@ -135,7 +135,7 @@ export default function Layout({ chains, children }: LayoutProps) {
         bg={
           isIndex
             ? colorMode === "dark"
-              ? "linear-gradient(180deg, #0C1506 0%, #151D10 100%)"
+                        ? "linear-gradient(180deg, #0C1506 0%, #151D10 100%)"
               : "linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 100%)"
             : colorMode === "dark"
             ? "#101010"

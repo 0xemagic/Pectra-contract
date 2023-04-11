@@ -74,9 +74,9 @@ export function Layout({ children }: LayoutProps) {
             minH={"100vh"}
             h="full"
             bg={
- colorMode === "dark"
-                        ? "linear-gradient(180deg, #0C1506 0%, #151D10 100%)"
-                        : "linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 100%)"
+                colorMode === "dark"
+                    ? "linear-gradient(180deg, #0C1506 0%, #151D10 100%)"
+                    : "linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 100%)"
             }
             direction="column"
             pb="4rem"
@@ -86,7 +86,7 @@ export function Layout({ children }: LayoutProps) {
                 top={0}
                 justifyContent="space-between"
                 py="3rem"
-                px={{ base: "2rem", md: "4rem" }}
+                px={{ base: "1rem", md: "4rem" }}
                 h="56px"
                 alignItems="center"
                 pos="sticky"
@@ -96,7 +96,7 @@ export function Layout({ children }: LayoutProps) {
                 <Flex onClick={() => router.push("/")} _hover={{ cursor: "pointer" }}>
                     <Image src="/icons/spectra.svg" alt="spectra-protocol-logo" h="2.25rem" />
                     <Heading
-                        display={{base: "none", md: "flex"}}
+                        display={{ base: "none", md: "flex" }}
                         ml="1rem"
                         variant="heading"
                         fontSize={{ base: "2rem", md: "2.25rem" }}
@@ -130,9 +130,9 @@ export function Layout({ children }: LayoutProps) {
                                         w="3.5rem"
                                         h="3.5rem"
                                         bg={
-                                         colorMode === "dark"
-                                                    ? "#22291C"
-                                                    : "#F5F5F5"
+                                            colorMode === "dark"
+                                                ? "#22291C"
+                                                : "#F5F5F5"
                                         }
                                         alignItems={"center"}
                                         justifyContent="center"
@@ -150,23 +150,23 @@ export function Layout({ children }: LayoutProps) {
                         })}
                     </Flex>
 
-                    <Flex alignItems="center" alignContent={{base: "end", md: "center"}}>
-                        <Button mr="1rem" variant="ghost" onClick={toggleColorMode}>
+                    <Flex justifyContent={{base: "end", md: "center"}} alignContent={{ base: "end", md: "center" }}>
+                        <Button mr={{base: "0rem", md: "1rem" }} variant="ghost" onClick={toggleColorMode}>
                             {colorMode === "dark" ? <HiSun /> : <HiMoon />}
                         </Button>
-                            <ConnectButton
-                                chainStatus={"none"}
-                                showBalance={{
-                                    smallScreen: false,
-                                    largeScreen: true,
-                                }}
-                                accountStatus={{
-                                    smallScreen: "avatar",
-                                    largeScreen: "full",
-                                }}
-                            />
-                            <Button display={{base: "none", md: "block"}} ml="1rem" mr="0.5rem" variant="secondary">LEARN MORE</Button>
-                            <Button  display={{base: "none", md: "block"}} variant="secondary">SALES DECK</Button>
+                        <ConnectButton
+                            chainStatus={"none"}
+                            showBalance={{
+                                smallScreen: false,
+                                largeScreen: true,
+                            }}
+                            accountStatus={{
+                                smallScreen: "avatar",
+                                largeScreen: "full",
+                            }}
+                        />
+                        <Button ml={{base: "0.5rem", md: "1rem" }} mr={{base: "0rem", md: "0.5rem" }}variant="secondary">LEARN MORE</Button>
+                        {/* <Button display={{ base: "none", md: "block" }} variant="secondary">FAQ</Button> */}
                     </Flex>
                 </Flex>
             </Flex>
@@ -185,25 +185,25 @@ export function Layout({ children }: LayoutProps) {
 function Sales() {
     return (
         <>
-        <NextSeo
-        title="Pectra Public Sale"
-        description="Public sale of $PECTRA token."
-        openGraph={{
-          title: "Pectra Protocol",
-          description: "Pair trading made easy.",
-          images: [
-            {
-              url: "https://www.spectra.garden/spectra-protocol.svg",
-              width: 800,
-              height: 600,
-              alt: "Pectra Protocol",
-            },
-          ],
-        }}
-      />
-        <Layout>
-            <Front />
-        </Layout>
+            <NextSeo
+                title="Pectra Public Sale"
+                description="Public sale of $PECTRA token."
+                openGraph={{
+                    title: "Pectra Protocol",
+                    description: "Pair trading made easy.",
+                    images: [
+                        {
+                            url: "https://www.spectra.garden/spectra-protocol.svg",
+                            width: 800,
+                            height: 600,
+                            alt: "Pectra Protocol",
+                        },
+                    ],
+                }}
+            />
+            <Layout>
+                <Front />
+            </Layout>
         </>
     )
 }
