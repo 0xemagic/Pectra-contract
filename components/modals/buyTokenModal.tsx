@@ -180,7 +180,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                         {address !== undefined ?
 
                             <Button variant="primary" w="fit-content" mr={3} onClick={() => setStep(2)}>
-                                {step === 1 ? 'Accept Terms' : 'Invest in $PECTRA'}
+                                {step === 1 ? 'Accept Terms' : 'Buy $PECTRA'}
                             </Button>
 
                             :
