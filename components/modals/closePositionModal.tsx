@@ -16,7 +16,7 @@ import {
   InputRightElement,
 } from "@chakra-ui/react";
 
-import { useState} from "react";
+import { useState } from "react";
 
 import { BiDownArrowAlt } from "react-icons/bi";
 
@@ -73,6 +73,7 @@ const OpenPositionModal = ({
   const [amount, setAmount] = useState<number>(0);
 
   const Boxes = ({ bg, border, tokenValue, usdcValue, title, token }: BoxesProps) => {
+    console.log(usdcValue)
     return (
       <Box
         bg={bg}
@@ -157,7 +158,7 @@ const OpenPositionModal = ({
                 height="50px"
                 children={
                   <Button variant="function" alignItems="center" justifyContent="center" minW="50px"
-                  onClick={() => setAmount(+netvalue)}
+                    onClick={() => setAmount(+netvalue)}
                   >
                     Max
                   </Button>
@@ -168,7 +169,7 @@ const OpenPositionModal = ({
               Max Amount: {netvalue} USDC
             </Text>
             <Flex my="1rem">
-            <BiDownArrowAlt size="2.25rem" />
+              <BiDownArrowAlt size="2.25rem" />
 
             </Flex>
             <Boxes
@@ -202,10 +203,18 @@ const OpenPositionModal = ({
                     5
                   )}`}
                 /> */}{" "}
+              <Boxes
+                bg="#404040"
+                border="none"
+                usdcValue={+netvalue + +pnl}
+                tokenValue={+netvalue + +pnl}
+                token={"USDC"}
+                title="Receive"
+              />
             </Flex>
 
-            <Button variant="secondary" onClick={() => console.log(  longPrice
-)}>
+            <Button variant="secondary" onClick={() => console.log(longPrice
+            )}>
               Close Position
             </Button>
           </Flex>

@@ -113,6 +113,7 @@ export default function Layout({ chains, children }: LayoutProps) {
   ];
 
   const isIndex = router.pathname === "/";
+  const isSales = router.pathname === "/sales";
 
   return (
     <RainbowKitProvider
@@ -134,7 +135,7 @@ export default function Layout({ chains, children }: LayoutProps) {
         bg={
           isIndex
             ? colorMode === "dark"
-              ? "linear-gradient(180deg, #0C1506 0%, #151D10 100%)"
+                        ? "linear-gradient(180deg, #0C1506 0%, #151D10 100%)"
               : "linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 100%)"
             : colorMode === "dark"
             ? "#101010"
@@ -144,6 +145,7 @@ export default function Layout({ chains, children }: LayoutProps) {
         pb="4rem"
       >
         <Flex
+                display={isSales === true ? "none" : "flex"}
           position="absolute"
           top={0}
           justifyContent="space-between"
