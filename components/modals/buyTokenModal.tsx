@@ -63,7 +63,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                             </ListItem>
                             <ListItem>
                                 <ListIcon as={MdCheckCircle} color='#43931E' />
-                                The token quantity is capped at 100M, equating to a raise of $2.5M
+                                The token quantity is capped at 116M, equating to a raise of $2.9M 
                             </ListItem>
                             <ListItem>
                                 <ListIcon as={MdCheckCircle} color='#43931E' />

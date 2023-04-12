@@ -19,6 +19,7 @@ import { HiSun, HiMoon } from "react-icons/hi";
 import { FaDiscord } from "react-icons/fa";
 import { SiMedium } from "react-icons/si";
 import { useRouter } from "next/router";
+import { useAccount } from "wagmi";
 import Front from "../components/sales/front";
 import { NextSeo } from "next-seo";
 
@@ -28,6 +29,7 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
     const { colorMode, toggleColorMode } = useColorMode();
+
     const links = [
         {
             icon: (
@@ -69,7 +71,7 @@ export function Layout({ children }: LayoutProps) {
 
     const router = useRouter();
 
-    return (
+    return (      
         <Flex
             minH={"100vh"}
             h="full"
