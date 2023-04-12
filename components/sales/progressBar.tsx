@@ -101,18 +101,19 @@ export default function TotalInvestedBar() {
             direction="column"
         >
             <Flex
-                alignSelf="center"
-                alignItems="center"
-                justifyContent="center"
-                justifyItems="center"
-                w="full"
+             alignSelf="center"
+             alignItems="center"
+             justifyContent="center"
+             justifyItems="center"
+             w="full"
             // direction="row"
             // mt="2rem" w={{ base: "80%", md: "90%" }}
             // border="4px solid"
             // borderColor="#43931E"
             // borderRadius="xl"
             // position="relative"
-            >                <Tooltip
+            >               
+             <Tooltip
                 label="Start of private sale"
                 isOpen={startLabel}
             >
@@ -206,6 +207,7 @@ export default function TotalInvestedBar() {
                         justify="center"
                         align="center"
                         px={{base: "2rem", md: "1rem"}}
+                        borderLeftRadius={"lg"}
                     >
                         <Tooltip
                             label={`Public Token Sale: ${commify(

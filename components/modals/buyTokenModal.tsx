@@ -163,14 +163,14 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                                         <b>{+amount * 0.025}</b> $PECTRA
                                     </Text>
                                 </Flex>
-                                <Flex mt="0.5rem" px="1.25rem">
+                                {/* <Flex mt="0.5rem" px="1.25rem">
                                     <Text mr="0.25rem" variant="paragraph">
                                         Vest unlock date
                                     </Text>
                                     <Text variant="paragraph" color="#BBFF81">
                                         <b>25 / 05 / 2024</b>
                                     </Text>
-                                </Flex>
+                                </Flex> */}
                             </>
                         )
                     }

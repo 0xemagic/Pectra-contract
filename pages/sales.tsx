@@ -150,8 +150,8 @@ export function Layout({ children }: LayoutProps) {
                         })}
                     </Flex>
 
-                    <Flex justifyContent={{base: "end", md: "center"}} alignContent={{ base: "end", md: "center" }}>
-                        <Button mr={{base: "0rem", md: "1rem" }} variant="ghost" onClick={toggleColorMode}>
+                    <Flex justifyContent={{ base: "end", md: "center" }} alignContent={{ base: "end", md: "center" }} alignItems="center" justifyItems="center">
+                        <Button mr={{ base: "0rem", md: "1rem" }} variant="ghost" onClick={toggleColorMode}>
                             {colorMode === "dark" ? <HiSun /> : <HiMoon />}
                         </Button>
                         <ConnectButton
@@ -165,7 +165,13 @@ export function Layout({ children }: LayoutProps) {
                                 largeScreen: "full",
                             }}
                         />
-                        <Button ml={{base: "0.5rem", md: "1rem" }} mr={{base: "0rem", md: "0.5rem" }}variant="secondary">LEARN MORE</Button>
+                        <Link
+                            ml={{ base: "0.5rem", md: "1rem" }}
+                            mr={{ base: "0rem", md: "0.5rem" }}
+                            href="https://discord.gg/RKNRDVeFwG"
+                            isExternal
+                            _hover={{ textDecoration: "none" }}
+                        ><Button variant="secondary">JOIN DISCORD</Button></Link>
                         {/* <Button display={{ base: "none", md: "block" }} variant="secondary">FAQ</Button> */}
                     </Flex>
                 </Flex>

@@ -59,7 +59,7 @@ export default function Front() {
                             w={{ base: "fit-content", md: "fit-content", lg: "550px" }}
                             fontWeight="500"
                         >
-                            Invest in the first narrative-driven pair trading platform          </Text>
+                            The first narrative-driven pair trading platform          </Text>
                     </motion.div>
                 </Flex>
                 <motion.div
@@ -100,13 +100,13 @@ export default function Front() {
                         mb={{ base: "1rem", md: "0rem" }}
                         onClick={() => onOpen()}
                     >
-                        INVEST in $PECTRA
+                        BUY $PECTRA
                     </Button>
                     <Link
-                        href="https://discord.gg/RKNRDVeFwG"
+                        href="https://www.notion.so"
                         isExternal
                         _hover={{ textDecoration: "none" }}
-                    ><Button variant="secondary">JOIN DISCORD</Button></Link>
+                    ><Button variant="secondary">LEARN MORE</Button></Link>
                 </Flex>
                 </motion.div>
                 </Flex>
