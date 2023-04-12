@@ -81,7 +81,7 @@ export function Layout({ children }: LayoutProps) {
                     : "linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 100%)"
             }
             direction="column"
-            pb="4rem"
+            // pb="4rem"
         >
             <Flex
                 position="absolute"
