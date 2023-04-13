@@ -6,7 +6,8 @@ import {
     IconButton,
     Link,
     useColorMode,
-    Tooltip
+    Tooltip,
+    useDisclosure
 } from "@chakra-ui/react";
 
 import { AiOutlineInfoCircle } from "react-icons/ai";
@@ -14,7 +15,13 @@ import { FaCaretDown } from "react-icons/fa";
 import { useAccount } from "wagmi";
 import { useState } from "react";
 
+import TokenDetailsModal  from "../modals/tokenInvestDetailsModal";
+import BuyTokenModal from "../modals/buyTokenModal";
+
 export default function Dashboard({ onOpen }: any) {
+    const {isOpen: isOpenDashboard, onClose: onCloseDashboard, onOpen: onOpenDashboard} = useDisclosure(); 
+    const {isOpen: isOpenBuy, onClose: onCloseBuy, onOpen: onOpenBuy} = useDisclosure(); 
+
     const { address, isConnecting, isDisconnected } = useAccount();
     const [vestInfo, setVestInfo] = useState(false);
     const { colorMode } = useColorMode();
@@ -23,6 +30,7 @@ export default function Dashboard({ onOpen }: any) {
 
 
     return (
+        <>
         <Flex
             direction="column"
             alignItems="center"
@@ -45,6 +53,7 @@ export default function Dashboard({ onOpen }: any) {
                         variant="ghost"
                         aria-label="Open $PECTRA investing details"
                         icon={<FaCaretDown />}
+                        onClick={onOpenDashboard}
                     />
                 </Flex>
 
@@ -96,11 +105,17 @@ export default function Dashboard({ onOpen }: any) {
                     variant="primary"
                     boxShadow={colorMode === "dark" ? "0px -1px 22px #518128" : "none"}
                     // mr={{ base: "none", md: "0.5rem" }}
-                    onClick={() => onOpen()}
+                    onClick={() => onOpenBuy()}
                 >
                     BUY $PECTRA
                 </Button>
             </Flex>
         </Flex>
+
+        {isOpenDashboard && !isOpenBuy ? <TokenDetailsModal isOpenDashboard={isOpenDashboard} onCloseDashboard={onCloseDashboard} onOpenBuy={onOpenBuy}  /> : null}
+
+        {isOpenBuy && !isOpenDashboard ? <BuyTokenModal isOpen={isOpenBuy} onClose={onCloseBuy} /> : null}
+
+        </>
     )
 }
