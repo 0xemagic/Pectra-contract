@@ -27,6 +27,8 @@ import { truncate } from '../utils'
 import { useBalance, useAccount } from "wagmi";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
+import { useBuyTokens } from '../hooks/usePublicSale';
+
 export default function BuyTokenModal({ isOpen, onClose }: any) {
 
     const [step, setStep] = useState(1);
@@ -38,10 +40,22 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         isLoading: balanceLoading,
     } = useBalance({
         address: address,
-        token: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+        token: "0xA537aF138c1376ea9cC66501a2FfEF62a9c43630",
     });
 
-    console.log(address)
+    const { data, isLoading, isSuccess, write, approveData, isLoadingApprove, isSuccessApprove, writeApprove } = useBuyTokens(
+        address!,
+        amount
+    );
+
+    console.log(
+        data,
+        isLoading,
+        isSuccess,
+        approveData,
+        isLoadingApprove,
+        isSuccessApprove
+    )
 
     return (
         <Modal isCentered
@@ -179,7 +193,11 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                     <Flex w="full" direction="row" justify="center">
                         {address !== undefined ?
 
-                            <Button variant="primary" w="fit-content" mr={3} onClick={() => setStep(2)}>
+                            <Button variant="primary" w="fit-content" mr={3} 
+                            onClick={
+                                step === 1 ? () => setStep(2) : () => write
+                            }
+                            >
                                 {step === 1 ? 'Accept Terms' : 'Buy $PECTRA'}
                             </Button>
 

@@ -20,8 +20,7 @@ import { FaDiscord } from "react-icons/fa";
 import { SiMedium } from "react-icons/si";
 import { useRouter } from "next/router";
 import { useAccount } from "wagmi";
-import Front from "../components/sales/front";
-import Dashboard   from "../components/sales/dashboard";
+import SalesPage from "../components/sales";
 import { NextSeo } from "next-seo";
 
 interface LayoutProps {
@@ -211,8 +210,7 @@ function Sales() {
                 }}
             />
             <Layout>
-                {/* <Front /> */}
-                <Dashboard />
+                <SalesPage />
             </Layout>
         </>
     )
