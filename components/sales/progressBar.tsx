@@ -3,11 +3,9 @@ import { commify } from "ethers/lib/utils.js";
 import millify from "millify";
 import { useState } from "react";
 import { AiOutlineInfoCircle } from "react-icons/ai";
-import { truncate } from "../utils";
 
 import { BigNumberish } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
-import { useBuyTokens } from "../hooks/usePublicSale";
 
 type ProgressBarProps = {
   percentage: number;
@@ -42,7 +40,8 @@ export default function TotalInvestedBar() {
     },
   ];
 
-  const { tokensSold } = useBuyTokens();
+  //   const { tokensSold } = useBuyTokens();
+  const tokensSold = 0;
 
   const publicAmount = tokensSold
     ? +formatUnits(tokensSold as BigNumberish, 18)
@@ -207,7 +206,8 @@ export default function TotalInvestedBar() {
             justify="center"
             align="center"
           >
-            <Tooltip
+            <Text textColor={"black"}>fixing the progress bar calc..</Text>
+            {/* <Tooltip
               label={`Available token amount:  (${truncate(
                 commify(available * 40),
                 2
@@ -232,7 +232,7 @@ export default function TotalInvestedBar() {
                   fontSize={{ base: "0.75rem", md: "1rem" }}
                 >{`($${commify(available)})`}</Text>
               </Flex>
-            </Tooltip>
+            </Tooltip> */}
           </Flex>
         </Flex>
         <Tooltip label="End of public sale" isOpen={endLabel}>
