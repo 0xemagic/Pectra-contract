@@ -42,7 +42,6 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     functionName: "allowance",
     args: [address, SALES_CONTRACT],
     watch: true,
-    cacheTime: 1_000,
   });
 
   const { data: publicPectraBalance } = useContractRead({
