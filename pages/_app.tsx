@@ -13,6 +13,7 @@ import { configureChains, createClient, WagmiConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 
 import { alchemyProvider } from "wagmi/providers/alchemy";
+import { infuraProvider } from "wagmi/providers/infura";
 import Layout from "../components/layout";
 
 export const { chains, provider, webSocketProvider } = configureChains(
