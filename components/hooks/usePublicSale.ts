@@ -8,7 +8,8 @@ import erc20ABI from "../../public/abi/erc20.json";
 import salesABI from "../../public/abi/publicSale.json";
 
 import { parseUnits } from "@ethersproject/units";
-import { BigNumber } from "ethers";
+import { BigNumber, BigNumberish } from "ethers";
+import { formatUnits } from "@ethersproject/units";
 
 const SALES_CONTRACT =
   typeof process.env.NEXT_PUBLIC_SALE_CONTRACT === "string"
@@ -21,13 +22,20 @@ const USDC =
     : "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8";
 
 export const useBuyTokens = (address?: string, amount?: string) => {
-  const { config } = usePrepareContractWrite({
+  // const { config } = usePrepareContractWrite({
+  //   address: SALES_CONTRACT,
+  //   abi: salesABI,
+  //   functionName: "buyTokens",
+  //   args: [amount ? parseUnits(amount!, 6) : 0],
+  // });
+
+  const { data, isLoading, isSuccess, write } = useContractWrite({
+    mode: 'recklesslyUnprepared',
     address: SALES_CONTRACT,
     abi: salesABI,
     functionName: "buyTokens",
     args: [amount ? parseUnits(amount!, 6) : 0],
   });
-  const { data, isLoading, isSuccess, write } = useContractWrite(config);
 
   const { config: approveConfig } = usePrepareContractWrite({
     address: USDC,
@@ -69,9 +77,7 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     functionName: "isPaused",
   });
 
-  const isApproved =
-    BigNumber.isBigNumber(allowance) &&
-    allowance.gte(amount ? parseUnits(amount!, 6) : 0 ?? "0");
+  const isApproved = allowance && +formatUnits(allowance as BigNumberish, 6) >= +amount!
 
   const {
     data: approveData,

@@ -68,7 +68,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
     const insufficientBalance = usdcBalance && +formatUnits(usdcBalance!.value!, 6) < +amount;
 
     useEffect(() => {
-        if (isApproved && approveStatus === "success") {
+        if (isApproved && approveSuccess) {
           toast({
             variant: "success",
             duration: 5000,
@@ -78,7 +78,6 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
             ),
           });
         }
-        setApproveSuccess(true)
       }, [approveStatus, isApproved]);
 
     const handleTokenBuy = async () => {
@@ -99,6 +98,17 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
             });
         }
     };
+
+    const { isLoading: isLoadApprove } = useWaitForTransaction({
+        hash: approveData && approveData!.hash,
+        enabled: typeof approveData?.hash === "string",
+        onSuccess: (data: any) => {
+            if (data!.status === 1) {
+                setApproveSuccess(true);
+                // onClose();
+            }
+        },
+    });
 
     const { isLoading: isLoadingBuy } = useWaitForTransaction({
         hash: data && data!.hash,
