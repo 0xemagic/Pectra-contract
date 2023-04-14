@@ -21,6 +21,7 @@ import { FaDiscord } from "react-icons/fa";
 import { HiMoon, HiSun } from "react-icons/hi";
 import { RiGithubFill, RiTwitterFill } from "react-icons/ri";
 import { SiMedium } from "react-icons/si";
+import { usePublicSale } from "../hooks/usePublicSale";
 
 interface LayoutProps {
   children: JSX.Element;
@@ -30,6 +31,7 @@ interface LayoutProps {
 export default function Layout({ chains, children }: LayoutProps) {
   const { colorMode, toggleColorMode } = useColorMode();
   const router = useRouter();
+  const { isPaused } = usePublicSale();
 
   const links = [
     // {
@@ -159,6 +161,19 @@ export default function Layout({ chains, children }: LayoutProps) {
               >
                 Buy $PECTRA
               </Button>
+            </HStack>
+          </Flex>
+        )}
+        {isSales && isPaused && (
+          <Flex
+            w="100%"
+            h={12}
+            bg="yellow.900"
+            alignItems={"center"}
+            direction="row"
+          >
+            <HStack margin={"0 auto"} spacing={4}>
+              <Text>Sale is paused, or not started yet.</Text>
             </HStack>
           </Flex>
         )}

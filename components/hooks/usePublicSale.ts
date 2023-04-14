@@ -98,3 +98,13 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     isPaused,
   };
 };
+
+export const usePublicSale = () => {
+  const { data: isPaused } = useContractRead({
+    address: SALES_CONTRACT,
+    abi: salesABI,
+    functionName: "isPaused",
+    watch: true,
+  });
+  return { isPaused };
+};
