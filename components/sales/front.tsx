@@ -13,10 +13,11 @@ import TotalInvestedBar from "./progressBar";
 
 import BuyTokenModal from "../modals/buyTokenModal";
 
+import { formatDistance } from "date-fns";
 import { BigNumberish } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
 import { useAccount } from "wagmi";
-import { useBuyTokens } from "../hooks/usePublicSale";
+import { useBuyTokens, usePublicSale } from "../hooks/usePublicSale";
 
 export default function Front() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -24,6 +25,7 @@ export default function Front() {
   const { address } = useAccount();
 
   const { publicPectraBalance } = useBuyTokens(address!);
+  const { saleEndEpoch, saleEndDate } = usePublicSale();
 
   const vested =
     publicPectraBalance && +formatUnits(publicPectraBalance as BigNumberish, 18) > 0
@@ -143,7 +145,10 @@ export default function Front() {
                 fontSize={{ base: "1.5rem", md: "2rem" }}
                 color="#81FF7E"
               >
-                00D / 00H / 00M
+                {formatDistance(saleEndDate ?? new Date(), new Date(), {
+                  addSuffix: true,
+                })}
+                {/* 00D / 00H / 00M */}
               </Heading>
             </Flex>
             <Flex

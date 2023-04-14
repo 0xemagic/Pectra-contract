@@ -106,5 +106,16 @@ export const usePublicSale = () => {
     functionName: "isPaused",
     watch: true,
   });
-  return { isPaused };
+  const { data: saleEndEpoch } = useContractRead({
+    address: SALES_CONTRACT,
+    abi: salesABI,
+    functionName: "saleEndEpoch",
+  });
+  return {
+    isPaused,
+    saleEndEpoch,
+    saleEndDate: saleEndEpoch
+      ? new Date((saleEndEpoch as number) * 1000 ?? 0)
+      : undefined,
+  };
 };
