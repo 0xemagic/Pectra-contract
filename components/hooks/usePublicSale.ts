@@ -59,6 +59,13 @@ export const useBuyTokens = (
       functionName: "totalTokensSold",
       watch: true,
     });
+
+    const { data: isPaused } = useContractRead({
+      address: SALES_CONTRACT,
+      abi: salesABI,
+      functionName: "isPaused",
+      watch: true,
+    });
   
     const isApproved =
       BigNumber.isBigNumber(allowance) &&
@@ -68,6 +75,6 @@ export const useBuyTokens = (
   
     const { data: approveData, isLoading: isLoadingApprove, isSuccess: isSuccessApprove, write: writeApprove } = useContractWrite(approveConfig);
   
-    return { data, isLoading, isSuccess, write,  approveData, isLoadingApprove, isSuccessApprove, writeApprove, isApproved, publicPectraBalance, spectraPrice, tokensSold };
+    return { data, isLoading, isSuccess, write,  approveData, isLoadingApprove, isSuccessApprove, writeApprove, isApproved, publicPectraBalance, spectraPrice, tokensSold, isPaused };
   };
 
