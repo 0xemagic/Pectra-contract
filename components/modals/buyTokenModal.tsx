@@ -61,24 +61,18 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         isLoadingApprove,
         isSuccessApprove,
         writeApprove,
-        // isApproved,
+        isApproved,
         publicPectraBalance,
         spectraPrice,
         isPaused,
         usdcBalance
     } = useBuyTokens(address!, amount);
 
-    const insufficientBalance = usdcBalance && +formatUnits(usdcBalance!.value!, 6) < +amount!;
+    useEffect(() => {
+        setApproved(isApproved ? true : false)
+    }, [isApproved])
 
-    const { data: allowance } = useContractRead({
-        address: USDC,
-        abi: erc20ABI,
-        functionName: "allowance",
-        args: [address, SALES_CONTRACT],
-        watch: true,
-      });
-    
-      const isApproved = (approved && allowance) && +formatUnits(allowance as BigNumberish, 6) >= +amount!
+    const insufficientBalance = usdcBalance && +formatUnits(usdcBalance!.value!, 6) < +amount!;
 
     useEffect(() => {
         if (isApproved && approveSuccess) {
@@ -96,7 +90,6 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
     const handleApprove = async () => {
     try {
         await writeApprove?.();
-        setApproved(true);
     } catch (e) {
         console.error(e);
         setApproved(false);
@@ -127,6 +120,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         onSuccess: (data: any) => {
             if (data!.status === 1) {
                 setApproveSuccess(true);
+                if (!isApproved) setApproved(true);
                 // onClose();
             }
         },
@@ -333,14 +327,14 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                                         // || isApproved
                                     }
                                     onClick={
-                                        step === 1 ? () => setStep(2) : !isApproved ? () => handleApprove() : () => {}
+                                        step === 1 ? () => setStep(2) : !approved ? () => handleApprove() : () => {}
                                     }
                                 >
                                     {isPaused
                                         ? "COMING SOON"
                                         : step === 1
                                             ? "Accept Terms"
-                                            : !isApproved
+                                            : !approved
                                                 ? "Approve USDC" : "BUYING..."}
                                 </Button>
                                 <Button
