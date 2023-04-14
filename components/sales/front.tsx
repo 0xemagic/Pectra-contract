@@ -165,7 +165,11 @@ export default function Front() {
                 }
                 mr={{ base: "none", md: "0.5rem" }}
                 mb={{ base: "1rem", md: "0rem" }}
-                onClick={() => onOpen()}
+                onClick={() => {
+                  if (address) {
+                    onOpen();
+                  }
+                }}
               >
                 BUY $PECTRA
               </Button>
@@ -174,14 +178,22 @@ export default function Front() {
                 isExternal
                 _hover={{ textDecoration: "none" }}
               >
-                <Button variant="outline"
-                   w="155px"
-                   h="48px"
-                   borderRadius="12px"
-                >LEARN MORE</Button>
+                <Button
+                  variant="outline"
+                  w="155px"
+                  h="48px"
+                  borderRadius="12px"
+                >
+                  LEARN MORE
+                </Button>
               </Link>
             </Flex>
-            <Flex pb="2rem" mt="2rem" alignItems={"center"} justifyContent="center">
+            <Flex
+              pb="2rem"
+              mt="2rem"
+              alignItems={"center"}
+              justifyContent="center"
+            >
               {vested && (
                 <Link href="/token" _hover={{ textDecoration: "none" }}>
                   <Button variant="secondary">MY $PECTRA</Button>
