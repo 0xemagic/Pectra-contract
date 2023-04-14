@@ -135,11 +135,10 @@ export function Layout({ children }: LayoutProps) {
           })}
         </Flex>
         <Flex
+          flexDirection="row"
           flex={1}
-          justifyContent={{ base: "end", md: "center" }}
-          alignContent={{ base: "end", md: "center" }}
-          alignItems="center"
-          justifyItems="center"
+          justifyContent={{ base: "end" }}
+          alignContent={{ base: "end" }}
         >
           <ConnectButton
             chainStatus={"none"}
