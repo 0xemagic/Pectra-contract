@@ -67,6 +67,8 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
 
     const insufficientBalance = usdcBalance && +formatUnits(usdcBalance!.value!, 6) < +amount;
 
+    console.log(isApproved)
+
     useEffect(() => {
         if (isApproved && approveSuccess) {
           toast({
