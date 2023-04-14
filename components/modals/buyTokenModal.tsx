@@ -63,15 +63,11 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         spectraPrice,
         isPaused,
         usdcBalance
-    } = useBuyTokens(address!, amount);
+    } = useBuyTokens(amount);
 
     const insufficientBalance = usdcBalance && +formatUnits(usdcBalance!.value!, 6) < +amount;
 
     console.log(isApproved)
-
-    useEffect(() => {
-        setAmount(amount);
-    }, [approveStatus, approveSuccess, isApproved])
 
     useEffect(() => {
         if (isApproved && approveSuccess) {

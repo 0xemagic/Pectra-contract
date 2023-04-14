@@ -3,6 +3,7 @@ import {
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
+  useAccount
 } from "wagmi";
 import erc20ABI from "../../public/abi/erc20.json";
 import salesABI from "../../public/abi/publicSale.json";
@@ -10,6 +11,7 @@ import salesABI from "../../public/abi/publicSale.json";
 import { parseUnits } from "@ethersproject/units";
 import { BigNumber, BigNumberish } from "ethers";
 import { formatUnits } from "@ethersproject/units";
+const { address } = useAccount();
 
 const SALES_CONTRACT =
   typeof process.env.NEXT_PUBLIC_SALE_CONTRACT === "string"
