@@ -18,7 +18,8 @@ import {
     NumberInput,
     NumberInputField,
     NumberInputStepper,
-    Image
+    Image,
+    useToast
 } from '@chakra-ui/react'
 
 import { MdCheckCircle } from 'react-icons/md'
@@ -29,8 +30,12 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 import { useBuyTokens } from '../hooks/usePublicSale';
 
-export default function BuyTokenModal({ isOpen, onClose }: any) {
+import { getErrorMessage } from '../utils/errors';
 
+import { DangerToast, SuccessToast } from "../UI/toasts";
+
+export default function BuyTokenModal({ isOpen, onClose }: any) {
+    const toast = useToast();
     const [step, setStep] = useState(1);
     const [amount, setAmount] = useState<string>("0");
     const { address, isConnecting, isDisconnected } = useAccount();
@@ -43,19 +48,37 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         token: "0xA537aF138c1376ea9cC66501a2FfEF62a9c43630",
     });
 
-    const { data, isLoading, isSuccess, write, approveData, isLoadingApprove, isSuccessApprove, writeApprove } = useBuyTokens(
+    const { data, isLoading, isSuccess, write, approveData, isLoadingApprove, isSuccessApprove, writeApprove, isApproved } = useBuyTokens(
         address!,
         amount
     );
 
     console.log(
-        data,
-        isLoading,
-        isSuccess,
-        approveData,
-        isLoadingApprove,
-        isSuccessApprove
+        // data,
+        // isLoading,
+        // isSuccess,
+        // approveData,
+        // isLoadingApprove,
+        // isSuccessApprove,
+        isApproved
     )
+
+    const handleTokenBuy = async () => {
+        if (!isApproved) {
+          return;
+        }
+        try {
+          await write!();
+        } catch (error) {
+          const errorMessage = getErrorMessage(error);
+          toast({
+            variant: "danger",
+            duration: 5000,
+            position: "bottom",
+            render: () => <DangerToast message={errorMessage} />,
+          });
+        }
+      };
 
     return (
         <Modal isCentered
@@ -195,10 +218,10 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
 
                             <Button variant="primary" w="fit-content" mr={3} 
                             onClick={
-                                step === 1 ? () => setStep(2) : () => write
+                                step === 1 ? () => setStep(2) : !isApproved ? () => writeApprove!() : () => handleTokenBuy()
                             }
                             >
-                                {step === 1 ? 'Accept Terms' : 'Buy $PECTRA'}
+                                {step === 1 ? 'Accept Terms' : !isApproved ? 'Approve USDC' : 'Buy $PECTRA'}
                             </Button>
 
                             :

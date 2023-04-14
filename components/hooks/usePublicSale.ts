@@ -24,7 +24,7 @@ export const useBuyTokens = (
       abi: erc20ABI,
       functionName: "approve",
       args: [
-        address,
+        SALES_CONTRACT,
         parseUnits(noSpecialCharacters(usdcAmount), 6),
       ],
     });
@@ -48,6 +48,6 @@ export const useBuyTokens = (
   
     const { data: approveData, isLoading: isLoadingApprove, isSuccess: isSuccessApprove, write: writeApprove } = useContractWrite(approveConfig);
   
-    return { data, isLoading, isSuccess, write,  approveData, isLoadingApprove, isSuccessApprove, writeApprove };
+    return { data, isLoading, isSuccess, write,  approveData, isLoadingApprove, isSuccessApprove, writeApprove, isApproved };
   };
 
