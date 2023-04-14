@@ -41,6 +41,7 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     abi: erc20ABI,
     functionName: "allowance",
     args: [address, SALES_CONTRACT],
+    watch: true,
   });
 
   const { data: publicPectraBalance } = useContractRead({
