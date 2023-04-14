@@ -60,26 +60,25 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         isLoadingApprove,
         isSuccessApprove,
         writeApprove,
-        // isApproved,
+        isApproved,
         publicPectraBalance,
         spectraPrice,
         isPaused,
         usdcBalance
     } = useBuyTokens(address!, amount);
 
-    const { data: allowance } = useContractRead({
-        address: USDC,
-        abi: erc20ABI,
-        functionName: "allowance",
-        args: [address, SALES_CONTRACT],
-        watch: true,
-      });
-    
-    const isApproved = allowance && +formatUnits(allowance as BigNumberish, 6) >= +amount!
-
     const insufficientBalance = usdcBalance && +formatUnits(usdcBalance!.value!, 6) < +amount;
 
-    console.log(isApproved)
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (amount !== "0.0"){
+            setAmount(amount)
+            }
+            console.log(isApproved, "yes")
+        }, 3000);
+
+        return () => clearInterval(interval);
+    }, [isLoadingApprove])
 
     useEffect(() => {
         if (isApproved && approveSuccess) {
