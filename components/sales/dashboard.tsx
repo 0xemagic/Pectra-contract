@@ -30,8 +30,6 @@ export default function Dashboard({ onOpen, publicPectraBalance }: any) {
     const [vestInfo, setVestInfo] = useState(false);
     const { colorMode } = useColorMode();
 
-    console.log(formatUnits(publicPectraBalance, 18))
-
     return (
         <>
             <Flex

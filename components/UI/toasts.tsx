@@ -38,7 +38,7 @@ export function WarningToast({ link, icon, message }: ButtonProps) {
         h="8px"
         w="8px"
       />
-      <Link href={`https://etherscan.io/tx/${link}`} isExternal>
+      <Link href={`https://arbiscan.io/tx/${link}`} isExternal>
         <HStack w="full" justifyContent="space-between" alignItems="start">
           <Text
             textAlign="left"
@@ -77,7 +77,7 @@ export function DangerToast({ link, icon, message }: ButtonProps) {
         h="8px"
         w="8px"
       />
-      <Link href={`https://etherscan.io/tx/${link}`} isExternal>
+      <Link href={`https://arbiscan.io/tx/${link}`} isExternal>
         <HStack w="full" justifyContent="space-between" alignItems="start">
           <Text
             textAlign="left"
@@ -118,7 +118,7 @@ export function SuccessToast({ link, icon, message }: ButtonProps) {
         h="8px"
         w="8px"
       />
-      <Link href={`https://etherscan.io/tx/${link}`} isExternal>
+      <Link href={`https://arbiscan.io/tx/${link}`} isExternal>
         <HStack w="full" justifyContent="space-between" alignItems="start">
           <Text
             textAlign="left"
@@ -151,7 +151,7 @@ export function InfoToast({ link, icon, message }: ButtonProps) {
       bg={colorMode === "dark" ? "#232323" : "#E8E8E8"}
       alignItems="center"
     >
-      <Link href={`https://etherscan.io/tx/${link}`} isExternal>
+      <Link href={`https://arbiscan.io/tx/${link}`} isExternal>
         <HStack w="full" justifyContent="space-between" alignItems="start">
           <Text
             textAlign="left"

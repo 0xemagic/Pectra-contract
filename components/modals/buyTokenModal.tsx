@@ -25,7 +25,7 @@ import {
 import { MdCheckCircle } from 'react-icons/md'
 import { useState } from 'react'
 import { truncate } from '../utils'
-import { useBalance, useAccount } from "wagmi";
+import { useBalance, useAccount, useWaitForTransaction } from "wagmi";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 import { useBuyTokens } from '../hooks/usePublicSale';
@@ -34,8 +34,13 @@ import { getErrorMessage } from '../utils/errors';
 
 import { DangerToast, SuccessToast } from "../UI/toasts";
 
+import Confetti from "react-confetti";
+import useWindowSize from "react-use/lib/useWindowSize";
+
 export default function BuyTokenModal({ isOpen, onClose }: any) {
     const toast = useToast();
+    const { width, height } = useWindowSize();
+    const [buySuccess, setBuySuccess] = useState(false);
     const [step, setStep] = useState(1);
     const [amount, setAmount] = useState<string>("0");
     const { address, isConnecting, isDisconnected } = useAccount();
@@ -53,23 +58,12 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         amount
     );
 
-    console.log(
-        // data,
-        // isLoading,
-        // isSuccess,
-        // approveData,
-        // isLoadingApprove,
-        // isSuccessApprove,
-        isApproved,
-        publicPectraBalance
-    )
-
     const handleTokenBuy = async () => {
         if (!isApproved) {
           return;
         }
         try {
-          await write!();
+          await write?.();
         } catch (error) {
           const errorMessage = getErrorMessage(error);
           toast({
@@ -81,7 +75,19 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         }
       };
 
+      const { isLoading: isLoadingBuy } = useWaitForTransaction({
+        hash: data && data!.hash,
+        enabled: typeof data?.hash === "string",
+        onSuccess: (data: any) => {
+          if (data!.status === 1) {
+            setBuySuccess(true);
+            // onClose();
+          }
+        },
+      });
+
     return (
+        <>
         <Modal isCentered
             isOpen={isOpen} onClose={onClose} size="2xl" >
             <ModalOverlay />
@@ -221,12 +227,12 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                             variant="primary"
                             w="fit-content" 
                             mr={3} 
-                            disabled={step === 2 && amount === "0"}
+                            disabled={step === 2 && amount === "0" || isLoadingApprove || isLoading}
                             onClick={
                                 step === 1 ? () => setStep(2) : !isApproved ? () => writeApprove!() : () => handleTokenBuy()
                             }
                             >
-                                {step === 1 ? 'Accept Terms' : !isApproved ? 'Approve USDC' : 'Buy $PECTRA'}
+                                {step === 1 ? 'Accept Terms' : !isApproved ? 'Approve USDC' : isLoadingApprove ? 'Approving...' : isLoading ? "Buying..." : 'Buy $PECTRA'}
                             </Button>
 
                             :
@@ -241,5 +247,15 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                 </ModalFooter>
             </ModalContent>
         </Modal>
+
+        <Confetti
+        run={buySuccess}
+        width={width}
+        height={height}
+        numberOfPieces={500}
+        onConfettiComplete={() => {
+          setBuySuccess(false);
+        }}/>
+        </>
     )
 }

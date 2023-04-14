@@ -10,12 +10,12 @@ const SALES_CONTRACT = "0x00006ef5eb2c94abacfc95363a4811b117ce22eb";
 
 export const useBuyTokens = (      
   address: string,
-  usdcAmount?: string) => {
+  amount?: string) => {
     const { config } = usePrepareContractWrite({
       address: SALES_CONTRACT,
       abi: salesABI,
       functionName: "buyTokens",
-      args: [usdcAmount ? parseUnits(usdcAmount!, 6) : 0],
+      args: [amount ? parseUnits(amount!, 6) : 0],
     });
     const { data, isLoading, isSuccess, write } = useContractWrite(config);
 
@@ -25,7 +25,7 @@ export const useBuyTokens = (
       functionName: "approve",
       args: [
         SALES_CONTRACT,
-        usdcAmount ? parseUnits(usdcAmount!, 6) : 0
+        amount ? parseUnits(amount!, 6) : 0
       ],
     });
   
@@ -48,7 +48,7 @@ export const useBuyTokens = (
     const isApproved =
       BigNumber.isBigNumber(allowance) &&
       allowance.gte(
-        usdcAmount ? parseUnits(usdcAmount!, 6) : 0 ?? "0"
+        amount ? parseUnits(amount!, 6) : 0 ?? "0"
       );
   
     const { data: approveData, isLoading: isLoadingApprove, isSuccess: isSuccessApprove, write: writeApprove } = useContractWrite(approveConfig);
