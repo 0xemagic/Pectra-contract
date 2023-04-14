@@ -10,13 +10,13 @@ import { parseUnits } from "@ethersproject/units";
 import { BigNumber } from "ethers";
 
 const SALES_CONTRACT =
-  process.env.VERCEL_ENV === "production"
-    ? "0x5a1efce55840e2f5b49f2ff7e5061712e6fa3151"
+  typeof process.env.NEXT_PUBLIC_SALE_CONTRACT === "string"
+    ? (process.env.NEXT_PUBLIC_SALE_CONTRACT as `0x${string}`)
     : "0x00006ef5eb2c94abacfc95363a4811b117ce22eb";
 const USDC =
-  process.env.VERCEL_ENV === "production"
-    ? "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8"
-    : "0xa537af138c1376ea9cc66501a2ffef62a9c43630";
+  typeof process.env.NEXT_PUBLIC_SALE_USDC === "string"
+    ? (process.env.NEXT_PUBLIC_SALE_USDC as `0x${string}`)
+    : "0x00006ef5eb2c94abacfc95363a4811b117ce22eb";
 
 export const useBuyTokens = (address?: string, amount?: string) => {
   const { config } = usePrepareContractWrite({
