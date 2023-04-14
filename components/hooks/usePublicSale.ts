@@ -11,15 +11,9 @@ import { parseUnits } from "@ethersproject/units";
 import { BigNumber, BigNumberish } from "ethers";
 import { formatUnits } from "@ethersproject/units";
 
-export const SALES_CONTRACT =
-  typeof process.env.NEXT_PUBLIC_SALE_CONTRACT === "string"
-    ? (process.env.NEXT_PUBLIC_SALE_CONTRACT as `0x${string}`)
-    : "0x5a1efce55840e2f5b49f2ff7e5061712e6fa3151";
+export const SALES_CONTRACT = "0x5a1efce55840e2f5b49f2ff7e5061712e6fa3151";
 
-export const USDC =
-  typeof process.env.NEXT_PUBLIC_SALE_USDC === "string"
-    ? (process.env.NEXT_PUBLIC_SALE_USDC as `0x${string}`)
-    : "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8";
+export const USDC = "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8";
 
 export const useBuyTokens = (address?: string, amount?: string) => {
   // const { config } = usePrepareContractWrite({
