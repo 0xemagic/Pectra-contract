@@ -17,17 +17,17 @@ export default function SalesPage() {
 
     return (
         <>
-            {process.env.NODE_ENV === "production" ? (
+            {/* {process.env.NODE_ENV === "production" ? (
                 <Flex w="full">
                     <Heading m="auto" mt="20%">Coming Soon</Heading>
                 </Flex>)
-                : (
+                : ( */}
                     <>
                         {
                             publicPectraBalance! > 0 ? <Dashboard publicPectraBalance={publicPectraBalance} /> : <Front />
                         }
                     </>
-                )}
+                {/* )} */}
         </>
     )
 }
