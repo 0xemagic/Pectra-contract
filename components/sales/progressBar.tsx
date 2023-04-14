@@ -170,7 +170,7 @@ export default function TotalInvestedBar() {
               borderLeftRadius={"lg"}
             >
               <Tooltip
-                label={`Public Tokens Sold: ${commify(spectraSold)} $PECTRA`}
+                label={`$PECTRA Sold: ${commify(spectraSold)}`}
                 isOpen={publicLabel}
               >
                 <Flex
@@ -209,10 +209,7 @@ export default function TotalInvestedBar() {
             {/* <Text textColor={"black"}>fixing the progress bar calc..</Text> */}
             {
               <Tooltip
-                label={`Available token amount:  (${truncate(
-                  commify(spectraUnsold),
-                  2
-                )} $PECTRA)`}
+                label={`$PECTRA Available:  ${truncate(commify(spectraUnsold), 2)}`}
                 isOpen={availableLabel}
               >
                 <Flex
