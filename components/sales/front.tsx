@@ -10,11 +10,11 @@ export default function Front() {
 
     return (
         <>
-         {process.env.NODE_ENV === "production" ? (
+         {/* {process.env.NODE_ENV === "production" ? (
         <Flex w="full">
           <Heading m="auto" mt="20%">Coming Soon</Heading>
         </Flex>)
-        : (
+        : ( */}
             <Flex direction="column" minH="80vh" px={{ base: "1rem", md: "4rem" }} align="center">
                 <Flex direction="column" w="full" align="center" mb={{base: "0rem", "3xl": "2rem"}}>
                     <motion.div
@@ -115,7 +115,7 @@ export default function Front() {
                 </Flex>
                 </motion.div>
                 </Flex>
-            </Flex>)}
+            </Flex>
             {isOpen && <BuyTokenModal isOpen={isOpen} onClose={onClose} />}
         </>
     )
