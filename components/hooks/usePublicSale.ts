@@ -78,6 +78,7 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     isLoading: isLoadingApprove,
     isSuccess: isSuccessApprove,
     write: writeApprove,
+    status: approveStatus,
   } = useContractWrite(approveConfig);
 
   const {
@@ -97,6 +98,7 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     approveData,
     isLoadingApprove,
     isSuccessApprove,
+    approveStatus,
     writeApprove,
     isApproved,
     publicPectraBalance,

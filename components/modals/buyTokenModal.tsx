@@ -23,7 +23,7 @@ import {
 } from "@chakra-ui/react";
 
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MdCheckCircle } from "react-icons/md";
 import { useAccount, useBalance, useWaitForTransaction } from "wagmi";
 import { truncate } from "../utils";
@@ -32,7 +32,7 @@ import { useBuyTokens } from "../hooks/usePublicSale";
 
 import { getErrorMessage } from "../utils/errors";
 
-import { DangerToast } from "../UI/toasts";
+import { DangerToast, SuccessToast } from "../UI/toasts";
 
 import { commify, formatUnits } from "@ethersproject/units";
 import { BigNumberish } from "ethers";
@@ -43,6 +43,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
     const toast = useToast();
     const { width, height } = useWindowSize();
     const [buySuccess, setBuySuccess] = useState(false);
+    const [approveSuccess, setApproveSuccess] = useState(false);
     const [step, setStep] = useState(1);
     const [amount, setAmount] = useState<string>("0");
     const { address } = useAccount();
@@ -53,6 +54,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         isSuccess,
         write,
         approveData,
+        approveStatus,
         isLoadingApprove,
         isSuccessApprove,
         writeApprove,
@@ -65,11 +67,27 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
 
     const insufficientBalance = usdcBalance && +formatUnits(usdcBalance!.value!, 6) < +amount;
 
-    const handleTokenBuy = async () => {
-        if (!isApproved) {
-            return;
+    useEffect(() => {
+        if (isApproved && approveStatus === "success") {
+          toast({
+            variant: "success",
+            duration: 5000,
+            position: "bottom",
+            render: () => (
+              <SuccessToast message={`You have approved ${amount} USDC`} />
+            ),
+          });
         }
+        setApproveSuccess(true)
+      }, [approveStatus, isApproved]);
+
+    const handleTokenBuy = async () => {
+        // if (!isApproved) {
+        //     console.log("YES")
+        //     return;
+        // }
         try {
+            console.log("YES")
             await write?.();
         } catch (error) {
             const errorMessage = getErrorMessage(error);
@@ -271,21 +289,19 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                     <ModalFooter mt="1.5rem">
                         <Flex w="full" direction="row" justify="center">
                             {address !== undefined ? (
+                                <>
                                 <Button
+                                    display={isApproved && step !== 1 ? "none" :  "flex"}
                                     variant="primary"
                                     w="fit-content"
                                     mr={3}
                                     disabled={
                                         (step === 2 && amount === "0") ||
-                                        isLoadingApprove ||
-                                        isLoading
+                                        isLoadingApprove 
+                                        // || isApproved
                                     }
                                     onClick={
-                                        step === 1
-                                            ? () => setStep(2)
-                                            : !isApproved
-                                                ? () => writeApprove!()
-                                                : () => handleTokenBuy()
+                                        step === 1 ? () => setStep(2) : !isApproved ? () => writeApprove!() : () => {}
                                     }
                                 >
                                     {isPaused
@@ -293,14 +309,24 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                                         : step === 1
                                             ? "Accept Terms"
                                             : !isApproved
-                                                ? "Approve USDC"
-                                                : isLoadingApprove
-                                                    ? "Approving..."
-                                                    : isLoading
-                                                        ? "Buying..."
-                                                        : "Buy $PECTRA"}
+                                                ? "Approve USDC" : "BUYING..."}
                                 </Button>
-                            ) : (
+                                <Button
+                                    display={!isApproved || step === 1 ? "none" : "flex"}
+                                    variant="primary"
+                                    w="fit-content"
+                                    disabled={
+                                        (step === 2 && amount === "0") ||
+                                        step === 1 ||
+                                        isLoadingApprove ||
+                                        !isApproved
+                                    }
+                                    onClick={() => handleTokenBuy()}
+                                >
+                                    BUY $PECTRA
+                                </Button>
+                                </>
+                                ) : (
                                 <Button variant="primary" w="fit-content" mr={3}>
                                     <ConnectButton />
                                 </Button>
