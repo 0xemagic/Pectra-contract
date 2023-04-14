@@ -68,7 +68,7 @@ export default function TotalInvestedBar() {
         />
         {translateX !== 0 ? (
           <Tooltip
-            label={`${millify(publicAmount)} of public sales`}
+            label={`${millify(spectraSold)} of public sales`}
             isOpen={alreadySoldLabel}
           >
             <Flex
