@@ -40,7 +40,6 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     abi: erc20ABI,
     functionName: "allowance",
     args: [address, SALES_CONTRACT],
-    watch: true,
   });
 
   const { data: publicPectraBalance } = useContractRead({
@@ -48,28 +47,24 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     abi: salesABI,
     functionName: "tokenBalances",
     args: [address],
-    watch: true,
   });
 
   const { data: spectraPrice } = useContractRead({
     address: SALES_CONTRACT,
     abi: salesABI,
     functionName: "pricePerToken",
-    watch: true,
   });
 
   const { data: tokensSold } = useContractRead({
     address: SALES_CONTRACT,
     abi: salesABI,
     functionName: "totalTokensSold",
-    watch: true,
   });
 
   const { data: isPaused } = useContractRead({
     address: SALES_CONTRACT,
     abi: salesABI,
     functionName: "isPaused",
-    watch: true,
   });
 
   const isApproved =

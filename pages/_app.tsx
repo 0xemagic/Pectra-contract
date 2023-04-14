@@ -17,14 +17,15 @@ import Layout from "../components/layout";
 
 export const { chains, provider, webSocketProvider } = configureChains(
   [arbitrum],
-  typeof process.env.NEXT_PUBLIC_ALCHEMY_API_KEY === "string"
-    ? [
-        alchemyProvider({
-          apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
-        }),
-        publicProvider(),
-      ]
-    : [publicProvider()]
+  // typeof process.env.NEXT_PUBLIC_ALCHEMY_API_KEY === "string"
+  //   ? [
+  //       alchemyProvider({
+  //         apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
+  //       }),
+  //       publicProvider(),
+  //     ]
+  //   : 
+  [publicProvider()]
 );
 
 const { connectors } = getDefaultWallets({
