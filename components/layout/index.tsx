@@ -114,6 +114,7 @@ export default function Layout({ chains, children }: LayoutProps) {
 
   const isIndex = router.pathname === "/";
   const isSales = router.pathname === "/sales";
+  const isToken = router.pathname === "/token";
 
   return (
     <RainbowKitProvider
@@ -142,7 +143,7 @@ export default function Layout({ chains, children }: LayoutProps) {
             : "#FFFFFF"
         }
         direction="column"
-        pb="4rem"
+        // pb="4rem"
       >
         <Flex
                 display={isSales === true ? "none" : "flex"}
@@ -169,7 +170,7 @@ export default function Layout({ chains, children }: LayoutProps) {
           </Flex>
 
           <Flex
-            display={isIndex ? "none" : "flex"}
+            display={isIndex || isToken ? "none" : "flex"}
             direction="row"
             justify="space-between"
             align="center"
@@ -195,12 +196,11 @@ export default function Layout({ chains, children }: LayoutProps) {
           </Flex>
           <Flex
             w="fit-content"
-            justifyContent={isIndex ? "space-between" : "flex-end"}
+            justifyContent={isIndex || isToken ? "space-between" : "flex-end"}
           >
             <Flex
               display={{ base: "none", md: "flex" }}
-              justifySelf={isIndex ? "center" : "end"}
-              justify="center"
+              justifySelf={isIndex || isToken ? "center" : "end"}
               m="auto"
               mr="1rem"
             >
@@ -217,7 +217,7 @@ export default function Layout({ chains, children }: LayoutProps) {
                       w="3.5rem"
                       h="3.5rem"
                       bg={
-                        isIndex
+                        isIndex || isToken
                           ? colorMode === "dark"
                             ? "#22291C"
                             : "#F5F5F5"
@@ -268,11 +268,11 @@ export default function Layout({ chains, children }: LayoutProps) {
                   chainStatus={"none"}
                   showBalance={{
                     smallScreen: false,
-                    largeScreen: true,
+                    largeScreen: false,
                   }}
                   accountStatus={{
                     smallScreen: "avatar",
-                    largeScreen: "full",
+                    largeScreen: "avatar",
                   }}
                 />
               )}

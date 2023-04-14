@@ -20,7 +20,7 @@ import { FaDiscord } from "react-icons/fa";
 import { SiMedium } from "react-icons/si";
 import { useRouter } from "next/router";
 import { useAccount } from "wagmi";
-import Front from "../components/sales/front";
+import SalesPage from "../components/sales";
 import { NextSeo } from "next-seo";
 
 interface LayoutProps {
@@ -157,16 +157,16 @@ export function Layout({ children }: LayoutProps) {
                             {colorMode === "dark" ? <HiSun /> : <HiMoon />}
                         </Button>
                         <ConnectButton
-                            chainStatus={"none"}
-                            showBalance={{
-                                smallScreen: false,
-                                largeScreen: true,
-                            }}
-                            accountStatus={{
-                                smallScreen: "avatar",
-                                largeScreen: "full",
-                            }}
-                        />
+                  chainStatus={"none"}
+                  showBalance={{
+                    smallScreen: false,
+                    largeScreen: false,
+                  }}
+                  accountStatus={{
+                    smallScreen: "avatar",
+                    largeScreen: "avatar",
+                  }}
+                />
                         <Link
                             ml={{ base: "0.5rem", md: "1rem" }}
                             mr={{ base: "0rem", md: "0.5rem" }}
@@ -210,7 +210,7 @@ function Sales() {
                 }}
             />
             <Layout>
-                <Front />
+                <SalesPage />
             </Layout>
         </>
     )

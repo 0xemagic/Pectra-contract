@@ -12,6 +12,10 @@ import { truncate } from "../utils";
 import { useState } from "react";
 import { AiOutlineInfoCircle } from 'react-icons/ai'
 
+import { useBuyTokens } from "../hooks/usePublicSale";
+import { formatUnits } from "ethers/lib/utils";
+import { BigNumberish } from "ethers";
+
 type ProgressBarProps = {
     percentage: number;
     borderColor?: string;
@@ -20,7 +24,6 @@ type ProgressBarProps = {
     bottomBox?: string;
     bottomLabel?: string;
 }
-
 
 export default function TotalInvestedBar() {
     const { colorMode } = useColorMode();
@@ -34,14 +37,13 @@ export default function TotalInvestedBar() {
     const [alreadySoldLabel, setAlreadySoldLabel] = useState(false);
 
     const legend = [
-        // { name: "Private", description: "How much has been sold through private sale", color: "#BBFF81" },
         { name: "Public", description: "How much has been sold through public sale", color: "#81FF7E" },
         { name: "Unsold", description: "How much is available for public sale", color: "white" },
-        // { name: "Current", description: "How much it's been sold so far (private + public sale)", color: "red" }
     ];
 
-    // const privateAmount = 1050000;
-    const publicAmount = 100000;
+    const { tokensSold } = useBuyTokens();
+
+    const publicAmount = tokensSold ? +formatUnits(tokensSold as BigNumberish, 18) : 0;
     const available = 2900000 - publicAmount;
 
     const ProgressBarMark = ({ percentage, label, borderColor = "#43931E", translateX = 0, bottomLabel = "-2.75rem", bottomBox = "-0.75rem" }: ProgressBarProps) => {
@@ -106,12 +108,6 @@ export default function TotalInvestedBar() {
              justifyContent="center"
              justifyItems="center"
              w="full"
-            // direction="row"
-            // mt="2rem" w={{ base: "80%", md: "90%" }}
-            // border="4px solid"
-            // borderColor="#43931E"
-            // borderRadius="xl"
-            // position="relative"
             >               
              <Tooltip
                 label="Start of private sale"
@@ -146,14 +142,6 @@ export default function TotalInvestedBar() {
                     borderRadius="xl"
                     position="relative"
                 >
-                    {/* <ProgressBarMark
-                        percentage={((publicAmount) / 2900000) * 100}
-                        label={`${millify(publicAmount)}`}
-                        borderColor="red"
-                        translateX={65}
-                        bottomLabel="2.5rem"
-                        bottomBox="2.25rem"
-                    /> */}
                     <ProgressBarMark
                         percentage={100 * (725000 / 2900000)}
                         label="725K"
@@ -166,78 +154,48 @@ export default function TotalInvestedBar() {
                         percentage={100 * (2175000 / 2900000)}
                         label="2.175M"
                     />
-                    {/* <ProgressBarMark
-                        percentage={100 * (1000000 / 2500000)}
-                        label="1M"
-                    /> */}
-                    {/* <Flex
-                        bg={legend[0].color}
-                        w={`${(privateAmount / 1000000) * 100}%`}
-                        h={{ base: "3rem", md: "2rem" }}
-                        direction="column"
-                        justify="center"
-                        align="center"
-                        borderLeftRadius={"lg"}
-                    >
-                        <Tooltip
-                            label={`Private Token Sale ${commify(
-                                privateAmount
-                            )} (${truncate(commify(privateAmount), 2)} USDC)`}
-                            isOpen={privateLabel}
-                        >
-                            <Flex
-                                direction="row"
-                                onMouseEnter={() => setPrivateLabel(true)}
-                                onMouseLeave={() => setPrivateLabel(false)}
-                                onClick={() => setPrivateLabel(true)}
-                            >
-                                <Text color="#222222" textAlign="center" fontWeight="bold" size="xs" mr="0.5rem">{`${(
-                                    (privateAmount / 2500000) *
-                                    100
-                                ).toFixed(1)}%`}</Text>
-                                <Text color="#222222" size="xs">{`($${millify(privateAmount)})`}</Text>
-                            </Flex>
-                        </Tooltip>
-                    </Flex> */}
-                    <Flex
-                        bg={legend[0].color}
-                        w={`${(publicAmount / 1000000) * 110}%`}
-                        h={{ base: "3rem", md: "2.5rem" }}
-                        direction="column"
-                        justify="center"
-                        align="center"
-                        px={{base: "2rem", md: "1rem"}}
-                        borderLeftRadius={"lg"}
-                    >
-                        <Tooltip
-                            label={`Public Token Sale: ${commify(
-                                publicAmount
-                            )} (${truncate(commify(publicAmount), 2)} USDC)`}
-                            isOpen={publicLabel}
-                        >
-                            <Flex
-                                direction={{ base: "column", "2xl": "row" }}
-                                onMouseEnter={() => setPublicLabel(true)}
-                                onMouseLeave={() => setPublicLabel(false)}
-                                onClick={() => setPublicLabel(true)}
-                                alignContent="center"
-                            >
-                                <Text color="#222222" textAlign="center" fontSize={{ base: "0.75rem", md: "1rem" }}
-                                    fontWeight="bold" mr={{base: "0rem", md: "0.5rem"}}>{`${(
-                                        (publicAmount / 2900000) *
-                                        100
-                                    ).toFixed(1)}%`}</Text>
-                                <Text color="#222222" fontSize={{ base: "0.75rem", md: "1rem" }}
-                                >{`($${millify(publicAmount)})`}</Text>
-                            </Flex>
-                        </Tooltip>
-                    </Flex>
+                    {+publicAmount > 0 && (
+                         <Flex
+                         bg={legend[0].color}
+                         w={`${(publicAmount / 1000000) * 110}%`}
+                         h={{ base: "3rem", md: "2.5rem" }}
+                         direction="column"
+                         justify="center"
+                         align="center"
+                         px={{base: "2rem", md: "1rem"}}
+                         borderLeftRadius={"lg"}
+                     >
+                         <Tooltip
+                             label={`Public Tokens Sold: ${commify(
+                                 publicAmount
+                             )} (${truncate(commify(publicAmount / 0.025), 2)} USDC)`}
+                             isOpen={publicLabel}
+                         >
+                             <Flex
+                                 direction={{ base: "column", "2xl": "row" }}
+                                 onMouseEnter={() => setPublicLabel(true)}
+                                 onMouseLeave={() => setPublicLabel(false)}
+                                 onClick={() => setPublicLabel(true)}
+                                 alignContent="center"
+                             >
+                                 <Text color="#222222" textAlign="center" fontSize={{ base: "0.75rem", md: "1rem" }}
+                                     fontWeight="bold" mr={{base: "0rem", md: "0.5rem"}}>{`${(
+                                         (publicAmount / 2900000) *
+                                         100
+                                     ).toFixed(1)}%`}</Text>
+                                 <Text color="#222222" fontSize={{ base: "0.75rem", md: "1rem" }}
+                                 >{`($${millify(publicAmount)})`}</Text>
+                             </Flex>
+                         </Tooltip>
+                     </Flex>
+                    )}
                     <Flex
                         w={`${(available / 1000000) * 90}%`}
                         h={{ base: "3rem", md: "2.5rem" }}
                         bg={legend[1].color}
                         borderWidth={"1px"}
                         borderRightRadius={"lg"}
+                        borderLeftRadius={+publicAmount > 0 ? "0" : "lg"}
                         direction="column"
                         justify="center"
                         align="center"

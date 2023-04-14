@@ -18,44 +18,93 @@ import {
     NumberInput,
     NumberInputField,
     NumberInputStepper,
-    Image
+    Image,
+    useToast
 } from '@chakra-ui/react'
 
 import { MdCheckCircle } from 'react-icons/md'
 import { useState } from 'react'
 import { truncate } from '../utils'
-import { useBalance, useAccount } from "wagmi";
+import { useBalance, useAccount, useWaitForTransaction } from "wagmi";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
-export default function BuyTokenModal({ isOpen, onClose }: any) {
+import { useBuyTokens } from '../hooks/usePublicSale';
 
+import { getErrorMessage } from '../utils/errors';
+
+import { DangerToast, SuccessToast } from "../UI/toasts";
+
+import Confetti from "react-confetti";
+import useWindowSize from "react-use/lib/useWindowSize";
+import { formatUnits, commify } from "@ethersproject/units";
+import { BigNumberish } from 'ethers';
+
+export default function BuyTokenModal({ isOpen, onClose }: any) {
+    const toast = useToast();
+    const { width, height } = useWindowSize();
+    const [buySuccess, setBuySuccess] = useState(false);
     const [step, setStep] = useState(1);
     const [amount, setAmount] = useState<string>("0");
-    const { address, isConnecting, isDisconnected } = useAccount();
+    const { address } = useAccount();
     const {
         data: tokenBalance,
         isError,
         isLoading: balanceLoading,
     } = useBalance({
         address: address,
-        token: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+        token: "0xA537aF138c1376ea9cC66501a2FfEF62a9c43630",
     });
 
-    console.log(address)
+    const { data, isLoading, isSuccess, write, approveData, isLoadingApprove, isSuccessApprove, writeApprove, isApproved, publicPectraBalance, spectraPrice, isPaused } = useBuyTokens(
+        address!,
+        amount
+    );
+
+    const handleTokenBuy = async () => {
+        if (!isApproved) {
+          return;
+        }
+        try {
+          await write?.();
+        } catch (error) {
+          const errorMessage = getErrorMessage(error);
+          toast({
+            variant: "danger",
+            duration: 5000,
+            position: "bottom",
+            render: () => <DangerToast message={errorMessage} />,
+          });
+        }
+      };
+
+      const { isLoading: isLoadingBuy } = useWaitForTransaction({
+        hash: data && data!.hash,
+        enabled: typeof data?.hash === "string",
+        onSuccess: (data: any) => {
+          if (data!.status === 1) {
+            setBuySuccess(true);
+            // onClose();
+          }
+        },
+      });
 
     return (
+        <>
         <Modal isCentered
             isOpen={isOpen} onClose={onClose} size="2xl" >
             <ModalOverlay />
             <ModalContent bgColor="#2B3226">
                 <ModalHeader>
                     <Flex direction="row" justify="center">
-                        <Heading fontSize="25px" variant="heading" color="#BBFF81" mr="0.25rem">$PECTRA</Heading><Heading fontSize="25px" variant="heading">{step === 1 ? "Token Public Sale Terms" : "Token Invest"}</Heading>
+                        <Heading fontSize="25px" variant="heading" color="#BBFF81" mr="0.25rem">$PECTRA</Heading><Heading fontSize="25px" variant="heading">{isPaused ? "INVEST" : step === 1 ? "Token Public Sale Terms" : "Token Invest"}</Heading>
                     </Flex>
                 </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody mt="1.5rem" px={{ base: "1rem", md: "2rem" }}>
-                    {step === 1 ?
+                    <>
+                    {isPaused ? <Text textAlign="center" variant="paragraph">Public sale is currently paused</Text> : (
+                        <>
+                        {step === 1 ?
                         <List spacing={5}>
                             <ListItem>
                                 <ListIcon as={MdCheckCircle} color='#43931E' />
@@ -154,33 +203,40 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                                         USDC
                                     </Text>
                                 </Flex>
+                                {+tokenBalance!.formatted! < +amount && (
+                                    <Text>
+                                        <b>Insufficient balance</b>
+                                    </Text>)}
                                 <Flex px="1.25rem"
                                 >
                                     <Text mr="0.25rem" variant="paragraph">
                                         You will receive
                                     </Text>
                                     <Text variant="paragraph" color="#BBFF81">
-                                        <b>{+amount * 0.025}</b> $PECTRA
+                                        <b>{commify((+amount / +formatUnits(spectraPrice as BigNumberish, 6)).toString())}</b> $PECTRA
                                     </Text>
                                 </Flex>
-                                {/* <Flex mt="0.5rem" px="1.25rem">
-                                    <Text mr="0.25rem" variant="paragraph">
-                                        Vest unlock date
-                                    </Text>
-                                    <Text variant="paragraph" color="#BBFF81">
-                                        <b>25 / 05 / 2024</b>
-                                    </Text>
-                                </Flex> */}
                             </>
                         )
                     }
+                        </>
+                    )}
+                    </>
                 </ModalBody>
                 <ModalFooter mt="1.5rem" >
                     <Flex w="full" direction="row" justify="center">
                         {address !== undefined ?
 
-                            <Button variant="primary" w="fit-content" mr={3} onClick={() => setStep(2)}>
-                                {step === 1 ? 'Accept Terms' : 'Buy $PECTRA'}
+                            <Button
+                            variant="primary"
+                            w="fit-content" 
+                            mr={3} 
+                            disabled={step === 2 && amount === "0" || isLoadingApprove || isLoading}
+                            onClick={
+                                step === 1 ? () => setStep(2) : !isApproved ? () => writeApprove!() : () => handleTokenBuy()
+                            }
+                            >
+                                {isPaused ? "COMING SOON" : step === 1 ? 'Accept Terms' : !isApproved ? 'Approve USDC' : isLoadingApprove ? 'Approving...' : isLoading ? "Buying..." : 'Buy $PECTRA'}
                             </Button>
 
                             :
@@ -195,5 +251,15 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                 </ModalFooter>
             </ModalContent>
         </Modal>
+
+        <Confetti
+        run={buySuccess}
+        width={width}
+        height={height}
+        numberOfPieces={500}
+        onConfettiComplete={() => {
+          setBuySuccess(false);
+        }}/>
+        </>
     )
 }
