@@ -2,6 +2,7 @@ import {
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
+  useBalance
 } from "wagmi";
 import erc20ABI from "../../public/abi/erc20.json";
 import salesABI from "../../public/abi/publicSale.json";
@@ -82,6 +83,15 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     write: writeApprove,
   } = useContractWrite(approveConfig);
 
+  const {
+    data: usdcBalance,
+    isError,
+    isLoading: balanceLoading,
+} = useBalance({
+    address: address! as any,
+    token: USDC,
+});
+
   return {
     data,
     isLoading,
@@ -96,6 +106,7 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     spectraPrice,
     tokensSold,
     isPaused,
+    usdcBalance
   };
 };
 

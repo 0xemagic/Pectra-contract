@@ -46,14 +46,6 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
     const [step, setStep] = useState(1);
     const [amount, setAmount] = useState<string>("0");
     const { address } = useAccount();
-    const {
-        data: tokenBalance,
-        isError,
-        isLoading: balanceLoading,
-    } = useBalance({
-        address: address,
-        token: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
-    });
 
     const {
         data,
@@ -68,9 +60,10 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         publicPectraBalance,
         spectraPrice,
         isPaused,
+        usdcBalance
     } = useBuyTokens(address!, amount);
 
-    const insufficientBalance = +tokenBalance!.formatted! < +amount;
+    const insufficientBalance = +usdcBalance!.formatted! < +amount;
 
     const handleTokenBuy = async () => {
         if (!isApproved) {
@@ -240,8 +233,8 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                                                 >
                                                     Wallet Balance:{" "}
                                                     <b>
-                                                        {tokenBalance
-                                                            ? truncate(tokenBalance!.formatted!.toString(), 2)
+                                                        {usdcBalance
+                                                            ? truncate(usdcBalance!.formatted!.toString(), 2)
                                                             : 0}
                                                     </b>{" "}
                                                     USDC

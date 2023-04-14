@@ -174,7 +174,11 @@ export default function Front() {
                 isExternal
                 _hover={{ textDecoration: "none" }}
               >
-                <Button variant="outline">LEARN MORE</Button>
+                <Button variant="outline"
+                   w="155px"
+                   h="48px"
+                   borderRadius="12px"
+                >LEARN MORE</Button>
               </Link>
             </Flex>
             <Flex pb="2rem" mt="2rem" alignItems={"center"} justifyContent="center">
