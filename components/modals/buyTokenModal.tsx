@@ -46,6 +46,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
     const { width, height } = useWindowSize();
     const [buySuccess, setBuySuccess] = useState(false);
     const [approveSuccess, setApproveSuccess] = useState(false);
+    const [approved, setApproved] = useState(false);
     const [step, setStep] = useState(1);
     const [amount, setAmount] = useState<string>("0");
     const { address } = useAccount();
@@ -60,7 +61,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         isLoadingApprove,
         isSuccessApprove,
         writeApprove,
-        isApproved,
+        // isApproved,
         publicPectraBalance,
         spectraPrice,
         isPaused,
@@ -68,6 +69,16 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
     } = useBuyTokens(address!, amount);
 
     const insufficientBalance = usdcBalance && +formatUnits(usdcBalance!.value!, 6) < +amount!;
+
+    const { data: allowance } = useContractRead({
+        address: USDC,
+        abi: erc20ABI,
+        functionName: "allowance",
+        args: [address, SALES_CONTRACT],
+        watch: true,
+      });
+    
+      const isApproved = (approved && allowance) && +formatUnits(allowance as BigNumberish, 6) >= +amount!
 
     useEffect(() => {
         if (isApproved && approveSuccess) {
@@ -80,8 +91,17 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
             ),
           });
         }
-        setAmount(amount);
       }, [approveSuccess, isApproved]);
+
+    const handleApprove = async () => {
+    try {
+        await writeApprove?.();
+        setApproved(true);
+    } catch (e) {
+        console.error(e);
+        setApproved(false);
+    } 
+    };
 
     const handleTokenBuy = async () => {
         // if (!isApproved) {
@@ -303,7 +323,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                             {address !== undefined ? (
                                 <>
                                 <Button
-                                    display={isApproved && step !== 1 ? "none" :  "flex"}
+                                    display={approved && step !== 1 ? "none" :  "flex"}
                                     variant="primary"
                                     w="fit-content"
                                     mr={3}
@@ -313,7 +333,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                                         // || isApproved
                                     }
                                     onClick={
-                                        step === 1 ? () => setStep(2) : !isApproved ? () => writeApprove!() : () => {}
+                                        step === 1 ? () => setStep(2) : !isApproved ? () => handleApprove() : () => {}
                                     }
                                 >
                                     {isPaused
@@ -324,14 +344,14 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                                                 ? "Approve USDC" : "BUYING..."}
                                 </Button>
                                 <Button
-                                    display={!isApproved || step === 1 ? "none" : "flex"}
+                                    display={!approved || step === 1 ? "none" : "flex"}
                                     variant="primary"
                                     w="fit-content"
                                     disabled={
                                         (step === 2 && amount === "0") ||
                                         step === 1 ||
                                         isLoadingApprove ||
-                                        !isApproved
+                                        !approved
                                     }
                                     onClick={() => handleTokenBuy()}
                                 >
