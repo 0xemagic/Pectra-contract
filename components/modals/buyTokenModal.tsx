@@ -70,17 +70,6 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
     const insufficientBalance = usdcBalance && +formatUnits(usdcBalance!.value!, 6) < +amount!;
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            if (amount !== "0"){
-            setAmount(amount)
-            }
-            console.log(isApproved, "yes")
-        }, 3000);
-
-        return () => clearInterval(interval);
-    }, [isLoadingApprove])
-
-    useEffect(() => {
         if (isApproved && approveSuccess) {
           toast({
             variant: "success",
