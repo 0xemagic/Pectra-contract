@@ -69,9 +69,9 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
 
     console.log(isApproved)
 
-    // useEffect(() => {
-        
-    // }, [approveStatus, approveSuccess, isApproved])
+    useEffect(() => {
+        setAmount(amount);
+    }, [approveStatus, approveSuccess, isApproved])
 
     useEffect(() => {
         if (isApproved && approveSuccess) {
