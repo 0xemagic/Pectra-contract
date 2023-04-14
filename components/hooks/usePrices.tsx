@@ -1,14 +1,12 @@
-import { useContractRead } from "wagmi";
-import { useEffect, useState } from "react";
 import {
   btcPriceQuery,
   client2,
   ethPriceQuery,
   linkPriceQuery,
-  maticPriceQuery,
-  truncate,
   uniPriceQuery,
 } from "@/components/utils";
+import { useEffect, useState } from "react";
+import { useContractRead } from "wagmi";
 
 const aggregatorV3InterfaceABI = [
   {
@@ -74,25 +72,31 @@ export const useReadPrices = () => {
     abi: aggregatorV3InterfaceABI,
     functionName: "latestRoundData",
     watch: true,
+    cacheTime: 15_000,
   });
 
   const { data: btcEthDecimals } = useContractRead({
     address: BTCETH,
     abi: aggregatorV3InterfaceABI,
     functionName: "decimals",
-    watch: true,  });
+    watch: true,
+    cacheTime: 15_000,
+  });
 
   const { data: linkEthRawPrice } = useContractRead({
     address: LINKETH,
     abi: aggregatorV3InterfaceABI,
     functionName: "latestRoundData",
-    watch: true,  });
+    watch: true,
+    cacheTime: 15_000,
+  });
 
   const { data: linkEthDecimals } = useContractRead({
     address: LINKETH,
     abi: aggregatorV3InterfaceABI,
     functionName: "decimals",
     watch: true,
+    cacheTime: 15_000,
   });
 
   // function that fetches prices is used to get the price of each token asynchronously
@@ -115,5 +119,14 @@ export const useReadPrices = () => {
     fetchPrices();
   }, []);
 
-  return { btcEthRawPrice, btcEthDecimals, linkEthRawPrice, linkEthDecimals, ethPrice, btcPrice, linkPrice, uniPrice };
+  return {
+    btcEthRawPrice,
+    btcEthDecimals,
+    linkEthRawPrice,
+    linkEthDecimals,
+    ethPrice,
+    btcPrice,
+    linkPrice,
+    uniPrice,
+  };
 };

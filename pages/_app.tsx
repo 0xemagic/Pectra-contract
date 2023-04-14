@@ -13,16 +13,21 @@ import { configureChains, createClient, WagmiConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 
 import { alchemyProvider } from "wagmi/providers/alchemy";
+import { infuraProvider } from "wagmi/providers/infura";
 import Layout from "../components/layout";
 
 export const { chains, provider, webSocketProvider } = configureChains(
   [arbitrum],
   typeof process.env.NEXT_PUBLIC_ALCHEMY_API_KEY === "string"
     ? [
+        infuraProvider({
+          apiKey: "c21864ca9db54e0298b589d5f7e8a194",
+        }),
         alchemyProvider({
           apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
         }),
-        publicProvider(),
+
+        // publicProvider(),
       ]
     : [publicProvider()]
 );

@@ -1,8 +1,8 @@
 import {
+  useBalance,
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
-  useBalance
 } from "wagmi";
 import erc20ABI from "../../public/abi/erc20.json";
 import salesABI from "../../public/abi/publicSale.json";
@@ -41,6 +41,7 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     functionName: "allowance",
     args: [address, SALES_CONTRACT],
     watch: true,
+    cacheTime: 15_000,
   });
 
   const { data: publicPectraBalance } = useContractRead({
@@ -49,6 +50,7 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     functionName: "tokenBalances",
     args: [address],
     watch: true,
+    cacheTime: 15_000,
   });
 
   const { data: spectraPrice } = useContractRead({
@@ -56,6 +58,7 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     abi: salesABI,
     functionName: "pricePerToken",
     watch: true,
+    cacheTime: 15_000,
   });
 
   const { data: tokensSold } = useContractRead({
@@ -63,6 +66,7 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     abi: salesABI,
     functionName: "totalTokensSold",
     watch: true,
+    cacheTime: 15_000,
   });
 
   const { data: isPaused } = useContractRead({
@@ -70,6 +74,7 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     abi: salesABI,
     functionName: "isPaused",
     watch: true,
+    cacheTime: 15_000,
   });
 
   const isApproved =
@@ -87,10 +92,10 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     data: usdcBalance,
     isError,
     isLoading: balanceLoading,
-} = useBalance({
+  } = useBalance({
     address: address! as any,
     token: USDC,
-});
+  });
 
   return {
     data,
@@ -106,7 +111,7 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     spectraPrice,
     tokensSold,
     isPaused,
-    usdcBalance
+    usdcBalance,
   };
 };
 
@@ -116,6 +121,7 @@ export const usePublicSale = () => {
     abi: salesABI,
     functionName: "isPaused",
     watch: true,
+    cacheTime: 15_000,
   });
   const { data: saleEndEpoch } = useContractRead({
     address: SALES_CONTRACT,
@@ -137,6 +143,7 @@ export const useSaleAdmin = () => {
     abi: salesABI,
     functionName: "isPaused",
     watch: true,
+    cacheTime: 15_000,
   });
   const { config } = usePrepareContractWrite({
     address: "0x5a1eFce55840E2f5b49F2ff7e5061712e6fA3151",
