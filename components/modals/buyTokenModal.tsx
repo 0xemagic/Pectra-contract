@@ -45,7 +45,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
     const [buySuccess, setBuySuccess] = useState(false);
     const [step, setStep] = useState(1);
     const [amount, setAmount] = useState<string>("0");
-    const { address, isConnecting, isDisconnected } = useAccount();
+    const { address } = useAccount();
     const {
         data: tokenBalance,
         isError,

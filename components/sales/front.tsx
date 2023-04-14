@@ -6,6 +6,8 @@ import BuyTokenModal from "../modals/buyTokenModal";
 
 import { useBuyTokens } from "../hooks/usePublicSale";
 import { useAccount } from "wagmi";
+import { formatUnits } from "ethers/lib/utils";
+import { BigNumberish } from "ethers";
 
 export default function Front() {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -13,6 +15,8 @@ export default function Front() {
     const { address } = useAccount();
 
     const { publicPectraBalance } = useBuyTokens(address!);
+
+    const vested = publicPectraBalance && +formatUnits(publicPectraBalance as BigNumberish, 18) > 0 ? true : false;
 
     return (
         <>
@@ -114,11 +118,10 @@ export default function Front() {
                                 _hover={{ textDecoration: "none" }}
                             ><Button variant="secondary">LEARN MORE</Button></Link>
                             {
-                                publicPectraBalance !== 0
+                                vested
                                 && (<Link
                                     ml={{ base: "none", md: "0.5rem" }}
                                     href="/token"
-                                    isExternal
                                     _hover={{ textDecoration: "none" }}
                                 ><Button variant="secondary">DASHBOARD</Button></Link>)
                             }

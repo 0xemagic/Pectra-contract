@@ -76,7 +76,7 @@ export default function Dashboard({ onOpen }: any) {
                 <Flex
                     w={{ base: '90%', md: "50%" }}
                     bgColor={colorMode === "dark" ? "#2B3226" : "#F2F2F2"}
-                    py="40px"
+                    py="1.5rem"
                     justifyContent="center"
                     alignItems="center"
                     borderRadius="xl"
@@ -115,7 +115,7 @@ export default function Dashboard({ onOpen }: any) {
                             alignItems="center"
                             justifyContent="center"
                             placeContent="center"
-                            mt="1.75rem"
+                            mt="0.75rem"
                             mr="0.5rem"
                             // color="#43931E"
                             onMouseEnter={() => setVestInfo(true)}
@@ -134,7 +134,7 @@ export default function Dashboard({ onOpen }: any) {
 
                 <Flex direction={{ base: "column", md: "row" }} alignItems="center" wrap="nowrap" mt={{ base: "0rem", "3xl": "2rem" }}>
                     <Heading mt="1rem" variant="heading" fontSize={{ base: "1.5rem", md: "2rem" }}>UNLOCKS IN:</Heading>
-                    <Heading mt="1rem" variant="heading" ml="1rem" fontSize={{ base: "1.5rem", md: "2rem" }} color="#81FF7E">00D / 00H  / 00M</Heading>
+                    <Heading mt="1rem" variant="heading" ml="1rem" fontSize={{ base: "1.5rem", md: "2rem" }} color="#81FF7E">TBD</Heading>
                 </Flex>
 
                 <Flex direction="column" alignItems="center" w="full" justifyContent="center" mt={{ base: "2.5rem", "3xl": "4rem" }}>

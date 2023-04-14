@@ -157,16 +157,16 @@ export function Layout({ children }: LayoutProps) {
                             {colorMode === "dark" ? <HiSun /> : <HiMoon />}
                         </Button>
                         <ConnectButton
-                            chainStatus={"none"}
-                            showBalance={{
-                                smallScreen: false,
-                                largeScreen: true,
-                            }}
-                            accountStatus={{
-                                smallScreen: "avatar",
-                                largeScreen: "full",
-                            }}
-                        />
+                  chainStatus={"none"}
+                  showBalance={{
+                    smallScreen: false,
+                    largeScreen: false,
+                  }}
+                  accountStatus={{
+                    smallScreen: "avatar",
+                    largeScreen: "avatar",
+                  }}
+                />
                         <Link
                             ml={{ base: "0.5rem", md: "1rem" }}
                             mr={{ base: "0rem", md: "0.5rem" }}
