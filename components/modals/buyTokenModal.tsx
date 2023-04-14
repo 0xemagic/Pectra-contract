@@ -63,7 +63,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         usdcBalance
     } = useBuyTokens(address!, amount);
 
-    const insufficientBalance = +usdcBalance!.formatted! < +amount;
+    const insufficientBalance = usdcBalance && +usdcBalance!.formatted! < +amount;
 
     const handleTokenBuy = async () => {
         if (!isApproved) {
