@@ -67,7 +67,18 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         usdcBalance
     } = useBuyTokens(address!, amount);
 
-    const insufficientBalance = usdcBalance && +formatUnits(usdcBalance!.value!, 6) < +amount;
+    const insufficientBalance = usdcBalance && +formatUnits(usdcBalance!.value!, 6) < +amount!;
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (amount !== "0"){
+            setAmount(amount)
+            }
+            console.log(isApproved, "yes")
+        }, 3000);
+
+        return () => clearInterval(interval);
+    }, [isLoadingApprove])
 
     useEffect(() => {
         if (isApproved && approveSuccess) {
@@ -194,7 +205,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                                                         min={0}
                                                         step={1000}
                                                         flex={1}
-                                                        value={truncate(amount, 2)}
+                                                        value={truncate(amount!, 2)}
                                                         onChange={setAmount}
                                                         // isInvalid={insufficientBalance}
                                                         allowMouseWheel
@@ -281,7 +292,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                                                         <b>
                                                             {commify(
                                                                 (
-                                                                    +amount /
+                                                                    +amount! /
                                                                     +formatUnits(spectraPrice as BigNumberish, 6)
                                                                 ).toString()
                                                             )}
