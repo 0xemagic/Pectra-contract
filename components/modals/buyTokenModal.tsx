@@ -69,6 +69,10 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
 
     console.log(isApproved)
 
+    // useEffect(() => {
+        
+    // }, [approveStatus, approveSuccess, isApproved])
+
     useEffect(() => {
         if (isApproved && approveSuccess) {
           toast({
@@ -81,7 +85,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
           });
         }
         setAmount(amount);
-      }, [approveStatus, isApproved]);
+      }, [approveSuccess, isApproved]);
 
     const handleTokenBuy = async () => {
         // if (!isApproved) {
@@ -89,7 +93,6 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         //     return;
         // }
         try {
-            console.log("YES")
             await write?.();
         } catch (error) {
             const errorMessage = getErrorMessage(error);

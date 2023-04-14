@@ -37,12 +37,32 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     args: [amount ? parseUnits(amount!, 6) : 0],
   });
 
-  const { config: approveConfig } = usePrepareContractWrite({
+  const {  data: approveData,
+    isLoading: isLoadingApprove,
+    isSuccess: isSuccessApprove,
+    write: writeApprove,
+    status: approveStatus, } = useContractWrite({
+    mode: 'recklesslyUnprepared',
     address: USDC,
     abi: erc20ABI,
     functionName: "approve",
     args: [SALES_CONTRACT, amount ? parseUnits(amount!, 6) : 0],
   });
+
+  // const {
+  //   data: approveData,
+  //   isLoading: isLoadingApprove,
+  //   isSuccess: isSuccessApprove,
+  //   write: writeApprove,
+  //   status: approveStatus,
+  // } = useContractWrite(approveConfig);
+
+  // const { config: approveConfig } = usePrepareContractWrite({
+  //   address: USDC,
+  //   abi: erc20ABI,
+  //   functionName: "approve",
+  //   args: [SALES_CONTRACT, amount ? parseUnits(amount!, 6) : 0],
+  // });
 
   const { data: allowance } = useContractRead({
     address: USDC,
@@ -79,13 +99,7 @@ export const useBuyTokens = (address?: string, amount?: string) => {
 
   const isApproved = allowance && +formatUnits(allowance as BigNumberish, 6) >= +amount!
 
-  const {
-    data: approveData,
-    isLoading: isLoadingApprove,
-    isSuccess: isSuccessApprove,
-    write: writeApprove,
-    status: approveStatus,
-  } = useContractWrite(approveConfig);
+
 
   const {
     data: usdcBalance,
