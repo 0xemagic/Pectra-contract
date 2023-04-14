@@ -7,7 +7,6 @@ import { AiOutlineInfoCircle } from "react-icons/ai";
 import { BigNumberish } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
 import { useBuyTokens } from "../hooks/usePublicSale";
-import { truncate } from "../utils";
 
 type ProgressBarProps = {
   percentage: number;
@@ -161,7 +160,7 @@ export default function TotalInvestedBar() {
           {+spectraSold > 0 && (
             <Flex
               bg={legend[0].color}
-              w={`${(spectraSold / 100_000_000) * 100}%`}
+              w={`${Math.max((spectraSold / 100_000_000) * 100, 10)}%`}
               h={{ base: "3rem", md: "2.5rem" }}
               direction="column"
               justify="center"
@@ -195,7 +194,7 @@ export default function TotalInvestedBar() {
               </Tooltip>
             </Flex>
           )}
-          <Flex
+          {/* <Flex
             w={`${(spectraUnsold / 100_000_000) * 90}%`}
             h={{ base: "3rem", md: "2.5rem" }}
             bg={legend[1].color}
@@ -206,7 +205,6 @@ export default function TotalInvestedBar() {
             justify="center"
             align="center"
           >
-            {/* <Text textColor={"black"}>fixing the progress bar calc..</Text> */}
             {
               <Tooltip
                 label={`$PECTRA Available:  ${truncate(commify(spectraUnsold), 2)}`}
@@ -232,7 +230,7 @@ export default function TotalInvestedBar() {
                 </Flex>
               </Tooltip>
             }
-          </Flex>
+          </Flex> */}
         </Flex>
         <Tooltip label="End of public sale" isOpen={endLabel}>
           <Flex
