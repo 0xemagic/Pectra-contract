@@ -169,15 +169,13 @@ export default function Front() {
                 isExternal
                 _hover={{ textDecoration: "none" }}
               >
-                <Button variant="secondary">LEARN MORE</Button>
+                <Button variant="outline">LEARN MORE</Button>
               </Link>
+            </Flex>
+            <Flex mt="2rem" alignItems={"center"} justifyContent="center">
               {vested && (
-                <Link
-                  ml={{ base: "none", md: "0.5rem" }}
-                  href="/token"
-                  _hover={{ textDecoration: "none" }}
-                >
-                  <Button variant="secondary">DASHBOARD</Button>
+                <Link href="/token" _hover={{ textDecoration: "none" }}>
+                  <Button variant="secondary">MY $PECTRA</Button>
                 </Link>
               )}
             </Flex>

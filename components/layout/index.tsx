@@ -17,6 +17,7 @@ import {
 } from "@rainbow-me/rainbowkit";
 
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { FaDiscord } from "react-icons/fa";
 import { HiMoon, HiSun } from "react-icons/hi";
 import { RiGithubFill, RiTwitterFill } from "react-icons/ri";
@@ -29,9 +30,13 @@ interface LayoutProps {
 }
 
 export default function Layout({ chains, children }: LayoutProps) {
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { colorMode, toggleColorMode, setColorMode } = useColorMode();
   const router = useRouter();
   const { isPaused } = usePublicSale();
+
+  useEffect(() => {
+    setColorMode("dark");
+  }, []);
 
   const links = [
     // {
@@ -284,9 +289,11 @@ export default function Layout({ chains, children }: LayoutProps) {
               </Flex>
 
               <Flex alignItems="center">
-                <Button mr="1rem" variant="ghost" onClick={toggleColorMode}>
-                  {colorMode === "dark" ? <HiSun /> : <HiMoon />}
-                </Button>
+                {!isSales && (
+                  <Button mr="1rem" variant="ghost" onClick={toggleColorMode}>
+                    {colorMode === "dark" ? <HiSun /> : <HiMoon />}
+                  </Button>
+                )}
                 {router.pathname === "/" ? (
                   <>
                     {process.env.NODE_ENV === "development" ? (

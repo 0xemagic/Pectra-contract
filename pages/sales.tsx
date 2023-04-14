@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Flex,
   Heading,
   Image,
@@ -12,7 +11,6 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { NextSeo } from "next-seo";
 import { useRouter } from "next/router";
 import { FaDiscord } from "react-icons/fa";
-import { HiMoon, HiSun } from "react-icons/hi";
 import { RiGithubFill, RiTwitterFill } from "react-icons/ri";
 import { SiMedium } from "react-icons/si";
 import SalesPage from "../components/sales";
@@ -89,7 +87,11 @@ export function Layout({ children }: LayoutProps) {
         zIndex="popover"
         w="98vw"
       >
-        <Flex onClick={() => router.push("/")} _hover={{ cursor: "pointer" }}>
+        <Flex
+          flex={1}
+          onClick={() => router.push("/")}
+          _hover={{ cursor: "pointer" }}
+        >
           <Image src="/icons/spectra.svg" alt="spectra-protocol-logo" h="2.25rem" />
           <Heading
             display={{ base: "none", md: "flex" }}
@@ -100,78 +102,58 @@ export function Layout({ children }: LayoutProps) {
             PECTRA
           </Heading>
         </Flex>
-        <Flex w="fit-content" justifyContent="space-between">
-          <Flex
-            display={{ base: "none", md: "flex" }}
-            justifySelf="center"
-            alignSelf="center"
-            align="center"
-            justify="center"
-            m="auto"
-            mr="1rem"
-          >
-            {links.map((link) => {
-              return (
-                <Link
-                  href={link.href}
-                  key={link.href}
-                  isExternal
-                  mt="0.5rem"
-                  mr="0.5rem"
+        <Flex
+          display={{ base: "none", md: "flex" }}
+          align="center"
+          justify="center"
+          flex={1}
+        >
+          {links.map((link) => {
+            return (
+              <Link
+                href={link.href}
+                key={link.href}
+                isExternal
+                mt="0.5rem"
+                mr="0.5rem"
+              >
+                <Flex
+                  w="3.5rem"
+                  h="3.5rem"
+                  bg={colorMode === "dark" ? "#22291C" : "#F5F5F5"}
+                  alignItems={"center"}
+                  justifyContent="center"
+                  borderRadius="12px"
+                  _hover={{
+                    bg: colorMode === "dark" ? "#2C3327" : "",
+                  }}
                 >
-                  <Flex
-                    w="3.5rem"
-                    h="3.5rem"
-                    bg={colorMode === "dark" ? "#22291C" : "#F5F5F5"}
-                    alignItems={"center"}
-                    justifyContent="center"
-                    borderRadius="12px"
-                    _hover={{
-                      bg: colorMode === "dark" ? "#2C3327" : "",
-                    }}
-                  >
-                    {link.icon}
-                  </Flex>
-                </Link>
-              );
-            })}
-          </Flex>
+                  {link.icon}
+                </Flex>
+              </Link>
+            );
+          })}
+        </Flex>
+        <Flex
+          flex={1}
+          justifyContent={{ base: "end", md: "center" }}
+          alignContent={{ base: "end", md: "center" }}
+          alignItems="center"
+          justifyItems="center"
+        >
+          <ConnectButton
+            chainStatus={"none"}
+            showBalance={{
+              smallScreen: false,
+              largeScreen: false,
+            }}
+            accountStatus={{
+              smallScreen: "avatar",
+              largeScreen: "avatar",
+            }}
+          />
 
-          <Flex
-            justifyContent={{ base: "end", md: "center" }}
-            alignContent={{ base: "end", md: "center" }}
-            alignItems="center"
-            justifyItems="center"
-          >
-            <Button
-              mr={{ base: "0rem", md: "1rem" }}
-              variant="ghost"
-              onClick={toggleColorMode}
-            >
-              {colorMode === "dark" ? <HiSun /> : <HiMoon />}
-            </Button>
-            <ConnectButton
-              chainStatus={"none"}
-              showBalance={{
-                smallScreen: false,
-                largeScreen: false,
-              }}
-              accountStatus={{
-                smallScreen: "avatar",
-                largeScreen: "avatar",
-              }}
-            />
-            <Link
-              ml={{ base: "0.5rem", md: "1rem" }}
-              mr={{ base: "0rem", md: "0.5rem" }}
-              href="https://discord.gg/RKNRDVeFwG"
-              isExternal
-              _hover={{ textDecoration: "none" }}
-            >
-              <Button variant="secondary">JOIN DISCORD</Button>
-            </Link>
-            {/* <Button display={{ base: "none", md: "block" }} variant="secondary">FAQ</Button> */}
-          </Flex>
+          {/* <Button display={{ base: "none", md: "block" }} variant="secondary">FAQ</Button> */}
         </Flex>
       </Flex>
       <Box

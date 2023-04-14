@@ -193,7 +193,7 @@ export default function Dashboard({ onOpen }: any) {
           justifyContent="center"
           mt={{ base: "2.5rem", "3xl": "4rem" }}
         >
-          <Button variant="secondary" mb="1rem">
+          <Button variant="secondary" mb="1rem" isDisabled>
             CLAIM
           </Button>
           <Button

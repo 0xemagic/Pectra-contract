@@ -1,23 +1,30 @@
 import "@/styles/globals.css";
-import "@rainbow-me/rainbowkit/styles.css";
-import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
-import theme from "../styles/theme";
-import Fonts from "../styles/fonts";
 import "@fontsource/inter";
 import "@fontsource/inter/variable-full.css";
+import "@rainbow-me/rainbowkit/styles.css";
+import type { AppProps } from "next/app";
+import Fonts from "../styles/fonts";
+import theme from "../styles/theme";
 
 import { getDefaultWallets } from "@rainbow-me/rainbowkit";
-import { createClient, configureChains } from "wagmi";
-import { WagmiConfig } from "wagmi";
 import { arbitrum } from "@wagmi/chains";
+import { configureChains, createClient, WagmiConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 
+import { alchemyProvider } from "wagmi/providers/alchemy";
 import Layout from "../components/layout";
 
 export const { chains, provider, webSocketProvider } = configureChains(
   [arbitrum],
-  [publicProvider()]
+  typeof process.env.NEXT_PUBLIC_ALCHEMY_API_KEY === "string"
+    ? [
+        alchemyProvider({
+          apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
+        }),
+        publicProvider(),
+      ]
+    : [publicProvider()]
 );
 
 const { connectors } = getDefaultWallets({
