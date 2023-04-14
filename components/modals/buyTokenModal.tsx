@@ -63,7 +63,10 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         usdcBalance
     } = useBuyTokens(address!, amount);
 
-    const insufficientBalance = usdcBalance && +usdcBalance!.formatted! < +amount;
+    const insufficientBalance = usdcBalance && +formatUnits(usdcBalance!.value!, 6) < +amount;
+
+    console.log("usdcBalance", +formatUnits(usdcBalance!.value!, 6))
+    console.log("amount", +amount)
 
     const handleTokenBuy = async () => {
         if (!isApproved) {
@@ -215,30 +218,30 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                                                     </Flex>
                                                 </Flex>
                                                 <Flex w="100%" justifyContent={insufficientBalance ? "space-between" : "end"}>
-                                                {insufficientBalance && (
-                                                    <Text                                                     ml="1.25rem"
-                                                    variant="paragraph"
-                                                        color="red">
-                                                        <b>Insufficient balance</b>
+                                                    {insufficientBalance && (
+                                                        <Text ml="1.25rem"
+                                                            variant="paragraph"
+                                                            color="red">
+                                                            <b>Insufficient balance</b>
+                                                        </Text>
+                                                    )}
+                                                    <Text
+                                                        variant="paragraph"
+                                                        fontSize="0.85rem"
+                                                        alignSelf="end"
+                                                        justifySelf="end"
+                                                        mr="1.25rem"
+                                                        color="#FFFFFF"
+                                                        opacity="0.7"
+                                                    >
+                                                        Wallet Balance:{" "}
+                                                        <b>
+                                                            {usdcBalance
+                                                                ? truncate(usdcBalance!.formatted!.toString(), 2)
+                                                                : 0}
+                                                        </b>{" "}
+                                                        USDC
                                                     </Text>
-                                                )}
-                                                <Text
-                                                    variant="paragraph"
-                                                    fontSize="0.85rem"
-                                                    alignSelf="end"
-                                                    justifySelf="end"
-                                                    mr="1.25rem"
-                                                    color="#FFFFFF"
-                                                    opacity="0.7"
-                                                >
-                                                    Wallet Balance:{" "}
-                                                    <b>
-                                                        {usdcBalance
-                                                            ? truncate(usdcBalance!.formatted!.toString(), 2)
-                                                            : 0}
-                                                    </b>{" "}
-                                                    USDC
-                                                </Text>
                                                 </Flex>
                                             </Flex>
 
@@ -247,21 +250,21 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                                                     You will receive
                                                 </Text>
                                                 <Flex direction="row" alignItems="end">
-                                                <Heading mr="0.5rem" variant="heading">
-                                                <b>
-                                                        {commify(
-                                                            (
-                                                                +amount /
-                                                                +formatUnits(spectraPrice as BigNumberish, 6)
-                                                            ).toString()
-                                                        )}
-                                                    </b>
-                                                </Heading>
-                                                <Heading variant="heading" fontSize={{base: "1.25rem", md: "1.5rem"}} color="#BBFF81">
-                                                                        $PECTRA
-                                                </Heading>
+                                                    <Heading mr="0.5rem" variant="heading">
+                                                        <b>
+                                                            {commify(
+                                                                (
+                                                                    +amount /
+                                                                    +formatUnits(spectraPrice as BigNumberish, 6)
+                                                                ).toString()
+                                                            )}
+                                                        </b>
+                                                    </Heading>
+                                                    <Heading variant="heading" fontSize={{ base: "1.25rem", md: "1.5rem" }} color="#BBFF81">
+                                                        $PECTRA
+                                                    </Heading>
                                                 </Flex>
-                                                                                           </Flex>
+                                            </Flex>
                                         </>
                                     )}
                                 </>
