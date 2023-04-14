@@ -153,7 +153,7 @@ const Trade = () => {
         fontFamily={"heading"}
         px={{ base: "2rem", "3xl": "4.25rem" }}
       >
-        {process.env.NODE_ENV === "production" ? (
+        {process.env.VERCEL_ENV === "production" ? (
           <Heading m="auto" mt="20%">
             Coming Soon
           </Heading>
