@@ -16,11 +16,13 @@ import { useAccount } from "wagmi";
 import { useState } from "react";
 import { truncate } from '../utils'
 import { commify } from 'ethers/lib/utils'
+import { BigNumber } from 'ethers'
+import { formatUnits } from "ethers/lib/utils";
 
 import TokenDetailsModal from "../modals/tokenInvestDetailsModal";
 import BuyTokenModal from "../modals/buyTokenModal";
 
-export default function Dashboard({ onOpen }: any) {
+export default function Dashboard({ onOpen, publicPectraBalance }: any) {
     const { isOpen: isOpenDashboard, onClose: onCloseDashboard, onOpen: onOpenDashboard } = useDisclosure();
     const { isOpen: isOpenBuy, onClose: onCloseBuy, onOpen: onOpenBuy } = useDisclosure();
 
@@ -28,7 +30,7 @@ export default function Dashboard({ onOpen }: any) {
     const [vestInfo, setVestInfo] = useState(false);
     const { colorMode } = useColorMode();
 
-    const userBalance = 20000000;
+    console.log(formatUnits(publicPectraBalance, 18))
 
     return (
         <>
@@ -75,8 +77,8 @@ export default function Dashboard({ onOpen }: any) {
                         justifyItems="center"
                     >
                         <Heading mt="1rem" mr={{ base: "0rem", md: "0.5rem" }} variant="heading" fontSize={{ base: "1.5rem", md: "2rem" }}>
-                            {userBalance
-                                ? commify(truncate(userBalance.toString(), 2))
+                            {publicPectraBalance
+                                ? commify(truncate(formatUnits(publicPectraBalance).toString(), 2))
                                 : 0}
                         </Heading>
                         <Heading mt="1rem" variant="heading" color="#81FF7E" fontSize={{ base: "0.5rem", md: "1.25rem" }}>$PECTRA</Heading>

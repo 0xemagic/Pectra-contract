@@ -1,5 +1,5 @@
 import { useContractWrite, usePrepareContractWrite, useContractRead } from "wagmi";
-import SalesABI from "../../public/abi/publicSale.json";
+import salesABI from "../../public/abi/publicSale.json";
 import erc20ABI from "../../public/abi/erc20.json";
 
 import { BigNumber } from "ethers";
@@ -10,12 +10,12 @@ const SALES_CONTRACT = "0x00006ef5eb2c94abacfc95363a4811b117ce22eb";
 
 export const useBuyTokens = (      
   address: string,
-  usdcAmount: string) => {
+  usdcAmount?: string) => {
     const { config } = usePrepareContractWrite({
       address: SALES_CONTRACT,
-      abi: SalesABI,
+      abi: salesABI,
       functionName: "buyTokens",
-      args: [parseUnits(noSpecialCharacters(usdcAmount), 6)],
+      args: [usdcAmount ? parseUnits(usdcAmount!, 6) : 0],
     });
     const { data, isLoading, isSuccess, write } = useContractWrite(config);
 
@@ -25,7 +25,7 @@ export const useBuyTokens = (
       functionName: "approve",
       args: [
         SALES_CONTRACT,
-        parseUnits(noSpecialCharacters(usdcAmount), 6),
+        usdcAmount ? parseUnits(usdcAmount!, 6) : 0
       ],
     });
   
@@ -36,18 +36,23 @@ export const useBuyTokens = (
       args: [address, SALES_CONTRACT],
       watch: true,
     });
+
+    const { data: publicPectraBalance } = useContractRead({
+      address: SALES_CONTRACT,
+      abi: salesABI,
+      functionName: "tokenBalances",
+      args: [address],
+      watch: true,
+    });
   
     const isApproved =
       BigNumber.isBigNumber(allowance) &&
       allowance.gte(
-        parseUnits(
-          noSpecialCharacters(usdcAmount),
-          6
-        ) ?? "0"
+        usdcAmount ? parseUnits(usdcAmount!, 6) : 0 ?? "0"
       );
   
     const { data: approveData, isLoading: isLoadingApprove, isSuccess: isSuccessApprove, write: writeApprove } = useContractWrite(approveConfig);
   
-    return { data, isLoading, isSuccess, write,  approveData, isLoadingApprove, isSuccessApprove, writeApprove, isApproved };
+    return { data, isLoading, isSuccess, write,  approveData, isLoadingApprove, isSuccessApprove, writeApprove, isApproved, publicPectraBalance };
   };
 

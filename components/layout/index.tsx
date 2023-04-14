@@ -142,7 +142,7 @@ export default function Layout({ chains, children }: LayoutProps) {
             : "#FFFFFF"
         }
         direction="column"
-        pb="4rem"
+        // pb="4rem"
       >
         <Flex
                 display={isSales === true ? "none" : "flex"}

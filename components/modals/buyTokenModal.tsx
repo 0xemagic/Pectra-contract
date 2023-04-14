@@ -48,7 +48,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         token: "0xA537aF138c1376ea9cC66501a2FfEF62a9c43630",
     });
 
-    const { data, isLoading, isSuccess, write, approveData, isLoadingApprove, isSuccessApprove, writeApprove, isApproved } = useBuyTokens(
+    const { data, isLoading, isSuccess, write, approveData, isLoadingApprove, isSuccessApprove, writeApprove, isApproved, publicPectraBalance } = useBuyTokens(
         address!,
         amount
     );
@@ -60,7 +60,8 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         // approveData,
         // isLoadingApprove,
         // isSuccessApprove,
-        isApproved
+        isApproved,
+        publicPectraBalance
     )
 
     const handleTokenBuy = async () => {
@@ -216,7 +217,11 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                     <Flex w="full" direction="row" justify="center">
                         {address !== undefined ?
 
-                            <Button variant="primary" w="fit-content" mr={3} 
+                            <Button
+                            variant="primary"
+                            w="fit-content" 
+                            mr={3} 
+                            disabled={step === 2 && amount === "0"}
                             onClick={
                                 step === 1 ? () => setStep(2) : !isApproved ? () => writeApprove!() : () => handleTokenBuy()
                             }
