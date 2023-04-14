@@ -177,7 +177,7 @@ export default function Front() {
                 <Button variant="outline">LEARN MORE</Button>
               </Link>
             </Flex>
-            <Flex mt="2rem" alignItems={"center"} justifyContent="center">
+            <Flex pb="2rem" mt="2rem" alignItems={"center"} justifyContent="center">
               {vested && (
                 <Link href="/token" _hover={{ textDecoration: "none" }}>
                   <Button variant="secondary">MY $PECTRA</Button>
