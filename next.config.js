@@ -4,12 +4,20 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/sale',
-        destination: '/sales',
+        source: "/sale",
+        destination: "/sales",
         permanent: true,
       },
-    ]
+    ];
   },
-}
+  async rewrites() {
+    return [
+      {
+        source: "/trade",
+        destination: process.env.NODE_ENV === "production" ? "/404" : "/trade",
+      },
+    ];
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

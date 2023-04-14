@@ -1,14 +1,14 @@
 import ModeComp from "@/components/trade/ModeComp";
-import { Box, Flex, Select, Grid, GridItem, Heading } from "@chakra-ui/react";
+import { Box, Flex, Heading } from "@chakra-ui/react";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import OpenPositions from "@/components/trade/PositionsTable";
 import Charts from "@/components/trade/Charts";
+import OpenPositions from "@/components/trade/PositionsTable";
 import Tickers from "@/components/trade/tickers";
 
-import { NextSeo } from "next-seo";
 import { useReadPrices } from "@/components/hooks/usePrices";
+import { NextSeo } from "next-seo";
 
 type SymbolProps = {
   label: string;
@@ -26,70 +26,70 @@ const Trade = () => {
       symbol: "VANTAGE:BTCETH",
       price: btcEthRawPrice
         ? Number(
-          (btcEthRawPrice as any).answer!.toString() /
-          Math.pow(10, btcEthDecimals as any)
-        ).toFixed(4)
+            (btcEthRawPrice as any).answer!.toString() /
+              Math.pow(10, btcEthDecimals as any)
+          ).toFixed(4)
         : 0,
     },
     {
       label: "BTC/LINK",
       symbol: "UNISWAP3ETH:WBTCLINK",
-      price: (btcPrice && linkPrice) ? (btcPrice / linkPrice).toFixed(2) : 0,
+      price: btcPrice && linkPrice ? (btcPrice / linkPrice).toFixed(2) : 0,
     },
     {
       label: "BTC/UNI",
       symbol: "UNISWAP3ETH:WBTCUNI",
-      price: (btcPrice && uniPrice) ? (btcPrice / uniPrice).toFixed(2) : 0,
+      price: btcPrice && uniPrice ? (btcPrice / uniPrice).toFixed(2) : 0,
     },
     {
       label: "ETH/BTC",
       symbol: "BINANCE:ETHBTC",
-      price: (ethPrice && btcPrice) ? (ethPrice / btcPrice).toFixed(2) : 0,
+      price: ethPrice && btcPrice ? (ethPrice / btcPrice).toFixed(2) : 0,
     },
     {
       label: "ETH/LINK",
       symbol: "UNISWAP3ETH:WETHLINK",
-      price: (ethPrice && linkPrice) ? (ethPrice / linkPrice).toFixed(2) : 0,
+      price: ethPrice && linkPrice ? (ethPrice / linkPrice).toFixed(2) : 0,
     },
     {
       label: "ETH/UNI",
       symbol: "UNISWAP3ETH:WETHUNI",
-      price: (ethPrice && uniPrice) ? (ethPrice / uniPrice).toFixed(2) : 0,
+      price: ethPrice && uniPrice ? (ethPrice / uniPrice).toFixed(2) : 0,
     },
     {
       label: "UNI/BTC",
       symbol: "BINANCE:UNIBTC",
-      price: (uniPrice && btcPrice) ? (uniPrice / btcPrice).toFixed(4) : 0,
+      price: uniPrice && btcPrice ? (uniPrice / btcPrice).toFixed(4) : 0,
     },
     {
       label: "UNI/ETH",
       symbol: "BINANCE:UNIETH",
-      price: (ethPrice && uniPrice) ? (uniPrice / ethPrice).toFixed(4) : 0,
+      price: ethPrice && uniPrice ? (uniPrice / ethPrice).toFixed(4) : 0,
     },
     {
       label: "UNI/LINK",
       symbol: "UNISWAP3ETH:UNILINK",
-      price: (linkPrice && uniPrice) ? (uniPrice / linkPrice).toFixed(2) : 0,
+      price: linkPrice && uniPrice ? (uniPrice / linkPrice).toFixed(2) : 0,
     },
     {
       label: "LINK/BTC",
       symbol: "BINANCE:LINKBTC",
-      price: (linkPrice && btcPrice) ? (linkPrice / btcPrice).toFixed(4) : 0,
+      price: linkPrice && btcPrice ? (linkPrice / btcPrice).toFixed(4) : 0,
     },
     {
       label: "LINK/ETH",
       symbol: "GEMINI:LINKETH",
       price: linkEthRawPrice
         ? Number(
-          (linkEthRawPrice as any).answer!.toString() /
-          Math.pow(10, linkEthDecimals as any)
-        ).toFixed(4)
+            (linkEthRawPrice as any).answer!.toString() /
+              Math.pow(10, linkEthDecimals as any)
+          ).toFixed(4)
         : 0,
     },
     {
       label: "LINK/UNI",
       symbol: "UNISWAP3ETH:LINKUNI",
-      price: (linkPrice && uniPrice) ? (linkPrice / uniPrice).toFixed(2) : 0,
+      price: linkPrice && uniPrice ? (linkPrice / uniPrice).toFixed(2) : 0,
     },
   ];
 
@@ -108,12 +108,27 @@ const Trade = () => {
 
   //current tokens available with price variables for each
   const tokens = [
-    { name: "ETH", price: ethPrice, address: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1" },
-    { name: "BTC", price: btcPrice, address: "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f" },
-    { name: "LINK", price: linkPrice, address: "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4" },
-    { name: "UNI", price: uniPrice, address: "0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0" },
+    {
+      name: "ETH",
+      price: ethPrice,
+      address: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+    },
+    {
+      name: "BTC",
+      price: btcPrice,
+      address: "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
+    },
+    {
+      name: "LINK",
+      price: linkPrice,
+      address: "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4",
+    },
+    {
+      name: "UNI",
+      price: uniPrice,
+      address: "0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0",
+    },
   ];
-
 
   return (
     <>
@@ -139,7 +154,9 @@ const Trade = () => {
         px={{ base: "2rem", "3xl": "4.25rem" }}
       >
         {process.env.NODE_ENV === "production" ? (
-          <Heading m="auto" mt="20%">Coming Soon</Heading>
+          <Heading m="auto" mt="20%">
+            Coming Soon
+          </Heading>
         ) : (
           <>
             <Flex
@@ -152,7 +169,14 @@ const Trade = () => {
               px="1.68rem"
               py="1.25rem"
             >
-              <ModeComp handleTabsChange={handleTabsChange} tabIndex={tabIndex} handleSymbolChange={handleSymbolChange} symbols={symbols} tokens={tokens} symbol={symbol!} />
+              <ModeComp
+                handleTabsChange={handleTabsChange}
+                tabIndex={tabIndex}
+                handleSymbolChange={handleSymbolChange}
+                symbols={symbols}
+                tokens={tokens}
+                symbol={symbol!}
+              />
             </Flex>
 
             <Flex w="70%" flex={1} direction="column">
@@ -204,14 +228,19 @@ const Trade = () => {
                     <Charts symb={symbol?.symbol} />
                   </Box>
                   <Box h="100%" w="37.5%">
-                    <Tickers symbols={symbols} handleChange={handleSymbolChange} />
+                    <Tickers
+                      symbols={symbols}
+                      handleChange={handleSymbolChange}
+                    />
                   </Box>
                 </Flex>
               </Flex>
               <Box w="100%" display={tabIndex === 0 ? "block" : "none"}>
                 <OpenPositions tabIndex={tabIndex} />
               </Box>
-            </Flex></>)}
+            </Flex>
+          </>
+        )}
       </Flex>
     </>
   );
