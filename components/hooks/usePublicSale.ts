@@ -16,7 +16,7 @@ const SALES_CONTRACT =
 const USDC =
   typeof process.env.NEXT_PUBLIC_SALE_USDC === "string"
     ? (process.env.NEXT_PUBLIC_SALE_USDC as `0x${string}`)
-    : "0x00006ef5eb2c94abacfc95363a4811b117ce22eb";
+    : "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8";
 
 export const useBuyTokens = (address?: string, amount?: string) => {
   const { config } = usePrepareContractWrite({

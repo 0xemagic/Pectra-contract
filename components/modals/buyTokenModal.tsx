@@ -52,7 +52,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
     isLoading: balanceLoading,
   } = useBalance({
     address: address,
-    token: "0xA537aF138c1376ea9cC66501a2FfEF62a9c43630",
+    token: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
   });
 
   const {
