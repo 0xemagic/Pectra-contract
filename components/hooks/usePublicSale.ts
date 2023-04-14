@@ -6,7 +6,8 @@ import { BigNumber } from "ethers";
 import { noSpecialCharacters } from "../utils";
 import { parseUnits } from "@ethersproject/units";
 
-const SALES_CONTRACT = "0x00006ef5eb2c94abacfc95363a4811b117ce22eb";
+const SALES_CONTRACT = "0x5a1efce55840e2f5b49f2ff7e5061712e6fa3151";
+const USDC = "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8"
 
 export const useBuyTokens = (      
   address?: string,
@@ -20,7 +21,7 @@ export const useBuyTokens = (
     const { data, isLoading, isSuccess, write } = useContractWrite(config);
 
     const { config: approveConfig } = usePrepareContractWrite({
-      address: "0xA537aF138c1376ea9cC66501a2FfEF62a9c43630",
+      address: USDC,
       abi: erc20ABI,
       functionName: "approve",
       args: [
@@ -30,7 +31,7 @@ export const useBuyTokens = (
     });
   
     const { data: allowance } = useContractRead({
-      address: "0xA537aF138c1376ea9cC66501a2FfEF62a9c43630",
+      address: USDC,
       abi: erc20ABI,
       functionName: "allowance",
       args: [address, SALES_CONTRACT],
