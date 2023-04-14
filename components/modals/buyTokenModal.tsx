@@ -80,6 +80,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
             ),
           });
         }
+        setAmount(amount);
       }, [approveStatus, isApproved]);
 
     const handleTokenBuy = async () => {
