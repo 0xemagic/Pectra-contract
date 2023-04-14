@@ -9,7 +9,7 @@ import { parseUnits } from "@ethersproject/units";
 const SALES_CONTRACT = "0x00006ef5eb2c94abacfc95363a4811b117ce22eb";
 
 export const useBuyTokens = (      
-  address: string,
+  address?: string,
   amount?: string) => {
     const { config } = usePrepareContractWrite({
       address: SALES_CONTRACT,
@@ -51,6 +51,13 @@ export const useBuyTokens = (
       functionName: "pricePerToken",
       watch: true,
     });
+
+    const { data: tokensSold } = useContractRead({
+      address: SALES_CONTRACT,
+      abi: salesABI,
+      functionName: "totalTokensSold",
+      watch: true,
+    });
   
     const isApproved =
       BigNumber.isBigNumber(allowance) &&
@@ -60,6 +67,6 @@ export const useBuyTokens = (
   
     const { data: approveData, isLoading: isLoadingApprove, isSuccess: isSuccessApprove, write: writeApprove } = useContractWrite(approveConfig);
   
-    return { data, isLoading, isSuccess, write,  approveData, isLoadingApprove, isSuccessApprove, writeApprove, isApproved, publicPectraBalance, spectraPrice };
+    return { data, isLoading, isSuccess, write,  approveData, isLoadingApprove, isSuccessApprove, writeApprove, isApproved, publicPectraBalance, spectraPrice, tokensSold };
   };
 

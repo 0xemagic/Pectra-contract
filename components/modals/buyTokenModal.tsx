@@ -36,7 +36,7 @@ import { DangerToast, SuccessToast } from "../UI/toasts";
 
 import Confetti from "react-confetti";
 import useWindowSize from "react-use/lib/useWindowSize";
-import { formatUnits } from "@ethersproject/units";
+import { formatUnits, commify } from "@ethersproject/units";
 import { BigNumberish } from 'ethers';
 
 export default function BuyTokenModal({ isOpen, onClose }: any) {
@@ -210,7 +210,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                                         You will receive
                                     </Text>
                                     <Text variant="paragraph" color="#BBFF81">
-                                        <b>{(+amount / +formatUnits(spectraPrice as BigNumberish, 6))}</b> $PECTRA
+                                        <b>{commify((+amount / +formatUnits(spectraPrice as BigNumberish, 6)).toString())}</b> $PECTRA
                                     </Text>
                                 </Flex>
                                 {/* <Flex mt="0.5rem" px="1.25rem">

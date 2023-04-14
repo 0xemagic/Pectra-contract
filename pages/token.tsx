@@ -59,7 +59,7 @@ export default function Dashboard({ onOpen }: any) {
                 direction="column"
                 alignItems="center"
                 justifyItems="center"
-                pt="5rem"
+                pt="2.5rem"
                 pb="5rem"
             >
                 <Flex

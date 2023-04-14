@@ -113,7 +113,7 @@ export default function Layout({ chains, children }: LayoutProps) {
   ];
 
   const isIndex = router.pathname === "/";
-  const isSales = router.pathname === "/sale";
+  const isSales = router.pathname === "/sales";
   const isToken = router.pathname === "/token";
 
   return (
