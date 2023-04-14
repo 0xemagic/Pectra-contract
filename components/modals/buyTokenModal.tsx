@@ -63,7 +63,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         spectraPrice,
         isPaused,
         usdcBalance
-    } = useBuyTokens(amount);
+    } = useBuyTokens(address!, amount);
 
     const insufficientBalance = usdcBalance && +formatUnits(usdcBalance!.value!, 6) < +amount;
 
