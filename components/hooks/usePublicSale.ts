@@ -11,12 +11,12 @@ import { parseUnits } from "@ethersproject/units";
 import { BigNumber, BigNumberish } from "ethers";
 import { formatUnits } from "@ethersproject/units";
 
-const SALES_CONTRACT =
+export const SALES_CONTRACT =
   typeof process.env.NEXT_PUBLIC_SALE_CONTRACT === "string"
     ? (process.env.NEXT_PUBLIC_SALE_CONTRACT as `0x${string}`)
     : "0x5a1efce55840e2f5b49f2ff7e5061712e6fa3151";
 
-const USDC =
+export const USDC =
   typeof process.env.NEXT_PUBLIC_SALE_USDC === "string"
     ? (process.env.NEXT_PUBLIC_SALE_USDC as `0x${string}`)
     : "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8";
@@ -64,14 +64,6 @@ export const useBuyTokens = (address?: string, amount?: string) => {
   //   args: [SALES_CONTRACT, amount ? parseUnits(amount!, 6) : 0],
   // });
 
-  const { data: allowance } = useContractRead({
-    address: USDC,
-    abi: erc20ABI,
-    functionName: "allowance",
-    args: [address, SALES_CONTRACT],
-    watch: true,
-  });
-
   const { data: publicPectraBalance } = useContractRead({
     address: SALES_CONTRACT,
     abi: salesABI,
@@ -97,9 +89,15 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     functionName: "isPaused",
   });
 
+  const { data: allowance } = useContractRead({
+    address: USDC,
+    abi: erc20ABI,
+    functionName: "allowance",
+    args: [address, SALES_CONTRACT],
+    watch: true,
+  });
+
   const isApproved = allowance && +formatUnits(allowance as BigNumberish, 6) >= +amount!
-
-
 
   const {
     data: usdcBalance,

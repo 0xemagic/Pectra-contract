@@ -25,10 +25,12 @@ import {
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useState, useEffect } from "react";
 import { MdCheckCircle } from "react-icons/md";
-import { useAccount, useBalance, useWaitForTransaction } from "wagmi";
+import { useAccount, useContractRead, useWaitForTransaction } from "wagmi";
 import { truncate } from "../utils";
 
 import { useBuyTokens } from "../hooks/usePublicSale";
+import { SALES_CONTRACT, USDC } from "../hooks/usePublicSale";
+import erc20ABI from "../../public/abi/erc20.json";
 
 import { getErrorMessage } from "../utils/errors";
 
@@ -58,12 +60,22 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         isLoadingApprove,
         isSuccessApprove,
         writeApprove,
-        isApproved,
+        // isApproved,
         publicPectraBalance,
         spectraPrice,
         isPaused,
         usdcBalance
     } = useBuyTokens(address!, amount);
+
+    const { data: allowance } = useContractRead({
+        address: USDC,
+        abi: erc20ABI,
+        functionName: "allowance",
+        args: [address, SALES_CONTRACT],
+        watch: true,
+      });
+    
+    const isApproved = allowance && +formatUnits(allowance as BigNumberish, 6) >= +amount!
 
     const insufficientBalance = usdcBalance && +formatUnits(usdcBalance!.value!, 6) < +amount;
 
