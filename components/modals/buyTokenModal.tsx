@@ -55,7 +55,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         token: "0xA537aF138c1376ea9cC66501a2FfEF62a9c43630",
     });
 
-    const { data, isLoading, isSuccess, write, approveData, isLoadingApprove, isSuccessApprove, writeApprove, isApproved, publicPectraBalance, spectraPrice } = useBuyTokens(
+    const { data, isLoading, isSuccess, write, approveData, isLoadingApprove, isSuccessApprove, writeApprove, isApproved, publicPectraBalance, spectraPrice, isPaused } = useBuyTokens(
         address!,
         amount
     );
@@ -96,12 +96,15 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
             <ModalContent bgColor="#2B3226">
                 <ModalHeader>
                     <Flex direction="row" justify="center">
-                        <Heading fontSize="25px" variant="heading" color="#BBFF81" mr="0.25rem">$PECTRA</Heading><Heading fontSize="25px" variant="heading">{step === 1 ? "Token Public Sale Terms" : "Token Invest"}</Heading>
+                        <Heading fontSize="25px" variant="heading" color="#BBFF81" mr="0.25rem">$PECTRA</Heading><Heading fontSize="25px" variant="heading">{isPaused ? "INVEST" : step === 1 ? "Token Public Sale Terms" : "Token Invest"}</Heading>
                     </Flex>
                 </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody mt="1.5rem" px={{ base: "1rem", md: "2rem" }}>
-                    {step === 1 ?
+                    <>
+                    {isPaused ? <Text textAlign="center" variant="paragraph">Public sale is currently paused</Text> : (
+                        <>
+                        {step === 1 ?
                         <List spacing={5}>
                             <ListItem>
                                 <ListIcon as={MdCheckCircle} color='#43931E' />
@@ -213,17 +216,12 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                                         <b>{commify((+amount / +formatUnits(spectraPrice as BigNumberish, 6)).toString())}</b> $PECTRA
                                     </Text>
                                 </Flex>
-                                {/* <Flex mt="0.5rem" px="1.25rem">
-                                    <Text mr="0.25rem" variant="paragraph">
-                                        Vest unlock date
-                                    </Text>
-                                    <Text variant="paragraph" color="#BBFF81">
-                                        <b>25 / 05 / 2024</b>
-                                    </Text>
-                                </Flex> */}
                             </>
                         )
                     }
+                        </>
+                    )}
+                    </>
                 </ModalBody>
                 <ModalFooter mt="1.5rem" >
                     <Flex w="full" direction="row" justify="center">
@@ -238,7 +236,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                                 step === 1 ? () => setStep(2) : !isApproved ? () => writeApprove!() : () => handleTokenBuy()
                             }
                             >
-                                {step === 1 ? 'Accept Terms' : !isApproved ? 'Approve USDC' : isLoadingApprove ? 'Approving...' : isLoading ? "Buying..." : 'Buy $PECTRA'}
+                                {isPaused ? "COMING SOON" : step === 1 ? 'Accept Terms' : !isApproved ? 'Approve USDC' : isLoadingApprove ? 'Approving...' : isLoading ? "Buying..." : 'Buy $PECTRA'}
                             </Button>
 
                             :

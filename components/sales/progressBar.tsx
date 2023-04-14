@@ -46,8 +46,6 @@ export default function TotalInvestedBar() {
     const publicAmount = tokensSold ? +formatUnits(tokensSold as BigNumberish, 18) : 0;
     const available = 2900000 - publicAmount;
 
-    console.log("publicAmount", publicAmount)
-
     const ProgressBarMark = ({ percentage, label, borderColor = "#43931E", translateX = 0, bottomLabel = "-2.75rem", bottomBox = "-0.75rem" }: ProgressBarProps) => {
         return (
             <Box position="absolute" left={`${percentage}%`} top="0">
