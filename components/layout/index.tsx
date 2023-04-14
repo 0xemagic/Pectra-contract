@@ -3,29 +3,24 @@ import {
   Button,
   Flex,
   Heading,
+  HStack,
   Image,
   Link,
   Text,
   useColorMode,
 } from "@chakra-ui/react";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import React from "react";
 import {
-  lightTheme,
+  ConnectButton,
   darkTheme,
+  lightTheme,
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
 
-import {
-  RiInstagramFill,
-  RiTwitterFill,
-  RiTelegramFill,
-  RiGithubFill,
-} from "react-icons/ri";
-import { HiSun, HiMoon } from "react-icons/hi";
-import { FaDiscord } from "react-icons/fa";
-import { SiMedium } from "react-icons/si";
 import { useRouter } from "next/router";
+import { FaDiscord } from "react-icons/fa";
+import { HiMoon, HiSun } from "react-icons/hi";
+import { RiGithubFill, RiTwitterFill } from "react-icons/ri";
+import { SiMedium } from "react-icons/si";
 
 interface LayoutProps {
   children: JSX.Element;
@@ -136,7 +131,7 @@ export default function Layout({ chains, children }: LayoutProps) {
         bg={
           isIndex
             ? colorMode === "dark"
-                        ? "linear-gradient(180deg, #0C1506 0%, #151D10 100%)"
+              ? "linear-gradient(180deg, #0C1506 0%, #151D10 100%)"
               : "linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 100%)"
             : colorMode === "dark"
             ? "#101010"
@@ -145,8 +140,30 @@ export default function Layout({ chains, children }: LayoutProps) {
         direction="column"
         // pb="4rem"
       >
+        {!isSales && (
+          <Flex
+            w="100%"
+            h={12}
+            bg="purple.900"
+            alignItems={"center"}
+            direction="row"
+          >
+            <HStack margin={"0 auto"} spacing={4}>
+              <Text>Pectra token sale is ongoing!</Text>
+              <Button
+                size={"sm"}
+                variant={"outline"}
+                onClick={() => {
+                  router.push("/sales");
+                }}
+              >
+                Buy $PECTRA
+              </Button>
+            </HStack>
+          </Flex>
+        )}
         <Flex
-                display={isSales === true ? "none" : "flex"}
+          display={isSales === true ? "none" : "flex"}
           position="absolute"
           top={0}
           justifyContent="space-between"
@@ -249,20 +266,22 @@ export default function Layout({ chains, children }: LayoutProps) {
               </Button>
               {router.pathname === "/" ? (
                 <>
-                {process.env.NODE_ENV === "development" ? (
-                  <Button
-                  variant="primary"
-                  onClick={() => router.push("/trade")}
-                >
-                  ENTER
-                </Button>) : (
-                   <Button
-                   variant="primary"
-                  //  onClick={() => router.push("/trade")}
-                 >
-                   COMING SOON
-                 </Button>)}
-                 </>
+                  {process.env.NODE_ENV === "development" ? (
+                    <Button
+                      variant="primary"
+                      onClick={() => router.push("/trade")}
+                    >
+                      ENTER
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="primary"
+                      //  onClick={() => router.push("/trade")}
+                    >
+                      COMING SOON
+                    </Button>
+                  )}
+                </>
               ) : (
                 <ConnectButton
                   chainStatus={"none"}
