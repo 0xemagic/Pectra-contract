@@ -65,9 +65,6 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
 
     const insufficientBalance = usdcBalance && +formatUnits(usdcBalance!.value!, 6) < +amount;
 
-    console.log("usdcBalance", +formatUnits(usdcBalance!.value!, 6))
-    console.log("amount", +amount)
-
     const handleTokenBuy = async () => {
         if (!isApproved) {
             return;

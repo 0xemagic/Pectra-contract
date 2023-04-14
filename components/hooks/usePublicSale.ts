@@ -13,7 +13,8 @@ import { BigNumber } from "ethers";
 const SALES_CONTRACT =
   typeof process.env.NEXT_PUBLIC_SALE_CONTRACT === "string"
     ? (process.env.NEXT_PUBLIC_SALE_CONTRACT as `0x${string}`)
-    : "0x00006ef5eb2c94abacfc95363a4811b117ce22eb";
+    : "0x5a1efce55840e2f5b49f2ff7e5061712e6fa3151";
+
 const USDC =
   typeof process.env.NEXT_PUBLIC_SALE_USDC === "string"
     ? (process.env.NEXT_PUBLIC_SALE_USDC as `0x${string}`)
