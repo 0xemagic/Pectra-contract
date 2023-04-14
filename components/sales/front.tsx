@@ -170,8 +170,9 @@ export default function Front() {
                     onOpen();
                   }
                 }}
+                disabled={!address}
               >
-                BUY $PECTRA
+                {address ? "BUY $PECTRA" : "CONNECT WALLET"}
               </Button>
               <Link
                 href="https://medium.com/@spectra_protocol/introducing-the-spectra-public-sale-45e4524df32e"
