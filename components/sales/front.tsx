@@ -13,6 +13,7 @@ import TotalInvestedBar from "./progressBar";
 
 import BuyTokenModal from "../modals/buyTokenModal";
 
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { formatDistance } from "date-fns";
 import { BigNumberish } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
@@ -158,22 +159,36 @@ export default function Front() {
               justifyContent="center"
               mt={{ base: "2.5rem", "3xl": "4rem" }}
             >
-              <Button
-                variant="primary"
-                boxShadow={
-                  colorMode === "dark" ? "0px -1px 22px #518128" : "none"
-                }
-                mr={{ base: "none", md: "0.5rem" }}
-                mb={{ base: "1rem", md: "0rem" }}
-                onClick={() => {
-                  if (address) {
-                    onOpen();
+              {address ? (
+                <Button
+                  variant="primary"
+                  boxShadow={
+                    colorMode === "dark" ? "0px -1px 22px #518128" : "none"
                   }
-                }}
-                disabled={!address}
-              >
-                {address ? "BUY $PECTRA" : "CONNECT WALLET"}
-              </Button>
+                  mr={{ base: "none", md: "0.5rem" }}
+                  mb={{ base: "1rem", md: "0rem" }}
+                  onClick={() => {
+                    if (address) {
+                      onOpen();
+                    }
+                  }}
+                  disabled={!address}
+                >
+                  {"BUY $PECTRA"}
+                </Button>
+              ) : (
+                <ConnectButton
+                  chainStatus={"none"}
+                  showBalance={{
+                    smallScreen: false,
+                    largeScreen: false,
+                  }}
+                  accountStatus={{
+                    smallScreen: "avatar",
+                    largeScreen: "avatar",
+                  }}
+                />
+              )}
               <Link
                 href="https://medium.com/@spectra_protocol/introducing-the-spectra-public-sale-45e4524df32e"
                 isExternal
