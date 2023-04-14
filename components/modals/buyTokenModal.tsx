@@ -36,6 +36,8 @@ import { DangerToast, SuccessToast } from "../UI/toasts";
 
 import Confetti from "react-confetti";
 import useWindowSize from "react-use/lib/useWindowSize";
+import { formatUnits } from "@ethersproject/units";
+import { BigNumberish } from 'ethers';
 
 export default function BuyTokenModal({ isOpen, onClose }: any) {
     const toast = useToast();
@@ -53,7 +55,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
         token: "0xA537aF138c1376ea9cC66501a2FfEF62a9c43630",
     });
 
-    const { data, isLoading, isSuccess, write, approveData, isLoadingApprove, isSuccessApprove, writeApprove, isApproved, publicPectraBalance } = useBuyTokens(
+    const { data, isLoading, isSuccess, write, approveData, isLoadingApprove, isSuccessApprove, writeApprove, isApproved, publicPectraBalance, spectraPrice } = useBuyTokens(
         address!,
         amount
     );
@@ -198,13 +200,17 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                                         USDC
                                     </Text>
                                 </Flex>
+                                {+tokenBalance!.formatted! < +amount && (
+                                    <Text>
+                                        <b>Insufficient balance</b>
+                                    </Text>)}
                                 <Flex px="1.25rem"
                                 >
                                     <Text mr="0.25rem" variant="paragraph">
                                         You will receive
                                     </Text>
                                     <Text variant="paragraph" color="#BBFF81">
-                                        <b>{+amount * 0.025}</b> $PECTRA
+                                        <b>{(+amount / +formatUnits(spectraPrice as BigNumberish, 6))}</b> $PECTRA
                                     </Text>
                                 </Flex>
                                 {/* <Flex mt="0.5rem" px="1.25rem">

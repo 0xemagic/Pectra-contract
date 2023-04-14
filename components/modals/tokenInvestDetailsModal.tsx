@@ -14,6 +14,9 @@ import {
 
 import { truncate } from '../utils'
 import { useBalance, useAccount } from "wagmi";
+import { useBuyTokens } from "../hooks/usePublicSale";
+import { formatUnits, commify } from "ethers/lib/utils";
+import { BigNumberish } from 'ethers';
 
 type Props = {
     onCloseDashboard: () => void;
@@ -24,23 +27,16 @@ type Props = {
 export default function TokenDetailsModal({ isOpenDashboard, onCloseDashboard, onOpenBuy }: Props) {
 
     const { address, isConnecting, isDisconnected } = useAccount();
-    const {
-        data: privateSaleBalance,
-        isError: isErrorPrivate,
-        isLoading: privateLoading,
-    } = useBalance({
-        address: address,
-        token: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
-    });
+    // const {
+    //     data: privateSaleBalance,
+    //     isError: isErrorPrivate,
+    //     isLoading: privateLoading,
+    // } = useBalance({
+    //     address: address,
+    //     token: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+    // });
 
-    const {
-        data: publicSaleBalance,
-        isError: isErrorPublic,
-        isLoading: publicLoading,
-    } = useBalance({
-        address: address,
-        token: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
-    });
+    const { publicPectraBalance, spectraPrice } = useBuyTokens(address!);
 
     const {
         data: migratorBalance,
@@ -48,26 +44,26 @@ export default function TokenDetailsModal({ isOpenDashboard, onCloseDashboard, o
         isLoading: migratorLoading,
     } = useBalance({
         address: address,
-        token: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+        token: "0xFffffF8244e4d4a906F9A70C13E91cB30E1Cb39A",
     });
 
     const balances =
         [
+            // [
+            //     privateSaleBalance?.formatted?.toString(),
+            //     "Private Sale"
+            // ],
             [
-                privateSaleBalance?.formatted?.toString(),
-                "Private Sale"
-            ],
-            [
-                publicSaleBalance?.formatted?.toString(),
+                +formatUnits(publicPectraBalance! as BigNumberish),
                 "Public Sale"
             ],
             [
-                migratorBalance?.formatted?.toString(),
+                migratorBalance?.formatted,
                 "OG Migrator"
             ]
         ]
 
-    const totalBalance = (+migratorBalance?.formatted! + +publicSaleBalance?.formatted! + +privateSaleBalance?.formatted!);
+    const totalBalance = (+migratorBalance?.formatted! + +formatUnits(publicPectraBalance! as BigNumberish)) * +formatUnits(spectraPrice as BigNumberish, 6);
 
     return (
         <Modal isCentered
@@ -100,7 +96,7 @@ export default function TokenDetailsModal({ isOpenDashboard, onCloseDashboard, o
                             <Flex direction="column" alignItems="center" justifyItems="center">
                                 <Heading variant="heading" fontSize={{ base: "1.5rem", md: "2rem" }}>
                                     ${totalBalance
-                                        ? truncate(totalBalance.toString(), 2)
+                                        ? commify(truncate((totalBalance).toString(), 2))
                                         : 0}
                                 </Heading>
                             </Flex>
@@ -117,7 +113,7 @@ export default function TokenDetailsModal({ isOpenDashboard, onCloseDashboard, o
                                 console.log()
                                 return (
                                     <>
-                                        {balance[0] === "0" || balance[0] === undefined ? null : (
+                                        {balance[0] === 0 || balance[0] === undefined || balance[0] === "0.0" ? null : (
                                             <Flex
                                                 flexDir="column"
                                                 mb="0.25rem"
@@ -135,7 +131,7 @@ export default function TokenDetailsModal({ isOpenDashboard, onCloseDashboard, o
                                                 </Text>
                                                 <Flex direction="column" alignItems="center" justifyItems="center">
                                                     <Heading variant="heading" fontSize={{ base: "1.5rem", md: "2rem" }}> {balance[0]
-                                                        ? truncate(balance[0], 2)
+                                                        ? commify(truncate(balance[0].toString(), 2))
                                                         : 0}</Heading>
                                                     <Heading mt="0.25rem" variant="heading" color="#81FF7E" fontSize={{ base: "0.5rem", md: "1.25rem" }}>                                        $PECTRA
                                                     </Heading>

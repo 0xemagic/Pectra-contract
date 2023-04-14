@@ -10,19 +10,23 @@ import {
     useDisclosure
 } from "@chakra-ui/react";
 
+import { NextSeo } from "next-seo";
+
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { FaCaretDown } from "react-icons/fa";
 import { useAccount } from "wagmi";
 import { useState } from "react";
-import { truncate } from '../utils'
+import { truncate } from '../components/utils'
 import { commify } from 'ethers/lib/utils'
-import { BigNumber } from 'ethers'
+import { BigNumber, BigNumberish } from 'ethers'
 import { formatUnits } from "ethers/lib/utils";
 
-import TokenDetailsModal from "../modals/tokenInvestDetailsModal";
-import BuyTokenModal from "../modals/buyTokenModal";
+import TokenDetailsModal from "../components/modals/tokenInvestDetailsModal";
+import BuyTokenModal from "../components/modals/buyTokenModal";
 
-export default function Dashboard({ onOpen, publicPectraBalance }: any) {
+import { useBuyTokens } from "../components/hooks/usePublicSale";
+
+export default function Dashboard({ onOpen }: any) {
     const { isOpen: isOpenDashboard, onClose: onCloseDashboard, onOpen: onOpenDashboard } = useDisclosure();
     const { isOpen: isOpenBuy, onClose: onCloseBuy, onOpen: onOpenBuy } = useDisclosure();
 
@@ -30,12 +34,33 @@ export default function Dashboard({ onOpen, publicPectraBalance }: any) {
     const [vestInfo, setVestInfo] = useState(false);
     const { colorMode } = useColorMode();
 
+    const { publicPectraBalance } = useBuyTokens(
+        address!
+    );
+
     return (
         <>
-            <Flex
+            <NextSeo
+                title="Pectra Token Dashboard"
+                description="$PECTRA token dashboard."
+                openGraph={{
+                    title: "Pectra Protocol",
+                    description: "Pair trading made easy.",
+                    images: [
+                        {
+                            url: "https://www.spectra.garden/spectra-protocol.svg",
+                            width: 800,
+                            height: 600,
+                            alt: "Pectra Protocol",
+                        },
+                    ],
+                }}
+            />            <Flex
                 direction="column"
                 alignItems="center"
                 justifyItems="center"
+                pt="5rem"
+                pb="5rem"
             >
                 <Flex
                     direction="row"
@@ -45,7 +70,7 @@ export default function Dashboard({ onOpen, publicPectraBalance }: any) {
                         $PECTRA
                     </Heading>
                     <Heading variant="heading" fontSize={{ base: "1.5rem", md: "2rem" }} >
-                        Token Sale Dashboard
+                        Token Dashboard
                     </Heading>
                 </Flex>
                 <Flex
@@ -76,7 +101,7 @@ export default function Dashboard({ onOpen, publicPectraBalance }: any) {
                     >
                         <Heading mt="1rem" mr={{ base: "0rem", md: "0.5rem" }} variant="heading" fontSize={{ base: "1.5rem", md: "2rem" }}>
                             {publicPectraBalance
-                                ? commify(truncate(formatUnits(publicPectraBalance).toString(), 2))
+                                ? commify(truncate(formatUnits(publicPectraBalance! as BigNumberish).toString(), 2))
                                 : 0}
                         </Heading>
                         <Heading mt="1rem" variant="heading" color="#81FF7E" fontSize={{ base: "0.5rem", md: "1.25rem" }}>$PECTRA</Heading>
