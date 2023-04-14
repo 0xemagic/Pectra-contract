@@ -170,8 +170,8 @@ export default function TotalInvestedBar() {
             >
               <Tooltip
                 label={`Public Tokens Sold: ${commify(
-                  publicAmount
-                )} (${truncate(commify(publicAmount / 0.025), 2)} USDC)`}
+                  publicAmount * 40
+                )} $PECTRA`}
                 isOpen={publicLabel}
               >
                 <Flex
@@ -208,10 +208,10 @@ export default function TotalInvestedBar() {
             align="center"
           >
             <Tooltip
-              label={`Available token amount: ${commify(available)} (${truncate(
-                commify(available),
+              label={`Available token amount:  (${truncate(
+                commify(available * 40),
                 2
-              )} USDC)`}
+              )} $PECTRA)`}
               isOpen={availableLabel}
             >
               <Flex
@@ -230,7 +230,7 @@ export default function TotalInvestedBar() {
                   color={colorMode === "dark" ? "black" : "black"}
                   textAlign="center"
                   fontSize={{ base: "0.75rem", md: "1rem" }}
-                >{`($${millify(available)})`}</Text>
+                >{`($${commify(available)})`}</Text>
               </Flex>
             </Tooltip>
           </Flex>

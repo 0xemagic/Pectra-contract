@@ -119,3 +119,19 @@ export const usePublicSale = () => {
       : undefined,
   };
 };
+
+export const useSaleAdmin = () => {
+  const { data: isPaused } = useContractRead({
+    address: "0x5a1eFce55840E2f5b49F2ff7e5061712e6fA3151",
+    abi: salesABI,
+    functionName: "isPaused",
+    watch: true,
+  });
+  const { config } = usePrepareContractWrite({
+    address: "0x5a1eFce55840E2f5b49F2ff7e5061712e6fA3151",
+    abi: salesABI,
+    functionName: "togglePause",
+  });
+  const { data, isLoading, isSuccess, write } = useContractWrite(config);
+  return { data, isLoading, isSuccess, togglePause: write, isPaused };
+};
