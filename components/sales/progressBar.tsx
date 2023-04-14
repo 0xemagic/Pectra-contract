@@ -6,6 +6,8 @@ import { AiOutlineInfoCircle } from "react-icons/ai";
 
 import { BigNumberish } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
+import { useBuyTokens } from "../hooks/usePublicSale";
+import { truncate } from "../utils";
 
 type ProgressBarProps = {
   percentage: number;
@@ -40,13 +42,13 @@ export default function TotalInvestedBar() {
     },
   ];
 
-  //   const { tokensSold } = useBuyTokens();
-  const tokensSold = 0;
+  const { tokensSold } = useBuyTokens();
+  //   const tokensSold = 0;
 
-  const publicAmount = tokensSold
+  const spectraSold = tokensSold
     ? +formatUnits(tokensSold as BigNumberish, 18)
     : 0;
-  const available = 2500000 - publicAmount;
+  const spectraUnsold = 100_000_000 - spectraSold;
 
   const ProgressBarMark = ({
     percentage,
@@ -156,10 +158,10 @@ export default function TotalInvestedBar() {
             percentage={100 * (1875000 / 2500000)}
             label="1.875M"
           />
-          {+publicAmount > 0 && (
+          {+spectraSold > 0 && (
             <Flex
               bg={legend[0].color}
-              w={`${(publicAmount / 1000000) * 110}%`}
+              w={`${(spectraSold / 100_000_000) * 100}%`}
               h={{ base: "3rem", md: "2.5rem" }}
               direction="column"
               justify="center"
@@ -168,9 +170,7 @@ export default function TotalInvestedBar() {
               borderLeftRadius={"lg"}
             >
               <Tooltip
-                label={`Public Tokens Sold: ${commify(
-                  publicAmount * 40
-                )} $PECTRA`}
+                label={`Public Tokens Sold: ${commify(spectraSold)} $PECTRA`}
                 isOpen={publicLabel}
               >
                 <Flex
@@ -186,53 +186,55 @@ export default function TotalInvestedBar() {
                     fontSize={{ base: "0.75rem", md: "1rem" }}
                     fontWeight="bold"
                     mr={{ base: "0rem", md: "0.5rem" }}
-                  >{`${((publicAmount / 2500000) * 100).toFixed(1)}%`}</Text>
+                  >{`${((spectraSold / 100_000_000) * 100).toFixed(1)}%`}</Text>
                   <Text
                     color="#222222"
                     fontSize={{ base: "0.75rem", md: "1rem" }}
-                  >{`($${millify(publicAmount)})`}</Text>
+                  >{`($${millify(spectraSold / 40)})`}</Text>
                 </Flex>
               </Tooltip>
             </Flex>
           )}
           <Flex
-            w={`${(available / 1000000) * 90}%`}
+            w={`${(spectraUnsold / 100_000_000) * 90}%`}
             h={{ base: "3rem", md: "2.5rem" }}
             bg={legend[1].color}
             borderWidth={"1px"}
             borderRightRadius={"lg"}
-            borderLeftRadius={+publicAmount > 0 ? "0" : "lg"}
+            borderLeftRadius={+spectraSold > 0 ? "0" : "lg"}
             direction="column"
             justify="center"
             align="center"
           >
-            <Text textColor={"black"}>fixing the progress bar calc..</Text>
-            {/* <Tooltip
-              label={`Available token amount:  (${truncate(
-                commify(available * 40),
-                2
-              )} $PECTRA)`}
-              isOpen={availableLabel}
-            >
-              <Flex
-                direction={{ base: "column", md: "row" }}
-                onMouseEnter={() => setAvailableLabel(true)}
-                onMouseLeave={() => setAvailableLabel(false)}
-                onClick={() => setAvailableLabel(true)}
+            {/* <Text textColor={"black"}>fixing the progress bar calc..</Text> */}
+            {
+              <Tooltip
+                label={`Available token amount:  (${truncate(
+                  commify(spectraUnsold),
+                  2
+                )} $PECTRA)`}
+                isOpen={availableLabel}
               >
-                <Text
-                  color={colorMode === "dark" ? "black" : "black"}
-                  fontWeight="bold"
-                  textAlign="center"
-                  fontSize={{ base: "0.75rem", md: "1rem" }}
-                >{`${((available / 2500000) * 100).toFixed(1)}%`}</Text>
-                <Text
-                  color={colorMode === "dark" ? "black" : "black"}
-                  textAlign="center"
-                  fontSize={{ base: "0.75rem", md: "1rem" }}
-                >{`($${commify(available)})`}</Text>
-              </Flex>
-            </Tooltip> */}
+                <Flex
+                  direction={{ base: "column", md: "row" }}
+                  onMouseEnter={() => setAvailableLabel(true)}
+                  onMouseLeave={() => setAvailableLabel(false)}
+                  onClick={() => setAvailableLabel(true)}
+                >
+                  <Text
+                    color={colorMode === "dark" ? "black" : "black"}
+                    fontWeight="bold"
+                    textAlign="center"
+                    fontSize={{ base: "0.75rem", md: "1rem" }}
+                  >{`${((spectraUnsold / 100_000_000) * 100).toFixed(1)}%`}</Text>
+                  <Text
+                    color={colorMode === "dark" ? "black" : "black"}
+                    textAlign="center"
+                    fontSize={{ base: "0.75rem", md: "1rem" }}
+                  >{`($${commify(spectraUnsold / 40)})`}</Text>
+                </Flex>
+              </Tooltip>
+            }
           </Flex>
         </Flex>
         <Tooltip label="End of public sale" isOpen={endLabel}>
