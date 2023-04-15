@@ -71,7 +71,10 @@ export function Layout({ children }: LayoutProps) {
   
   const { publicPectraBalance, migratorBalance } = useBuyTokens(address!);
 
-  console.log(migratorBalance?.formatted!)
+  const vested =
+    publicPectraBalance && migratorBalance && (+formatUnits(publicPectraBalance! as BigNumberish, 18) + +migratorBalance?.formatted!) > 0
+      ? true
+      : false;
 
   return (
     <Flex
@@ -162,7 +165,7 @@ export function Layout({ children }: LayoutProps) {
             }}
           />
 
-          {publicPectraBalance && (formatUnits(publicPectraBalance as BigNumberish, 18) === "0.0" && migratorBalance?.formatted! === "0.0") ? null : <Link
+          {!address || !vested ? null : <Link
           href="/token"
           _hover={{ textDecoration: "none" }}
           ml="0.5rem"
