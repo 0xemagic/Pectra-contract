@@ -161,7 +161,7 @@ export default function TotalInvestedBar() {
           {+spectraSold > 0 && (
             <Flex
               bg={legend[0].color}
-              w={`${Math.max((spectraSold / 100_000_000) * 100, 10)}%`}
+              w={`${Math.max((spectraSold / 100_000_000) * 100, 5)}%`}
               h={{ base: "3rem", md: "2.5rem" }}
               direction="column"
               justify="center"
@@ -196,7 +196,7 @@ export default function TotalInvestedBar() {
             </Flex>
           )}
           <Flex
-            w={`${Math.min((spectraUnsold / 100_000_000) * 100, 90)}%`}
+            w={`${Math.min((spectraUnsold / 100_000_000) * 100, 95)}%`}
             h={{ base: "3rem", md: "2.5rem" }}
             bg={legend[1].color}
             borderWidth={"1px"}
