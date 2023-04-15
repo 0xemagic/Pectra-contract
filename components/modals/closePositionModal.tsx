@@ -138,13 +138,11 @@ const OpenPositionModal = ({
             <InputGroup>
               <InputLeftElement
                 ml={3}
-                height="50px"
-                children={
+                height="50px">
                   <Flex alignItems="center" justifyContent="center">
                     Close
                   </Flex>
-                }
-              />
+                </InputLeftElement>
               <Input
                 pl="80px"
                 height="50px"
@@ -155,15 +153,13 @@ const OpenPositionModal = ({
               <InputRightElement
                 mr="1rem"
                 ml={3}
-                height="50px"
-                children={
-                  <Button variant="function" alignItems="center" justifyContent="center" minW="50px"
+                height="50px">
+                   <Button variant="function" alignItems="center" justifyContent="center" minW="50px"
                     onClick={() => setAmount(+netvalue)}
                   >
                     Max
                   </Button>
-                }
-              />
+              </InputRightElement>
             </InputGroup>
             <Text mt="0.25rem" alignSelf="end" variant="paragraph">
               Max Amount: {netvalue} USDC

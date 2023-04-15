@@ -170,6 +170,6 @@ export const useWatchApprove = (address?: string, amount?: string) => {
   });
 
   const isApproved =
-    allowance && +formatUnits(allowance as BigNumberish, 6) >= +amount!;
+    allowance && +formatUnits(allowance! as BigNumberish, 6) >= +amount!;
   return { isApproved, allowance };
 };

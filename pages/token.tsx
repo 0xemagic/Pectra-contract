@@ -208,9 +208,9 @@ export default function Dashboard({ onOpen }: any) {
           isOpenDashboard={isOpenDashboard}
           onCloseDashboard={onCloseDashboard}
           onOpenBuy={onOpenBuy}
-          publicPectraBalance={publicPectraBalance as BigNumberish} 
+          publicPectraBalance={publicPectraBalance! as BigNumberish} 
           migratorBalance={migratorBalance} 
-          spectraPrice={spectraPrice as BigNumberish}
+          spectraPrice={spectraPrice! as BigNumberish}
           totalBalance={totalBalance}
         />
       ) : null}

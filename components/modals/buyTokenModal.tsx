@@ -312,7 +312,7 @@ export default function BuyTokenModal({ isOpen, onClose }: any) {
                               {commify(
                                 (
                                   +amount! /
-                                  +formatUnits(spectraPrice as BigNumberish, 6)
+                                  +formatUnits(spectraPrice! as BigNumberish, 6)
                                 ).toString()
                               )}
                             </b>
