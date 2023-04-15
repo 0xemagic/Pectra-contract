@@ -46,7 +46,7 @@ export default function TotalInvestedBar() {
   //   const tokensSold = 0;
 
   const spectraSold = tokensSold
-    ? +formatUnits(tokensSold as BigNumberish, 18)
+    ? +formatUnits(tokensSold! as BigNumberish, 18)
     : 0;
   const spectraUnsold = 100_000_000 - spectraSold;
 

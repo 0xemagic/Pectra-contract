@@ -42,7 +42,7 @@ export default function Dashboard({ onOpen }: any) {
 
   const { publicPectraBalance, migratorBalance, spectraPrice } = useBuyTokens(address!);
   
-  const totalBalance =
+  const totalBalance = publicPectraBalance && migratorBalance &&
     (+migratorBalance?.formatted! +
       +formatUnits(publicPectraBalance! as BigNumberish))
 

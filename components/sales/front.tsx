@@ -29,7 +29,7 @@ export default function Front() {
   const { saleEndEpoch, saleEndDate } = usePublicSale();
 
   const vested =
-    publicPectraBalance && +formatUnits(publicPectraBalance as BigNumberish, 18) > 0
+    publicPectraBalance && +formatUnits(publicPectraBalance! as BigNumberish, 18) > 0
       ? true
       : false;
 
