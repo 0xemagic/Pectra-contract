@@ -7,9 +7,8 @@ import {
 import erc20ABI from "../../public/abi/erc20.json";
 import salesABI from "../../public/abi/publicSale.json";
 
-import { parseUnits } from "@ethersproject/units";
-import { BigNumber, BigNumberish } from "ethers";
-import { formatUnits } from "@ethersproject/units";
+import { formatUnits, parseUnits } from "@ethersproject/units";
+import { BigNumberish } from "ethers";
 
 export const SALES_CONTRACT = "0x5a1efce55840e2f5b49f2ff7e5061712e6fa3151";
 
@@ -24,19 +23,21 @@ export const useBuyTokens = (address?: string, amount?: string) => {
   // });
 
   const { data, isLoading, isSuccess, write } = useContractWrite({
-    mode: 'recklesslyUnprepared',
+    mode: "recklesslyUnprepared",
     address: SALES_CONTRACT,
     abi: salesABI,
     functionName: "buyTokens",
     args: [amount ? parseUnits(amount!, 6) : 0],
   });
 
-  const {  data: approveData,
+  const {
+    data: approveData,
     isLoading: isLoadingApprove,
     isSuccess: isSuccessApprove,
     write: writeApprove,
-    status: approveStatus, } = useContractWrite({
-    mode: 'recklesslyUnprepared',
+    status: approveStatus,
+  } = useContractWrite({
+    mode: "recklesslyUnprepared",
     address: USDC,
     abi: erc20ABI,
     functionName: "approve",
@@ -83,16 +84,6 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     functionName: "isPaused",
   });
 
-  const { data: allowance } = useContractRead({
-    address: USDC,
-    abi: erc20ABI,
-    functionName: "allowance",
-    args: [address, SALES_CONTRACT],
-    watch: true,
-  });
-
-  const isApproved = allowance && +formatUnits(allowance as BigNumberish, 6) >= +amount!
-
   const {
     data: usdcBalance,
     isError,
@@ -112,7 +103,6 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     isSuccessApprove,
     approveStatus,
     writeApprove,
-    isApproved,
     publicPectraBalance,
     spectraPrice,
     tokensSold,
@@ -158,4 +148,18 @@ export const useSaleAdmin = () => {
   });
   const { data, isLoading, isSuccess, write } = useContractWrite(config);
   return { data, isLoading, isSuccess, togglePause: write, isPaused };
+};
+
+export const useWatchApprove = (address?: string, amount?: string) => {
+  const { data: allowance } = useContractRead({
+    address: USDC,
+    abi: erc20ABI,
+    functionName: "allowance",
+    args: [address, SALES_CONTRACT],
+    watch: true,
+  });
+
+  const isApproved =
+    allowance && +formatUnits(allowance as BigNumberish, 6) >= +amount!;
+  return { isApproved, allowance };
 };
