@@ -161,12 +161,12 @@ export default function TotalInvestedBar() {
           {+spectraSold > 0 && (
             <Flex
               bg={legend[0].color}
-              w={`${Math.max((spectraSold / 100_000_000) * 100, 5)}%`}
+              w={`${Math.max((spectraSold / 100_000_000) * 100, 10)}%`}
               h={{ base: "3rem", md: "2.5rem" }}
               direction="column"
               justify="center"
               align="center"
-              px={{ base: "2rem", md: "1rem" }}
+              px={{ base: "2rem", md: "2rem" }}
               borderLeftRadius={"lg"}
             >
               <Tooltip
