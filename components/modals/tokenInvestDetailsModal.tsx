@@ -108,7 +108,7 @@ export default function TokenDetailsModal({
                 >
                   $
                   {totalBalance
-                    ? commify(truncate(totalBalance.toString(), 2))
+                    ? commify(truncate((totalBalance * 0.025).toString(), 2))
                     : 0}
                 </Heading>
               </Flex>
