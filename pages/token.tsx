@@ -36,11 +36,15 @@ export default function Dashboard({ onOpen }: any) {
     onOpen: onOpenBuy,
   } = useDisclosure();
 
-  const { address, isConnecting, isDisconnected } = useAccount();
+  const { address } = useAccount();
   const [vestInfo, setVestInfo] = useState(false);
   const { colorMode } = useColorMode();
 
-  const { publicPectraBalance } = useBuyTokens(address!);
+  const { publicPectraBalance, migratorBalance, spectraPrice } = useBuyTokens(address!);
+  
+  const totalBalance =
+    (+migratorBalance?.formatted! +
+      +formatUnits(publicPectraBalance! as BigNumberish))
 
   return (
     <>
@@ -112,16 +116,9 @@ export default function Dashboard({ onOpen }: any) {
               variant="heading"
               fontSize={{ base: "1.5rem", md: "2rem" }}
             >
-              {publicPectraBalance
-                ? commify(
-                    truncate(
-                      formatUnits(
-                        publicPectraBalance! as BigNumberish
-                      ).toString(),
-                      2
-                    )
-                  )
-                : 0}
+              {totalBalance
+                    ? commify(truncate(totalBalance.toString(), 2))
+                    : 0}
             </Heading>
             <Heading
               mt="1rem"
@@ -211,6 +208,10 @@ export default function Dashboard({ onOpen }: any) {
           isOpenDashboard={isOpenDashboard}
           onCloseDashboard={onCloseDashboard}
           onOpenBuy={onOpenBuy}
+          publicPectraBalance={publicPectraBalance as BigNumberish} 
+          migratorBalance={migratorBalance} 
+          spectraPrice={spectraPrice as BigNumberish}
+          totalBalance={totalBalance}
         />
       ) : null}
       {isOpenBuy && !isOpenDashboard ? (

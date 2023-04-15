@@ -22,14 +22,21 @@ type Props = {
   onCloseDashboard: () => void;
   isOpenDashboard: boolean;
   onOpenBuy: () => void;
+  publicPectraBalance: BigNumberish;
+  migratorBalance: any;
+  totalBalance: any;
+  spectraPrice: BigNumberish;
 };
 
 export default function TokenDetailsModal({
   isOpenDashboard,
   onCloseDashboard,
   onOpenBuy,
+  publicPectraBalance,
+  migratorBalance,
+  totalBalance,
 }: Props) {
-  const { address, isConnecting, isDisconnected } = useAccount();
+
   // const {
   //     data: privateSaleBalance,
   //     isError: isErrorPrivate,
@@ -39,17 +46,6 @@ export default function TokenDetailsModal({
   //     token: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
   // });
 
-  const { publicPectraBalance, spectraPrice } = useBuyTokens(address!);
-
-  const {
-    data: migratorBalance,
-    isError: isErrorMigrator,
-    isLoading: migratorLoading,
-  } = useBalance({
-    address: address,
-    token: "0xFffffF8244e4d4a906F9A70C13E91cB30E1Cb39A",
-  });
-
   const balances = [
     // [
     //     privateSaleBalance?.formatted?.toString(),
@@ -58,11 +54,6 @@ export default function TokenDetailsModal({
     [+formatUnits(publicPectraBalance! as BigNumberish), "Public Sale"],
     [migratorBalance?.formatted, "OG Migrator"],
   ];
-
-  const totalBalance =
-    (+migratorBalance?.formatted! +
-      +formatUnits(publicPectraBalance! as BigNumberish)) *
-    +formatUnits(spectraPrice as BigNumberish, 6);
 
   return (
     <Modal

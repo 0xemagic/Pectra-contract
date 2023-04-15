@@ -93,6 +93,15 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     token: USDC,
   });
 
+  const {
+    data: migratorBalance,
+    isError: isErrorMigrator,
+    isLoading: migratorLoading,
+  } = useBalance({
+    address: address! as any,
+    token: "0xFffffF8244e4d4a906F9A70C13E91cB30E1Cb39A",
+  });
+
   return {
     data,
     isLoading,
@@ -104,6 +113,7 @@ export const useBuyTokens = (address?: string, amount?: string) => {
     approveStatus,
     writeApprove,
     publicPectraBalance,
+    migratorBalance,
     spectraPrice,
     tokensSold,
     isPaused,

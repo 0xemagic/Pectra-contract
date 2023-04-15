@@ -39,15 +39,6 @@ export default function Layout({ chains, children }: LayoutProps) {
   }, []);
 
   const links = [
-    // {
-    //   icon: (
-    //     <RiInstagramFill
-    //       color={colorMode === "dark" ? "#FFFFFF" : "222222"}
-    //       size="32px"
-    //     />
-    //   ),
-    //   href: "https://www.instagram.com/spectraprotocol/",
-    // },
     {
       icon: (
         <RiTwitterFill
@@ -57,15 +48,6 @@ export default function Layout({ chains, children }: LayoutProps) {
       ),
       href: "https://twitter.com/spectra_protocol",
     },
-    // {
-    //   icon: (
-    //     <RiTelegramFill
-    //       color={colorMode === "dark" ? "#FFFFFF" : "222222"}
-    //       size="32px"
-    //     />
-    //   ),
-    //   href: "https://t.me/spectraprotocol",
-    // },
     {
       icon: (
         <SiMedium
@@ -152,7 +134,7 @@ export default function Layout({ chains, children }: LayoutProps) {
             <Flex
               w="100%"
               h={12}
-              bg="purple.900"
+              bg={colorMode === "dark" ? "#3EB751" : "#BBFF81"}
               alignItems={"center"}
               direction="row"
             >
@@ -206,6 +188,7 @@ export default function Layout({ chains, children }: LayoutProps) {
                 h="2.25rem"
               />
               <Heading
+                display={isIndex ? "none" : "inline"}
                 ml="1rem"
                 variant="heading"
                 fontSize={{ base: "2rem", md: "2.25rem" }}
@@ -215,7 +198,7 @@ export default function Layout({ chains, children }: LayoutProps) {
             </Flex>
 
             <Flex
-              display={isIndex || isToken ? "none" : "flex"}
+              display={isIndex || isToken ? "none" : {base: "none", md: "flex"}}
               direction="row"
               justify="space-between"
               align="center"
@@ -338,7 +321,7 @@ export default function Layout({ chains, children }: LayoutProps) {
           </Box>
           {!isIndex && (
             <Flex
-              display={{ base: "flex", md: "none" }}
+              display={!isSales ? { base: "flex", md: "none" } : "none"}
               gap="0.5rem"
               alignSelf="start"
               px={{ base: "2rem", md: "4rem" }}

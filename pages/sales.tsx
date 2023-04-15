@@ -4,6 +4,7 @@ import {
   Heading,
   Image,
   Link,
+  Button,
   useColorMode,
 } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
@@ -14,6 +15,10 @@ import { FaDiscord } from "react-icons/fa";
 import { RiGithubFill, RiTwitterFill } from "react-icons/ri";
 import { SiMedium } from "react-icons/si";
 import SalesPage from "../components/sales";
+import { useBuyTokens } from "@/components/hooks/usePublicSale";
+import { useAccount } from "wagmi";
+import { formatUnits } from "ethers/lib/utils";
+import { BigNumberish } from "ethers";
 
 interface LayoutProps {
   children: JSX.Element;
@@ -62,6 +67,11 @@ export function Layout({ children }: LayoutProps) {
   ];
 
   const router = useRouter();
+  const { address } = useAccount();
+  
+  const { publicPectraBalance, migratorBalance } = useBuyTokens(address!);
+
+  console.log(migratorBalance?.formatted!)
 
   return (
     <Flex
@@ -152,7 +162,11 @@ export function Layout({ children }: LayoutProps) {
             }}
           />
 
-          {/* <Button display={{ base: "none", md: "block" }} variant="secondary">FAQ</Button> */}
+          {publicPectraBalance && (formatUnits(publicPectraBalance as BigNumberish, 18) === "0.0" && migratorBalance?.formatted! === "0.0") ? null : <Link
+          href="/token"
+          _hover={{ textDecoration: "none" }}
+          ml="0.5rem"
+          ><Button display={{ base: "none", md: "block" }} variant="secondary">MY $PECTRA</Button></Link>}
         </Flex>
       </Flex>
       <Box

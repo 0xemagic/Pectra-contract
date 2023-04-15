@@ -176,7 +176,16 @@ export default function Front() {
                 >
                   {"BUY $PECTRA"}
                 </Button>
-              ) : (
+              ) : ( <Button
+                variant="outline"
+                w="155px"
+                h="48px"
+                borderRadius="12px"                boxShadow={
+                  colorMode === "dark" ? "0px -1px 22px #518128" : "none"
+                }
+                mr={{ base: "none", md: "0.5rem" }}
+                mb={{ base: "1rem", md: "0rem" }}
+                >
                 <ConnectButton
                   chainStatus={"none"}
                   showBalance={{
@@ -188,6 +197,7 @@ export default function Front() {
                     largeScreen: "avatar",
                   }}
                 />
+                </Button>
               )}
               <Link
                 href="https://medium.com/@spectra_protocol/introducing-the-spectra-public-sale-45e4524df32e"

@@ -222,12 +222,13 @@ export default function TotalInvestedBar() {
                     fontWeight="bold"
                     textAlign="center"
                     fontSize={{ base: "0.75rem", md: "1rem" }}
+                    mr="0.5rem"
                   >{`${((spectraUnsold / 100_000_000) * 100).toFixed(1)}%`}</Text>
                   <Text
                     color={colorMode === "dark" ? "black" : "black"}
                     textAlign="center"
                     fontSize={{ base: "0.75rem", md: "1rem" }}
-                  >{`($${commify(spectraUnsold / 40)})`}</Text>
+                  >{`($${commify(truncate((spectraUnsold / 40).toString(), 2))})`}</Text>
                 </Flex>
               </Tooltip>
             }
