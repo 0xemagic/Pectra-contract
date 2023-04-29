@@ -5,15 +5,13 @@ import "../GMX/interfaces/IERC20.sol";
 import "../GMX/interfaces/IRouter.sol";
 import "../GMX/interfaces/IPositionRouter.sol";
 
-contract GMXAdapter is {
+contract GMXAdapter {
+
     address public OWNER;
     address public ROUTER;
     address public POSITION_ROUTER;
     
-    constructor(
-        address _router,
-        address _positionRouter
-    ) {
+    constructor(address _router, address _positionRouter) {
         OWNER = msg.sender;
         ROUTER = _router;
         POSITION_ROUTER = _positionRouter;
@@ -59,7 +57,7 @@ contract GMXAdapter is {
         uint256 _executionFee,
         bytes32 _referralCode,
         address _callbackTarget
-    ) external payable onlyOwner returns (bytes32) {
+    ) external payable returns (bytes32) {
         return IPositionRouter(POSITION_ROUTER).createIncreasePositionETH{value: msg.value}(_path, _indexToken, _minOut, _sizeDelta, _isLong, _acceptablePrice, _executionFee, _referralCode, _callbackTarget);
     }
     
@@ -75,7 +73,7 @@ contract GMXAdapter is {
         uint256 _executionFee,
         bool _withdrawETH,
         address _callbackTarget
-    ) external payable onlyOwner returns (bytes32) {
+    ) external payable returns (bytes32) {
         return IPositionRouter(POSITION_ROUTER).createDecreasePosition(_path, _indexToken, _collateralDelta, _sizeDelta, _isLong, _receiver, _acceptablePrice, _minOut, _executionFee, _withdrawETH, _callbackTarget);
     }
     
