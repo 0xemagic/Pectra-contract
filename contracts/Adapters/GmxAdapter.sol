@@ -77,18 +77,6 @@ contract GMXAdapter {
         return IPositionRouter(POSITION_ROUTER).createDecreasePosition(_path, _indexToken, _collateralDelta, _sizeDelta, _isLong, _receiver, _acceptablePrice, _minOut, _executionFee, _withdrawETH, _callbackTarget);
     }
     
-    function swap(address[] memory _path, uint256 _amountIn, uint256 _minOut, address _receiver) external onlyOwner {
-        IRouter(ROUTER).swap(_path, _amountIn, _minOut, _receiver);
-    }
-    
-    function swapETHToTokens(address[] memory _path, uint256 _minOut, address _receiver) external payable onlyOwner {
-        IRouter(ROUTER).swapETHToTokens{value: msg.value}(_path, _minOut, _receiver);
-    }
-    
-    function swapTokensToETH(address[] memory _path, uint256 _amountIn, uint256 _minOut, address payable _receiver) external onlyOwner {
-        IRouter(ROUTER).swapTokensToETH(_path, _amountIn, _minOut, _receiver);
-    }
-
     function withdrawToken(address token, address to, uint256 amount) external onlyOwner returns (bool) {
         return IERC20(token).transfer(to, amount);
     }
