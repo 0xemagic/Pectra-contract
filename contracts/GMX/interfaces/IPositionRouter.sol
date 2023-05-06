@@ -2,6 +2,8 @@
 pragma solidity ^0.8.13;
 
 interface IPositionRouter {
+    function minExecutionFee() external returns (uint256);
+    
     function createIncreasePosition(
         address[] memory _path,
         address _indexToken,
