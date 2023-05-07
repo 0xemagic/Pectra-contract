@@ -71,6 +71,27 @@ contract GMXFactory {
         return positionId;
     }
 
+    function openLongPositionEth(
+        address[] memory _path,
+        address _indexToken,
+        uint256 _minOut,
+        uint256 _sizeDelta,
+        uint256 _acceptablePrice
+    ) external payable returns (bytes32) {
+        bytes memory bytecode = type(GMXAdapter).creationCode;
+        address adapter;
+        assembly {
+            adapter := create(0, add(bytecode, 32), mload(bytecode))
+        }
+        IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER);
+        //address collateral = _path[_path.length-1];
+        //IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
+        IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
+        bytes32 positionId = IGMXAdapter(adapter).createIncreasePositionETH(_path, _indexToken, _minOut, _sizeDelta, true, _acceptablePrice);
+        positions[positionId] = msg.sender;
+        return positionId;
+    }
+
     function openShortPosition(
         address[] memory _path,
         address _indexToken,

@@ -17,6 +17,14 @@ interface IGMXAdapter is IERC20, IRouter, IPositionRouter {
         bool _isLong,
         uint256 _acceptablePrice
     ) external payable returns (bytes32);
+    function createIncreasePositionETH(
+        address[] memory _path,
+        address _indexToken,
+        uint256 _minOut,
+        uint256 _sizeDelta,
+        bool _isLong,
+        uint256 _acceptablePrice
+    ) external payable returns (bytes32);
     function withdrawToken(address token, address to, uint256 amount) external returns (bool);
     function withdrawEth(address to, uint256 amount) external returns (bool);
 }
