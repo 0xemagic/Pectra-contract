@@ -11,8 +11,11 @@ contract GMXFactory {
     address public ROUTER;
     address public POSITION_ROUTER;
 
-    // Mapping from position to owner
-    mapping (bytes32 => address) positions; //each position contract has an owner
+    mapping (bytes32 => address) public positionAdapters;
+
+    mapping (address => uint256) public positions;
+
+    mapping (address => mapping (uint => bytes32)) public indexedPositions;
 
     // Mapping from owner to list of owned positions
     mapping(address => mapping(uint256 => address)) private _ownedTokens;
@@ -67,7 +70,9 @@ contract GMXFactory {
         IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
         IGMXAdapter(adapter).approve(collateral, POSITION_ROUTER, _amountIn);
         bytes32 positionId = IGMXAdapter(adapter).createIncreasePosition(_path, _indexToken, _amountIn, _minOut, _sizeDelta, true, _acceptablePrice);
-        positions[positionId] = msg.sender;
+        positionAdapters[positionId] = msg.sender;
+        positions[msg.sender] += 1;
+        indexedPositions[msg.sender][positions[msg.sender]] = positionId;
         return positionId;
     }
 
@@ -84,11 +89,12 @@ contract GMXFactory {
             adapter := create(0, add(bytecode, 32), mload(bytecode))
         }
         IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER);
-        //address collateral = _path[_path.length-1];
-        //IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
         bytes32 positionId = IGMXAdapter(adapter).createIncreasePositionETH(_path, _indexToken, _minOut, _sizeDelta, true, _acceptablePrice);
-        positions[positionId] = msg.sender;
+        positionAdapters[positionId] = msg.sender;
+        positions[msg.sender] += 1;
+        indexedPositions[msg.sender][positions[msg.sender]] = positionId;
+
         return positionId;
     }
 
@@ -110,7 +116,31 @@ contract GMXFactory {
         IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
         IGMXAdapter(adapter).approve(collateral, POSITION_ROUTER, _amountIn);
         bytes32 positionId = IGMXAdapter(adapter).createIncreasePosition(_path, _indexToken, _amountIn, _minOut, _sizeDelta, false, _acceptablePrice);
-        positions[positionId] = msg.sender;
+        positionAdapters[positionId] = msg.sender;
+        positions[msg.sender] += 1;
+        indexedPositions[msg.sender][positions[msg.sender]] = positionId;
+
+        return positionId;
+    }
+
+    function openShortPositionEth(
+        address[] memory _path,
+        address _indexToken,
+        uint256 _minOut,
+        uint256 _sizeDelta,
+        uint256 _acceptablePrice
+    ) external payable returns (bytes32) {
+        bytes memory bytecode = type(GMXAdapter).creationCode;
+        address adapter;
+        assembly {
+            adapter := create(0, add(bytecode, 32), mload(bytecode))
+        }
+        IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER);
+        IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
+        bytes32 positionId = IGMXAdapter(adapter).createIncreasePositionETH(_path, _indexToken, _minOut, _sizeDelta, false, _acceptablePrice);
+        positionAdapters[positionId] = msg.sender;
+        positions[msg.sender] += 1;
+        indexedPositions[msg.sender][positions[msg.sender]] = positionId;
         return positionId;
     }
 
