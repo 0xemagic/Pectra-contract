@@ -53,7 +53,7 @@ contract GMXAdapter {
         uint256 _acceptablePrice
     ) external payable onlyOwner returns (bytes32) {
         uint256 _executionFee = IPositionRouter(POSITION_ROUTER).minExecutionFee();
-        return IPositionRouter(POSITION_ROUTER).createIncreasePosition(_path, _indexToken, _amountIn, _minOut, _sizeDelta, _isLong, _acceptablePrice, _executionFee, ZERO_VALUE, ZERO_ADDRESS);
+        return IPositionRouter(POSITION_ROUTER).createIncreasePosition{value: msg.value}(_path, _indexToken, _amountIn, _minOut, _sizeDelta, _isLong, _acceptablePrice, _executionFee, ZERO_VALUE, ZERO_ADDRESS);
     }
 
     function createIncreasePositionETH(
