@@ -144,4 +144,8 @@ contract GMXFactory {
         return positionId;
     }
 
+    function closePosition(bytes32 positionId) external {
+        
+    }
+
 }
