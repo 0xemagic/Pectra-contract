@@ -15,6 +15,14 @@ contract GMXAdapter {
     address constant ZERO_ADDRESS = address(0);
     bytes32 constant ZERO_VALUE = 0x0000000000000000000000000000000000000000000000000000000000000000;
     
+    address[] public path;
+    address public indexToken;
+    uint256 public amountIn;
+    uint256 public minOut;
+    uint256 public sizeDelta;
+    bool public isLong;
+    uint256 public acceptablePrice;
+        
     modifier onlyOwner() {
         require(OWNER == msg.sender, "caller is not the owner");
         _;
@@ -53,7 +61,9 @@ contract GMXAdapter {
         uint256 _acceptablePrice
     ) external payable onlyOwner returns (bytes32) {
         uint256 _executionFee = IPositionRouter(POSITION_ROUTER).minExecutionFee();
-        return IPositionRouter(POSITION_ROUTER).createIncreasePosition{value: msg.value}(_path, _indexToken, _amountIn, _minOut, _sizeDelta, _isLong, _acceptablePrice, _executionFee, ZERO_VALUE, ZERO_ADDRESS);
+        bytes32 result = IPositionRouter(POSITION_ROUTER).createIncreasePosition{value: msg.value}(_path, _indexToken, _amountIn, _minOut, _sizeDelta, _isLong, _acceptablePrice, _executionFee, ZERO_VALUE, ZERO_ADDRESS);
+        setPositionData(_path, _indexToken, _amountIn, _minOut, _sizeDelta, _isLong, _acceptablePrice);
+        return result;
     }
 
     function createIncreasePositionETH(
@@ -65,23 +75,16 @@ contract GMXAdapter {
         uint256 _acceptablePrice
     ) external payable returns (bytes32) {
         uint256 _executionFee = IPositionRouter(POSITION_ROUTER).minExecutionFee();
-        return IPositionRouter(POSITION_ROUTER).createIncreasePositionETH{value: msg.value}(_path, _indexToken, _minOut, _sizeDelta, _isLong, _acceptablePrice, _executionFee, ZERO_VALUE, ZERO_ADDRESS);
+        bytes32 result = IPositionRouter(POSITION_ROUTER).createIncreasePositionETH{value: msg.value}(_path, _indexToken, _minOut, _sizeDelta, _isLong, _acceptablePrice, _executionFee, ZERO_VALUE, ZERO_ADDRESS);
+        setPositionData(_path, _indexToken, msg.value - _executionFee, _minOut, _sizeDelta, _isLong, _acceptablePrice);
+        return result;
+
     }
     
-    function createDecreasePosition(
-        address[] memory _path,
-        address _indexToken,
-        uint256 _collateralDelta,
-        uint256 _sizeDelta,
-        bool _isLong,
-        address _receiver,
-        uint256 _acceptablePrice,
-        uint256 _minOut,
-        uint256 _executionFee,
-        bool _withdrawETH,
-        address _callbackTarget
-    ) external payable returns (bytes32) {
-        return IPositionRouter(POSITION_ROUTER).createDecreasePosition(_path, _indexToken, _collateralDelta, _sizeDelta, _isLong, _receiver, _acceptablePrice, _minOut, _executionFee, _withdrawETH, _callbackTarget);
+    function closePosition(address receiver, uint256 _acceptablePrice) external payable returns (bytes32) {
+        uint256 _executionFee = IPositionRouter(POSITION_ROUTER).minExecutionFee();
+        bytes32 result = IPositionRouter(POSITION_ROUTER).createDecreasePosition{value: msg.value}(path, indexToken, 0, sizeDelta, isLong, receiver, _acceptablePrice, 0, _executionFee, false, ZERO_ADDRESS);
+        return result;
     }
     
     function withdrawToken(address token, address to, uint256 amount) external onlyOwner returns (bool) {
@@ -92,5 +95,15 @@ contract GMXAdapter {
         (bool success,) = to.call{ value: amount}("");
         require(success, "Transfer failed!");
         return success;
+    }
+
+    function setPositionData (address[] memory _path, address _indexToken, uint256 _amountIn, uint256 _minOut, uint256 _sizeDelta, bool _isLong, uint256 _acceptablePrice) internal {
+        path = _path;
+        indexToken = _indexToken;
+        amountIn = _amountIn;
+        minOut = _minOut;
+        sizeDelta = _sizeDelta;
+        isLong = _isLong;
+        acceptablePrice = _acceptablePrice;
     }
 }
