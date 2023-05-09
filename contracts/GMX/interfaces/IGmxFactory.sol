@@ -36,5 +36,5 @@ interface IGMXFactory {
         uint256 _sizeDelta,
         uint256 _acceptablePrice
     ) external payable returns (bytes32);
-    function closePosition(bytes32 positionId) external;
+    function closePosition(bytes32 positionId, uint256 _acceptablePrice) external;
 }

@@ -2,8 +2,6 @@
 pragma solidity ^0.8.13;
 
 import "../GMX/interfaces/IERC20.sol";
-//import "../GMX/interfaces/IRouter.sol";
-//import "../GMX/interfaces/IPositionRouter.sol";
 import "../GMX/interfaces/IGMXAdapter.sol";
 
 contract GMXAdapter {
