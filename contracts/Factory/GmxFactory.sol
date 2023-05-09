@@ -95,7 +95,6 @@ contract GMXFactory {
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
-
         return positionId;
     }
 
@@ -121,7 +120,6 @@ contract GMXFactory {
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
-
         return positionId;
     }
 
