@@ -64,10 +64,10 @@ contract GMXFactory {
         assembly {
             adapter := create(0, add(bytecode, 32), mload(bytecode))
         }
-        IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER);
+        IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender);
         address collateral = _path[_path.length-1];
         IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
-        IGMXAdapter(adapter).approve(collateral, POSITION_ROUTER, _amountIn);
+        IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
         bytes32 positionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value}(_path, _indexToken, _amountIn, _minOut, _sizeDelta, true, _acceptablePrice);
         positionAdapters[positionId] = adapter;
         positionOwners[positionId] = msg.sender;
@@ -88,7 +88,7 @@ contract GMXFactory {
         assembly {
             adapter := create(0, add(bytecode, 32), mload(bytecode))
         }
-        IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER);
+        IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender);
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
         bytes32 positionId = IGMXAdapter(adapter).createIncreasePositionETH{value: msg.value}(_path, _indexToken, _minOut, _sizeDelta, true, _acceptablePrice);
         positionAdapters[positionId] = adapter;
@@ -111,10 +111,10 @@ contract GMXFactory {
         assembly {
             adapter := create(0, add(bytecode, 32), mload(bytecode))
         }
-        IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER);
+        IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender);
         address collateral = _path[_path.length-1];
         IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
-        IGMXAdapter(adapter).approve(collateral, POSITION_ROUTER, _amountIn);
+        IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
         bytes32 positionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value}(_path, _indexToken, _amountIn, _minOut, _sizeDelta, false, _acceptablePrice);
         positionAdapters[positionId] = adapter;
         positionOwners[positionId] = msg.sender;
@@ -135,7 +135,7 @@ contract GMXFactory {
         assembly {
             adapter := create(0, add(bytecode, 32), mload(bytecode))
         }
-        IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER);
+        IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender);
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
         bytes32 positionId = IGMXAdapter(adapter).createIncreasePositionETH{value: msg.value}(_path, _indexToken, _minOut, _sizeDelta, false, _acceptablePrice);
         positionAdapters[positionId] = adapter;

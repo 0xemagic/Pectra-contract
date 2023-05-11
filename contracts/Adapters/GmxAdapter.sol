@@ -22,22 +22,22 @@ contract GMXAdapter {
     uint256 public acceptablePrice;
         
     modifier onlyOwner() {
-        require(OWNER == msg.sender, "caller is not the owner");
+        require(OWNER == msg.sender || FACTORY == msg.sender, "caller is not the owner or factory");
         _;
     }
     
     receive() external payable {}
     
     constructor() {
-        OWNER = msg.sender;
         FACTORY = msg.sender;
     }
 
     // called once by the factory at time of deployment
-    function initialize(address _router, address _positionRouter) external {
+    function initialize(address _router, address _positionRouter, address _owner) external {
         require(msg.sender == FACTORY, 'GMXAdapter: FORBIDDEN'); // sufficient check
         ROUTER = _router;
         POSITION_ROUTER = _positionRouter;
+        OWNER = _owner;
 
     }
 
