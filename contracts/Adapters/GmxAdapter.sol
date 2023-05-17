@@ -38,7 +38,6 @@ contract GMXAdapter {
         ROUTER = _router;
         POSITION_ROUTER = _positionRouter;
         OWNER = _owner;
-
     }
 
     function approve(address token, address spender, uint256 amount) external onlyOwner returns (bool) {
@@ -71,7 +70,7 @@ contract GMXAdapter {
         uint256 _sizeDelta,
         bool _isLong,
         uint256 _acceptablePrice
-    ) external payable returns (bytes32) {
+    ) external payable onlyOwner returns (bytes32) {
         uint256 _executionFee = IPositionRouter(POSITION_ROUTER).minExecutionFee();
         bytes32 result = IPositionRouter(POSITION_ROUTER).createIncreasePositionETH{value: msg.value}(_path, _indexToken, _minOut, _sizeDelta, _isLong, _acceptablePrice, _executionFee, ZERO_VALUE, ZERO_ADDRESS);
         setPositionData(_path, _indexToken, msg.value - _executionFee, _minOut, _sizeDelta, _isLong, _acceptablePrice);
@@ -79,10 +78,23 @@ contract GMXAdapter {
 
     }
     
-    function closePosition(address receiver, uint256 _acceptablePrice) external payable returns (bytes32) {
+    function closePosition(address receiver, uint256 _acceptablePrice) external payable onlyOwner returns (bytes32) {
         uint256 _executionFee = IPositionRouter(POSITION_ROUTER).minExecutionFee();
-        bytes32 result = IPositionRouter(POSITION_ROUTER).createDecreasePosition{value: msg.value}(path, indexToken, 0, sizeDelta, isLong, receiver, _acceptablePrice, 0, _executionFee, false, ZERO_ADDRESS);
-        return result;
+        try IPositionRouter(POSITION_ROUTER).createDecreasePosition{value: msg.value}(path, indexToken, 0, sizeDelta, isLong, receiver, _acceptablePrice, 0, _executionFee, false, ZERO_ADDRESS) returns (bytes32 result) {
+            return result;
+        }
+        catch {
+            address collateral = path[path.length - 1];
+            uint256 collateralBalance = IERC20(collateral).balanceOf(address(this));
+            if (collateralBalance > 0) {
+                IERC20(collateral).transfer(receiver, collateralBalance);
+            }
+            else if (address(this).balance > 0) {
+                (bool success,) = receiver.call{ value: address(this).balance}("");
+                require(success, "Transfer failed!");
+            }
+        }
+        return "";
     }
     
     function withdrawToken(address token, address to, uint256 amount) external onlyOwner returns (bool) {
