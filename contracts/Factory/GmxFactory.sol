@@ -29,6 +29,7 @@ contract GMXFactory {
         require(OWNER == msg.sender, "caller is not the owner");
         _;
     }
+
     function swap(address[] memory _path, uint256 _amountIn, uint256 _minOut, address _receiver) external onlyOwner {
         IRouter(ROUTER).swap(_path, _amountIn, _minOut, _receiver);
     }
@@ -152,5 +153,4 @@ contract GMXFactory {
         address adapter = positionAdapters[positionId];
         IGMXAdapter(adapter).closePosition(msg.sender, _acceptablePrice);
     }
-
 }
