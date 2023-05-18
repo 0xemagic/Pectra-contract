@@ -75,22 +75,21 @@ contract GMXAdapter {
         bytes32 result = IPositionRouter(POSITION_ROUTER).createIncreasePositionETH{value: msg.value}(_path, _indexToken, _minOut, _sizeDelta, _isLong, _acceptablePrice, _executionFee, ZERO_VALUE, ZERO_ADDRESS);
         setPositionData(_path, _indexToken, msg.value - _executionFee, _minOut, _sizeDelta, _isLong, _acceptablePrice);
         return result;
-
     }
     
-    function closePosition(address receiver, uint256 _acceptablePrice) external payable onlyOwner returns (bytes32) {
+    function closePosition(address[] memory _path, address _receiver, uint256 _acceptablePrice, bool _withdrawETH) external payable onlyOwner returns (bytes32) {
         uint256 _executionFee = IPositionRouter(POSITION_ROUTER).minExecutionFee();
-        try IPositionRouter(POSITION_ROUTER).createDecreasePosition{value: msg.value}(path, indexToken, 0, sizeDelta, isLong, receiver, _acceptablePrice, 0, _executionFee, false, ZERO_ADDRESS) returns (bytes32 result) {
+        try IPositionRouter(POSITION_ROUTER).createDecreasePosition{value: msg.value}(_path, indexToken, 0, sizeDelta, isLong, _receiver, _acceptablePrice, 0, _executionFee, _withdrawETH, ZERO_ADDRESS) returns (bytes32 result) {
             return result;
         }
         catch {
             address collateral = path[path.length - 1];
             uint256 collateralBalance = IERC20(collateral).balanceOf(address(this));
             if (collateralBalance > 0) {
-                IERC20(collateral).transfer(receiver, collateralBalance);
+                IERC20(collateral).transfer(_receiver, collateralBalance);
             }
             else if (address(this).balance > 0) {
-                (bool success,) = receiver.call{ value: address(this).balance}("");
+                (bool success,) = _receiver.call{ value: address(this).balance}("");
                 require(success, "Transfer failed!");
             }
         }

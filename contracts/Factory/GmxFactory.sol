@@ -148,9 +148,9 @@ contract GMXFactory {
         return positionId;
     }
 
-    function closePosition(bytes32 positionId, uint256 _acceptablePrice) external {
-        require(msg.sender == positionOwners[positionId]);
+    function closePosition(bytes32 positionId, address[] memory _path, uint256 _acceptablePrice, bool _withdrawETH) external payable {
+        require(msg.sender == positionOwners[positionId], "not a position owner");
         address adapter = positionAdapters[positionId];
-        IGMXAdapter(adapter).closePosition(msg.sender, _acceptablePrice);
+        IGMXAdapter(adapter).closePosition{value: msg.value}(_path, msg.sender, _acceptablePrice, _withdrawETH);
     }
 }
