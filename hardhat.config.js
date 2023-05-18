@@ -1,8 +1,11 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("@nomiclabs/hardhat-etherscan");
 
-const INFURA_PROJECT_ID = "";
-const POLYGONSCAN_API_KEY = "";
+const {
+  POLYGON_MUMBAI_URL,
+  POLYGON_MUMBAI_DEPLOY_KEY,
+  POLYGONSCAN_API_KEY
+} = require("./env.json")
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
@@ -10,10 +13,8 @@ const POLYGONSCAN_API_KEY = "";
 module.exports = {
   networks: {
     polygonMumbai: {
-      url: `https://polygon-mumbai.infura.io/v3/${INFURA_PROJECT_ID}`,
-      accounts: {
-        mnemonic: "",
-      },
+      url: POLYGON_MUMBAI_URL,
+      accounts: [POLYGON_MUMBAI_DEPLOY_KEY],
     },
   },
   etherscan: {
