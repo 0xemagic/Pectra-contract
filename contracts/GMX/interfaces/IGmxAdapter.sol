@@ -33,4 +33,5 @@ interface IGMXAdapter is IERC20, IRouter, IPositionRouter {
     ) external payable returns (bytes32);
     function withdrawToken(address token, address to, uint256 amount) external returns (bool);
     function withdrawEth(address to, uint256 amount) external returns (bool);
+    function getPositionData() external view returns (address[] memory, address, address, uint256, uint256, uint256, bool, uint256);
 }

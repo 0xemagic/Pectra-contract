@@ -3,6 +3,8 @@ pragma solidity ^0.8.13;
 
 import "../GMX/interfaces/IERC20.sol";
 import "../GMX/interfaces/IRouter.sol";
+import "../GMX/interfaces/IReader.sol";
+import "../GMX/interfaces/IGMXAdapter.sol";
 import "../Adapters/GMXAdapter.sol";
 
 contract GMXFactory {
@@ -140,5 +142,17 @@ contract GMXFactory {
         require(msg.sender == positionOwners[positionId], "not a position owner");
         address adapter = positionAdapters[positionId];
         IGMXAdapter(adapter).closePosition{value: msg.value}(_path, msg.sender, _acceptablePrice, _withdrawETH);
+    }
+
+    function getPosition(bytes32 positionId, address reader, address vault) external view returns(uint256[] memory) {
+        address account = positionAdapters[positionId];
+        (, address collateralToken, address indexToken, , , , bool isLong,) = IGMXAdapter(account).getPositionData(); 
+        address[] memory collateralTokens = new address[](1);
+        collateralTokens[0] = collateralToken;
+        address[] memory indexTokens = new address[](1);
+        indexTokens[0] = indexToken;
+        bool[] memory isLongs = new bool[](1);
+        isLongs[0] = isLong;
+        return IReader(reader).getPositions(vault, account, collateralTokens, indexTokens, isLongs);
     }
 }

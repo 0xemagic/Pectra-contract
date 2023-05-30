@@ -13,13 +13,14 @@ contract GMXAdapter {
     address constant ZERO_ADDRESS = address(0);
     bytes32 constant ZERO_VALUE = 0x0000000000000000000000000000000000000000000000000000000000000000;
     
-    address[] public path;
-    address public indexToken;
-    uint256 public amountIn;
-    uint256 public minOut;
-    uint256 public sizeDelta;
-    bool public isLong;
-    uint256 public acceptablePrice;
+    address[] path;
+    address collateralToken;
+    address indexToken;
+    uint256 amountIn;
+    uint256 minOut;
+    uint256 sizeDelta;
+    bool isLong;
+    uint256 acceptablePrice;
         
     modifier onlyOwner() {
         require(OWNER == msg.sender || FACTORY == msg.sender, "caller is not the owner or factory");
@@ -108,11 +109,16 @@ contract GMXAdapter {
 
     function setPositionData (address[] memory _path, address _indexToken, uint256 _amountIn, uint256 _minOut, uint256 _sizeDelta, bool _isLong, uint256 _acceptablePrice) internal {
         path = _path;
+        collateralToken = _path[_path.length - 1];
         indexToken = _indexToken;
         amountIn = _amountIn;
         minOut = _minOut;
         sizeDelta = _sizeDelta;
         isLong = _isLong;
         acceptablePrice = _acceptablePrice;
+    }
+
+    function getPositionData() external view returns (address[] memory, address, address, uint256, uint256, uint256, bool, uint256) {
+        return (path, collateralToken, indexToken, amountIn, minOut, sizeDelta, isLong, acceptablePrice);
     }
 }
