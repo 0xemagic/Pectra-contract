@@ -5,6 +5,7 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
+const { verifyWithEtherscan } = require("hardhat-etherscan-abi");
 
 async function main() {
 
@@ -18,6 +19,14 @@ async function main() {
   console.log(
     `GMXFactory deployed to ${gmxFactory.address}`
   );
+
+  await hre.run("verify:verify", {
+    address: gmxFactory.address,
+    constructorArguments: [_router, _positionRouter],
+  });
+
+  // Generate Etherscan verification script
+  await verifyWithEtherscan(hre, gmxFactory.address, "GMXFactory", [_router, _positionRouter]);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
