@@ -57,7 +57,7 @@ contract GMXFactory {
         }
         IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender);
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
-        address collateral = _path[_path.length-1];
+        address collateral = _path[0];
         IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
         IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
         bytes32 positionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value}(_path, _indexToken, _amountIn, _minOut, _sizeDelta, true, _acceptablePrice);
@@ -105,7 +105,7 @@ contract GMXFactory {
         }
         IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender);
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
-        address collateral = _path[_path.length-1];
+        address collateral = _path[0];
         IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
         IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
         bytes32 positionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value}(_path, _indexToken, _amountIn, _minOut, _sizeDelta, false, _acceptablePrice);
