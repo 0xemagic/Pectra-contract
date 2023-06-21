@@ -11,7 +11,7 @@ contract PositionNFT is ERC721Enumerable {
     address public owner;
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "Hinata721: NOT_OWNER");
+        require(msg.sender == owner, "PositionNFT: NOT_OWNER");
         _;
     }
 
@@ -21,7 +21,7 @@ contract PositionNFT is ERC721Enumerable {
         string memory symbol_,
         string memory uri_
     ) ERC721(name_, symbol_) {
-        require(owner_ != address(0), "Hinata721: INVALID_OWNER");
+        require(owner_ != address(0), "PositionNFT: INVALID_OWNER");
         owner = owner_;
         baseURI = uri_;
     }
