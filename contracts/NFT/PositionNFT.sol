@@ -30,10 +30,6 @@ contract PositionNFT is ERC721Enumerable {
         _mint(to, ++lastTokenId);
     }
 
-    function batchMint(address[] calldata to) external onlyOwner {
-        for (uint256 i; i < to.length; i += 1) _mint(to[i], ++lastTokenId);
-    }
-
     function setBaseURI(string memory uri_) external onlyOwner {
         baseURI = uri_;
     }
