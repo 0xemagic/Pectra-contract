@@ -40,7 +40,7 @@ module.exports = {
     },
     arbitrumOne: {
       url: "https://arb1.arbitrum.io/rpc",
-      accounts: [process.env.PRIVATE_KEY_ADMIN]
+      accounts: [process.env.PRIVATE_KEY_MAINNET]
     }
   },
   etherscan: {
