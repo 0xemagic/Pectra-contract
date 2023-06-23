@@ -3,8 +3,8 @@ const { verifyWithEtherscan } = require("hardhat-etherscan-abi");
 
 async function main() {
   try {
-    const _router = "0x3D69F5E48fE3417422727329149152FcCF1D9A1b";
-    const _positionRouter = "0x2F7f73056B72C46a6DA51a46ad29453F6a727874";
+    const _router = "0xaBBc5F99639c9B6bCb58544ddf04EFA6802F4064";
+    const _positionRouter = "0xb87a436B93fFE9D75c5cFA7bAcFff96430b09868";
     const GMXFactory = await hre.ethers.getContractFactory("GMXFactory");
     const gmxFactory = await GMXFactory.deploy(_router, _positionRouter);
 
