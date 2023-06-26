@@ -2,7 +2,7 @@ const { ethers } = require("hardhat");
 const { expect } = require("chai");
 require("dotenv").config();
 
-describe("GMXFactory", function () {
+describe("GMXFactory", async function () {
     let gmxFactory;
     let deployer;
     let tokenUSDT;
@@ -110,6 +110,7 @@ describe("GMXFactory", function () {
             amountIn,
             minOut,
             _sizeDelta,
+            _acceptablePriceLongETH,
             _acceptablePriceLongETH,
             { value: value }
         );
