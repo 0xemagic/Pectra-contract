@@ -108,7 +108,6 @@ describe("GMXFactory", async function () {
             minOut,
             _sizeDelta,
             _acceptablePriceLongETH,
-            _acceptablePriceLongETH,
             { value: value }
         );
 
