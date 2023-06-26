@@ -14,15 +14,14 @@ describe("GMXFactory", async function () {
     let valueForEth;
     let _sizeDelta;
 
-    // * Constant Values* //
-    // Assuming that user will long 10 USDC with 5x Leverage
+    // * Constant Values * //
+    // Assuming that the user will long 10 USDC with 5x Leverage
     const amountIn = ethers.utils.parseEther("10");
     const value = ethers.utils.parseEther("0.00018");
 
     before(async function () {
-
-        // * Connecting to Smart Contract * //
-        //Getting Artifacts for all the Smart Contracts
+        // * Connecting to Smart Contracts * //
+        // Getting artifacts for all the Smart Contracts
         const [
             GMXFactory,
             TokenUSDT,
@@ -36,7 +35,6 @@ describe("GMXFactory", async function () {
             ethers.getContractFactory("PositionKeeper"),
             ethers.getContractFactory("Vault")
         ]);
-
 
         // Connecting to all required Smart Contracts
         gmxFactory = await GMXFactory.attach(process.env.TESTNET_GMX_FACTORY);
@@ -56,7 +54,7 @@ describe("GMXFactory", async function () {
         const amountInUSD = ethers.utils.parseUnits("10", 18);
         const amountInETH = amountInUSD.mul(ethers.utils.parseEther("1")).div(_acceptablePriceETH1e18);
 
-        //Calculation of Value to send alongside the ETH for opening positions with ETH
+        // Calculation of Value to send alongside the ETH for opening positions with ETH
         const additionalETH = ethers.utils.parseEther("0.00018");
         valueForEth = amountInETH.add(additionalETH);
 
@@ -67,7 +65,7 @@ describe("GMXFactory", async function () {
         _acceptablePriceLongETH = _acceptablePriceETH.mul(percentageLongETH).div(ethers.utils.parseUnits("1", 4));
         _acceptablePriceShortETH = _acceptablePriceETH.mul(percentageShortETH).div(ethers.utils.parseUnits("1", 4));
 
-        //Get the Current BTC Price from the Vault in 1e30
+        // Get the Current BTC Price from the Vault in 1e30
         const _acceptablePriceBTC = await vault.getMaxPrice(process.env.TESTNET_WBTC);
 
         // Adjust the Prices by 0.3% for Acceptable Price for Long and Short
@@ -82,7 +80,7 @@ describe("GMXFactory", async function () {
         const usdAmount = ethAmount.mul(_acceptablePriceETH1e18).div(ethers.utils.parseEther("1"));
         const executionFees = usdAmount.mul(ethers.BigNumber.from(10).pow(12));
 
-        //The Size Delta for 5x Leverage of 10$
+        // The Size Delta for 5x Leverage of 10$
         const _sizeDeltaOld = ethers.utils.parseUnits("50", 30);
 
         // Calculate new size delta in 1e30 format by deducting 0.1% of size delta
@@ -91,7 +89,36 @@ describe("GMXFactory", async function () {
 
         // Subtract Execution Fees from Size Delta to get the new Size Delta in 1e30 format
         _sizeDelta = sizeDeltaDeduction.sub(executionFees);
+    });
 
+    it("should create a long position for USDT/ETH", async function () {
+        this.timeout(120000);
+
+        const minOut = ethers.utils.parseEther("0");
+        const initialPosition = await gmxFactory.positions(deployer.address);
+
+        // Create the long position
+        approvalTx = await tokenUSDT.connect(deployer).approve(gmxFactory.address, amountIn);
+        await approvalTx.wait(); // Wait for Transaction to be Mined
+
+        const creatingPositionTx = await gmxFactory.connect(deployer).openLongPosition(
+            [process.env.TESTNET_USDT, process.env.TESTNET_WETH],
+            process.env.TESTNET_WETH,
+            amountIn,
+            minOut,
+            _sizeDelta,
+            _acceptablePriceLongETH,
+            _acceptablePriceLongETH,
+            { value: value }
+        );
+
+        await creatingPositionTx.wait();
+
+        // Get the number of positions for the deployer
+        const positions = await gmxFactory.positions(deployer.address);
+
+        // Assert that the number of positions is increased by 1
+        expect(positions).to.equal(initialPosition.add(1));
     });
 
     it("should create a long positions for USDT/ETH", async function () {
