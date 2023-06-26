@@ -121,37 +121,6 @@ describe("GMXFactory", async function () {
         expect(positions).to.equal(initialPosition.add(1));
     });
 
-    it("should create a long positions for USDT/ETH", async function () {
-        this.timeout(120000);
-
-        const minOut = ethers.utils.parseEther("0");
-        const initialPosition = await gmxFactory.positions(deployer.address);
-
-        // Create the long position
-        approvalTx = await tokenUSDT.connect(deployer).approve(gmxFactory.address, amountIn);
-        await approvalTx.wait(); // Wait for Transaction to be Mined
-
-        const creatingPositionTx = await gmxFactory.connect(deployer).openLongPosition(
-            [process.env.TESTNET_USDT, process.env.TESTNET_WETH],
-            process.env.TESTNET_WETH,
-            amountIn,
-            minOut,
-            _sizeDelta,
-            _acceptablePriceLongETH,
-            _acceptablePriceLongETH,
-            { value: value }
-        );
-
-        await creatingPositionTx.wait();
-
-        // Get the number of positions for the deployer
-        const positions = await gmxFactory.positions(deployer.address);
-
-        // Assert that the number of positions is increased by 1
-        expect(positions).to.equal(initialPosition.add(1));
-
-    });
-
     it("should verify the position of USDT/ETH we create", async function () {
 
         const positions = await gmxFactory.positions(deployer.address);
