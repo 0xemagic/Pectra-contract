@@ -7,7 +7,6 @@ describe("GMXFactory", async function () {
     let deployer;
     let tokenUSDT;
     let tokenWETH;
-    let positionKeeper;
     let vault;
     let _acceptablePriceLongETH;
     let _acceptablePriceShortETH;
@@ -15,9 +14,10 @@ describe("GMXFactory", async function () {
     let _sizeDelta;
 
     // * Constant Values * //
-    // Assuming that the user will long 10 USDC with 5x Leverage
-    const amountIn = ethers.utils.parseEther("10");
+    // Assuming that the user will long 10 USDT with 5x Leverage
+    const amountIn = ethers.utils.parseUnits("10", 6);
     const value = ethers.utils.parseEther("0.00018");
+    const minOut = ethers.utils.parseEther("0");
 
     before(async function () {
         // * Connecting to Smart Contracts * //
@@ -26,28 +26,25 @@ describe("GMXFactory", async function () {
             GMXFactory,
             TokenUSDT,
             TokenWETH,
-            PositionKeeper,
             Vault
         ] = await Promise.all([
             ethers.getContractFactory("GMXFactory"),
             ethers.getContractFactory("Token"),
             ethers.getContractFactory("Token"),
-            ethers.getContractFactory("PositionKeeper"),
             ethers.getContractFactory("Vault")
         ]);
 
         // Connecting to all required Smart Contracts
-        gmxFactory = await GMXFactory.attach(process.env.TESTNET_GMX_FACTORY);
-        tokenUSDT = await TokenUSDT.attach(process.env.TESTNET_USDT);
-        tokenWETH = await TokenWETH.attach(process.env.TESTNET_WETH);
-        positionKeeper = await PositionKeeper.attach(process.env.TESTNET_POSITION_KEEPER);
-        vault = await Vault.attach(process.env.TESTNET_VAULT);
+        gmxFactory = await GMXFactory.attach(process.env.MAINNET_GMX_FACTORY);
+        tokenUSDT = await TokenUSDT.attach(process.env.MAINNET_USDT);
+        tokenWETH = await TokenWETH.attach(process.env.MAINNET_WETH);
+        vault = await Vault.attach(process.env.MAINNET_VAULT);
 
         // * Getting Accounts from Private Keys * //
         [deployer, admin] = await ethers.getSigners();
 
         // * Calculating Values for Execution of Positions to be open by ETH * //
-        const _acceptablePriceETH = await vault.getMaxPrice(process.env.TESTNET_WETH); // Getting current value in 1e30 from Vault
+        const _acceptablePriceETH = await vault.getMaxPrice(process.env.MAINNET_WETH); // Getting current value in 1e30 from Vault
         const _acceptablePriceETH1e18 = ethers.BigNumber.from(_acceptablePriceETH).div(ethers.BigNumber.from(10).pow(12)); // Converting the Acceptable Price to 1e18 for Calculation
 
         // Calculate amount of ETH for 10 USD
@@ -66,7 +63,7 @@ describe("GMXFactory", async function () {
         _acceptablePriceShortETH = _acceptablePriceETH.mul(percentageShortETH).div(ethers.utils.parseUnits("1", 4));
 
         // Get the Current BTC Price from the Vault in 1e30
-        const _acceptablePriceBTC = await vault.getMaxPrice(process.env.TESTNET_WBTC);
+        const _acceptablePriceBTC = await vault.getMaxPrice(process.env.MAINNET_WBTC);
 
         // Adjust the Prices by 0.3% for Acceptable Price for Long and Short
         const percentageLongBTC = ethers.utils.parseUnits("1003", 4).div(1000); // 0.3% increase
@@ -94,7 +91,6 @@ describe("GMXFactory", async function () {
     it("should create a long position for USDT/ETH", async function () {
         this.timeout(120000);
 
-        const minOut = ethers.utils.parseEther("0");
         const initialPosition = await gmxFactory.positions(deployer.address);
 
         // Create the long position
@@ -102,8 +98,8 @@ describe("GMXFactory", async function () {
         await approvalTx.wait(); // Wait for Transaction to be Mined
 
         const creatingPositionTx = await gmxFactory.connect(deployer).openLongPosition(
-            [process.env.TESTNET_USDT, process.env.TESTNET_WETH],
-            process.env.TESTNET_WETH,
+            [process.env.MAINNET_USDT, process.env.MAINNET_WETH],
+            process.env.MAINNET_WETH,
             amountIn,
             minOut,
             _sizeDelta,
@@ -132,15 +128,6 @@ describe("GMXFactory", async function () {
 
     });
 
-    it("should execute Long position of USDT/ETH", async function () {
-        this.timeout(120000);
-
-        //Executes the Position
-        const executionTx = await positionKeeper.connect(admin).execute()
-        await executionTx.wait();
-
-    });
-
     it("should close a Long position of USDT/ETH we created", async function () {
 
         const positions = await gmxFactory.positions(deployer.address);
@@ -148,15 +135,14 @@ describe("GMXFactory", async function () {
         // Get the number of positions for the deployer
         const positionId = await gmxFactory.indexedPositions(deployer.address, positions);
 
-        const closeTx = await gmxFactory.closePosition(positionId, [process.env.TESTNET_WETH], _acceptablePriceLongETH, true, { value: value });
+        const closeTx = await gmxFactory.closePosition(positionId, [process.env.MAINNET_WETH], _acceptablePriceLongETH, true, { value: value });
         await closeTx.wait();
 
     });
 
     it("should create a short position of USDT/ETH", async function () {
         this.timeout(120000);
-
-        const minOut = ethers.utils.parseEther("0");
+        
         const initialPosition = await gmxFactory.positions(deployer.address);
 
         // Create the short position
@@ -164,8 +150,8 @@ describe("GMXFactory", async function () {
         await approvalTx.wait();
 
         const creatingPositionTx = await gmxFactory.connect(deployer).openShortPosition(
-            [process.env.TESTNET_USDT, process.env.TESTNET_WETH],
-            process.env.TESTNET_WETH,
+            [process.env.MAINNET_USDT, process.env.MAINNET_WETH],
+            process.env.MAINNET_WETH,
             amountIn,
             minOut,
             _sizeDelta,
@@ -181,15 +167,6 @@ describe("GMXFactory", async function () {
         expect(positions).to.equal(initialPosition.add(1));
     });
 
-    it("should execute Short position of USDT/ETH", async function () {
-        this.timeout(120000);
-
-        //Executes the Position
-        const executionTx = await positionKeeper.connect(admin).execute()
-        await executionTx.wait();
-
-    })
-
     it("should close a Short position of USDT/ETH we created", async function () {
 
         const positions = await gmxFactory.positions(deployer.address);
@@ -197,7 +174,7 @@ describe("GMXFactory", async function () {
         // Get the number of positions for the deployer
         const positionId = await gmxFactory.indexedPositions(deployer.address, positions);
 
-        const closeTx = await gmxFactory.closePosition(positionId, [process.env.TESTNET_WETH], _acceptablePriceShortETH, true, { value: value });
+        const closeTx = await gmxFactory.closePosition(positionId, [process.env.MAINNET_WETH], _acceptablePriceShortETH, true, { value: value });
         await closeTx.wait();
 
     });
@@ -205,7 +182,6 @@ describe("GMXFactory", async function () {
     it("should create a long position of ETH/BTC", async function () {
         this.timeout(120000);
 
-        const minOut = ethers.utils.parseEther("0");
         const initialPosition = await gmxFactory.positions(deployer.address);
 
         //Create the long position
@@ -213,8 +189,8 @@ describe("GMXFactory", async function () {
         await approvalTx.wait();
 
         const creatingPositionTx = await gmxFactory.connect(deployer).openLongPositionEth(
-            [process.env.TESTNET_WETH, process.env.TESTNET_WBTC],
-            process.env.TESTNET_WBTC,
+            [process.env.MAINNET_WETH, process.env.MAINNET_WBTC],
+            process.env.MAINNET_WBTC,
             minOut,
             _sizeDelta,
             _acceptablePriceLongBTC,
@@ -230,15 +206,6 @@ describe("GMXFactory", async function () {
 
     });
 
-    it("should execute long position of ETH/BTC", async function () {
-        this.timeout(120000);
-
-        //Executes the Position
-        const executionTx = await positionKeeper.connect(admin).execute()
-        await executionTx.wait();
-
-    });
-
     it("should close a long position of ETH/BTC we created", async function () {
 
         const positions = await gmxFactory.positions(deployer.address);
@@ -246,7 +213,7 @@ describe("GMXFactory", async function () {
         // Get the number of positions for the deployer
         const positionId = await gmxFactory.indexedPositions(deployer.address, positions);
 
-        const closeTx = await gmxFactory.closePosition(positionId, [process.env.TESTNET_WBTC], _acceptablePriceLongBTC, false, { value: value });
+        const closeTx = await gmxFactory.closePosition(positionId, [process.env.MAINNET_WBTC], _acceptablePriceLongBTC, false, { value: value });
         await closeTx.wait();
 
     });
@@ -254,7 +221,6 @@ describe("GMXFactory", async function () {
     it("should create a short position of ETH/BTC", async function () {
         this.timeout(120000);
 
-        const minOut = ethers.utils.parseEther("0");
         const initialPosition = await gmxFactory.positions(deployer.address);
 
         //Create the long position
@@ -262,8 +228,8 @@ describe("GMXFactory", async function () {
         await approvalTx.wait();
 
         const creatingPositionTx = await gmxFactory.connect(deployer).openShortPositionEth(
-            [process.env.TESTNET_WETH, process.env.TESTNET_WBTC],
-            process.env.TESTNET_WBTC,
+            [process.env.MAINNET_WETH, process.env.MAINNET_WBTC],
+            process.env.MAINNET_WBTC,
             minOut,
             _sizeDelta,
             _acceptablePriceShortBTC,
@@ -278,15 +244,6 @@ describe("GMXFactory", async function () {
         expect(positions).to.equal(initialPosition.add(1));
     });
 
-    it("should execute short position of ETH/BTC", async function () {
-        this.timeout(120000);
-
-        //Executes the Position
-        const executionTx = await positionKeeper.connect(admin).execute()
-        await executionTx.wait();
-
-    });
-
     it("should close a short position of ETH/BTC we created", async function () {
 
         const positions = await gmxFactory.positions(deployer.address);
@@ -294,7 +251,7 @@ describe("GMXFactory", async function () {
         // Get the number of positions for the deployer
         const positionId = await gmxFactory.indexedPositions(deployer.address, positions);
 
-        const closeTx = await gmxFactory.closePosition(positionId, [process.env.TESTNET_WBTC], _acceptablePriceShortBTC, false, { value: value });
+        const closeTx = await gmxFactory.closePosition(positionId, [process.env.MAINNET_WBTC], _acceptablePriceShortBTC, false, { value: value });
         await closeTx.wait();
 
     });
