@@ -13,3 +13,6 @@
 [submodule "lib/gmx-contracts"]
 	path = lib/gmx-contracts
 	url = https://github.com/gmx-io/gmx-contracts
+[submodule "lib/forge-std"]
+	path = lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
