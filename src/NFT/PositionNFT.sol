@@ -9,6 +9,12 @@ contract PositionNFT is ERC721Enumerable {
     uint256 public lastTokenId;
     string public baseURI;
     address public owner;
+    struct PositionIDs {
+        uint256 shortID;
+        uint256 longID;
+    }
+
+    mapping(uint256 => PositionIDs) public tokenList;
 
     modifier onlyOwner() {
         require(msg.sender == owner, "PositionNFT: NOT_OWNER");
@@ -26,8 +32,14 @@ contract PositionNFT is ERC721Enumerable {
         baseURI = uri_;
     }
 
-    function mint(address to) external onlyOwner {
+    function mint(
+        address to,
+        uint256 _long,
+        uint256 _short
+    ) external onlyOwner {
         _mint(to, ++lastTokenId);
+        tokenList[lastTokenId].longID = _long;
+        tokenList[lastTokenId].shortID = _short;
     }
 
     function setBaseURI(string memory uri_) external onlyOwner {
