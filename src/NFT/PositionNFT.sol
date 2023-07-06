@@ -36,10 +36,11 @@ contract PositionNFT is ERC721Enumerable {
         address to,
         uint256 _long,
         uint256 _short
-    ) external onlyOwner {
+    ) external onlyOwner returns (uint256) {
         _mint(to, ++lastTokenId);
         tokenList[lastTokenId].longID = _long;
         tokenList[lastTokenId].shortID = _short;
+        return lastTokenId;
     }
 
     function setBaseURI(string memory uri_) external onlyOwner {
