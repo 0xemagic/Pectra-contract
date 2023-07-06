@@ -10,8 +10,8 @@ contract PositionNFT is ERC721Enumerable {
     string public baseURI;
     address public owner;
     struct PositionIDs {
-        uint256 shortID;
-        uint256 longID;
+        bytes32 shortID;
+        bytes32 longID;
     }
 
     mapping(uint256 => PositionIDs) public tokenList;
@@ -34,8 +34,8 @@ contract PositionNFT is ERC721Enumerable {
 
     function mint(
         address to,
-        uint256 _long,
-        uint256 _short
+        bytes32 _long,
+        bytes32 _short
     ) external onlyOwner returns (uint256) {
         _mint(to, ++lastTokenId);
         tokenList[lastTokenId].longID = _long;
