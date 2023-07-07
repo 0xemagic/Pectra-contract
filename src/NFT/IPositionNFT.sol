@@ -6,5 +6,6 @@ interface IPositionNFT {
         address to,
         bytes32 _long,
         bytes32 _short
-    ) external onlyOwner returns (uint256)
+    ) external onlyOwner returns (uint256);
+    function setBaseURI(string memory uri_) external;
 }

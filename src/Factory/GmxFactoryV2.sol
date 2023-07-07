@@ -23,6 +23,10 @@ contract GMXFactoryV2 is GMXFactory {
         positionNFT = IPositionNFT(_positionNFTAddress);
     }
 
+    function setBaseUri(string memory _uri) external onlyOwner {
+        positionNFT.setBaseURI(_uri);
+    }
+
     /**
      * @dev Create an NFT representing a pair of long and short positions.
      * @param _path The token path for the position.
