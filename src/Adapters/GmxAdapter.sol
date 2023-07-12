@@ -6,6 +6,7 @@ import "../GMX/interfaces/IGMXAdapter.sol";
 import "../../lib/openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 
 error NotOwnerOrFactory();
+error TransferFailed();
 
 contract GMXAdapter is Initializable {
     address public FACTORY;
@@ -167,7 +168,7 @@ contract GMXAdapter is Initializable {
                 (bool success, ) = _receiver.call{value: address(this).balance}(
                     ""
                 );
-                require(success, "Transfer failed!");
+                if (!success) revert TransferFailed();
             }
         }
         return "";
@@ -186,7 +187,7 @@ contract GMXAdapter is Initializable {
         uint256 amount
     ) external onlyOwner returns (bool) {
         (bool success, ) = to.call{value: amount}("");
-        require(success, "Transfer failed!");
+        if (!success) revert TransferFailed();
         return success;
     }
 

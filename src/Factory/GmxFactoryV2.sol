@@ -45,48 +45,80 @@ contract GMXFactoryV2 is GMXFactory {
         uint256 _sizeDelta,
         uint256 _acceptablePriceLong,
         uint256 _acceptablePriceShort
-    ) external payable  {
+    ) external payable {
         bytes32 longPositionId;
         bytes32 shortPositionId;
 
-    {
-        // Call the original `openLongPosition` function
-        bytes memory bytecode = type(GMXAdapter).creationCode;
-        address adapter;
-        assembly {
-            adapter := create(0, add(bytecode, 32), mload(bytecode))
+        {
+            // Call the original `openLongPosition` function
+            bytes memory bytecode = type(GMXAdapter).creationCode;
+            address adapter;
+            assembly {
+                adapter := create(0, add(bytecode, 32), mload(bytecode))
+            }
+            IGMXAdapter(adapter).initialize(
+                ROUTER,
+                POSITION_ROUTER,
+                msg.sender
+            );
+            IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
+            address collateral = _path[0];
+            IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
+            IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
+            longPositionId = IGMXAdapter(adapter).createIncreasePosition{
+                value: msg.value / 2
+            }(
+                _path,
+                _indexToken,
+                _amountIn,
+                _minOut,
+                _sizeDelta,
+                true,
+                _acceptablePriceLong
+            );
+            positionAdapters[longPositionId] = adapter;
+            positionOwners[longPositionId] = msg.sender;
+            positions[msg.sender] += 1;
+            indexedPositions[msg.sender][
+                positions[msg.sender]
+            ] = longPositionId;
         }
-        IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender);
-        IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
-        address collateral = _path[0];
-        IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
-        IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
-        longPositionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value/2}(_path, _indexToken, _amountIn, _minOut, _sizeDelta, true, _acceptablePriceLong);
-        positionAdapters[longPositionId] = adapter;
-        positionOwners[longPositionId] = msg.sender;
-        positions[msg.sender] += 1;
-        indexedPositions[msg.sender][positions[msg.sender]] = longPositionId;
-    }
 
-    {
-        // Call the original `openShortPosition` function
-        bytes memory bytecode = type(GMXAdapter).creationCode;
-        address adapter;
-        assembly {
-            adapter := create(0, add(bytecode, 32), mload(bytecode))
+        {
+            // Call the original `openShortPosition` function
+            bytes memory bytecode = type(GMXAdapter).creationCode;
+            address adapter;
+            assembly {
+                adapter := create(0, add(bytecode, 32), mload(bytecode))
+            }
+            IGMXAdapter(adapter).initialize(
+                ROUTER,
+                POSITION_ROUTER,
+                msg.sender
+            );
+            IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
+            address collateral = _path[0];
+            IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
+            IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
+            shortPositionId = IGMXAdapter(adapter).createIncreasePosition{
+                value: msg.value / 2
+            }(
+                _path,
+                _indexToken,
+                _amountIn,
+                _minOut,
+                _sizeDelta,
+                false,
+                _acceptablePriceShort
+            );
+            positionAdapters[shortPositionId] = adapter;
+            positionOwners[shortPositionId] = msg.sender;
+            positions[msg.sender] += 1;
+            indexedPositions[msg.sender][
+                positions[msg.sender]
+            ] = shortPositionId;
         }
-        IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender);
-        IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
-        address collateral = _path[0];
-        IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
-        IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
-        shortPositionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value/2}(_path, _indexToken, _amountIn, _minOut, _sizeDelta, false, _acceptablePriceShort);
-        positionAdapters[shortPositionId] = adapter;
-        positionOwners[shortPositionId] = msg.sender;
-        positions[msg.sender] += 1;
-        indexedPositions[msg.sender][positions[msg.sender]] = shortPositionId;
-    }
-        
+
         // Mint the NFT with the long and short position IDs
         positionNFT.mint(msg.sender, longPositionId, shortPositionId);
     }

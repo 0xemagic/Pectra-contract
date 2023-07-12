@@ -7,5 +7,6 @@ interface IPositionNFT {
         bytes32 _long,
         bytes32 _short
     ) external returns (uint256);
+
     function setBaseURI(string memory uri_) external;
 }
