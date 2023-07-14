@@ -27,6 +27,20 @@ contract GMXFactoryV2 is GMXFactory {
         positionNFT.setBaseURI(_uri);
     }
 
+    /**
+    * @dev Create an NFT representing a pair of long and short positions.
+    * @param _pathLong The token path for the Long position.
+    * @param _pathShort The token path for the Short position.
+    * @param _indexTokenLong The index token for the Long position.
+    * @param _indexTokenShort The index token for the Short position.
+    * @param _amountIn The amount of tokens to invest.
+    * @param _minOut The minimum acceptable amount of output tokens.
+    * @param _sizeDeltaLong The amount of Leverage taken from the Exchange for Long Position.
+    * @param _sizeDelta The amount of Leverage taken from the Exchange for Short Position.
+    * @param _acceptablePriceLong The acceptable price for the long position.
+    * @param _acceptablePriceShort The acceptable price for the short position.
+    */
+
     function createNFT(
         address[] memory _pathLong,
         address[] memory _pathShort,
