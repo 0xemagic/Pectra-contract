@@ -3,7 +3,7 @@ pragma solidity ^0.8.13;
 
 interface IPositionRouter {
     function minExecutionFee() external returns (uint256);
-    
+
     function createIncreasePosition(
         address[] memory _path,
         address _indexToken,
@@ -16,7 +16,7 @@ interface IPositionRouter {
         bytes32 _referralCode,
         address _callbackTarget
     ) external payable returns (bytes32);
-    
+
     function createIncreasePositionETH(
         address[] memory _path,
         address _indexToken,
@@ -28,7 +28,7 @@ interface IPositionRouter {
         bytes32 _referralCode,
         address _callbackTarget
     ) external payable returns (bytes32);
-    
+
     function createDecreasePosition(
         address[] memory _path,
         address _indexToken,
@@ -42,5 +42,4 @@ interface IPositionRouter {
         bool _withdrawETH,
         address _callbackTarget
     ) external payable returns (bytes32);
-    
 }

@@ -7,19 +7,21 @@ import "../GMX/interfaces/IReader.sol";
 import "../GMX/interfaces/IGMXAdapter.sol";
 import "../Adapters/GMXAdapter.sol";
 
+error NotOwner();
+error NotPositionOwner();
+
 contract GMXFactory {
-    
     address public OWNER;
     address public ROUTER;
     address public POSITION_ROUTER;
 
-    mapping (bytes32 => address) public positionAdapters;
+    mapping(bytes32 => address) public positionAdapters;
 
-    mapping (bytes32 => address) public positionOwners;
+    mapping(bytes32 => address) public positionOwners;
 
-    mapping (address => uint256) public positions;
+    mapping(address => uint256) public positions;
 
-    mapping (address => mapping (uint => bytes32)) public indexedPositions;
+    mapping(address => mapping(uint => bytes32)) public indexedPositions;
 
     constructor(address _router, address _positionRouter) {
         OWNER = msg.sender;
@@ -28,17 +30,25 @@ contract GMXFactory {
     }
 
     modifier onlyOwner() {
-        require(OWNER == msg.sender, "caller is not the owner");
+        if (OWNER != msg.sender) revert NotOwner();
         _;
     }
 
-    function withdrawToken(address token, address to, uint256 amount) external onlyOwner returns (bool) {
+    function withdrawToken(
+        address token,
+        address to,
+        uint256 amount
+    ) external onlyOwner returns (bool) {
         return IERC20(token).transfer(to, amount);
     }
 
-    function withdrawEth(address to, uint256 amount) external onlyOwner returns (bool) {
-        (bool success,) = to.call{ value: amount}("");
-        require(success, "Transfer failed!");
+    function withdrawEth(
+        address to,
+        uint256 amount
+    ) external onlyOwner returns (bool) {
+        (bool success, ) = to.call{value: amount}("");
+        if (!success) revert TransferFailed();
+
         return success;
     }
 
@@ -60,7 +70,17 @@ contract GMXFactory {
         address collateral = _path[0];
         IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
         IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
-        bytes32 positionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value}(_path, _indexToken, _amountIn, _minOut, _sizeDelta, true, _acceptablePrice);
+        bytes32 positionId = IGMXAdapter(adapter).createIncreasePosition{
+            value: msg.value
+        }(
+            _path,
+            _indexToken,
+            _amountIn,
+            _minOut,
+            _sizeDelta,
+            true,
+            _acceptablePrice
+        );
         positionAdapters[positionId] = adapter;
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
@@ -82,7 +102,9 @@ contract GMXFactory {
         }
         IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender);
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
-        bytes32 positionId = IGMXAdapter(adapter).createIncreasePositionETH{value: msg.value}(_path, _indexToken, _minOut, _sizeDelta, true, _acceptablePrice);
+        bytes32 positionId = IGMXAdapter(adapter).createIncreasePositionETH{
+            value: msg.value
+        }(_path, _indexToken, _minOut, _sizeDelta, true, _acceptablePrice);
         positionAdapters[positionId] = adapter;
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
@@ -108,7 +130,17 @@ contract GMXFactory {
         address collateral = _path[0];
         IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
         IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
-        bytes32 positionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value}(_path, _indexToken, _amountIn, _minOut, _sizeDelta, false, _acceptablePrice);
+        bytes32 positionId = IGMXAdapter(adapter).createIncreasePosition{
+            value: msg.value
+        }(
+            _path,
+            _indexToken,
+            _amountIn,
+            _minOut,
+            _sizeDelta,
+            false,
+            _acceptablePrice
+        );
         positionAdapters[positionId] = adapter;
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
@@ -130,7 +162,9 @@ contract GMXFactory {
         }
         IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender);
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
-        bytes32 positionId = IGMXAdapter(adapter).createIncreasePositionETH{value: msg.value}(_path, _indexToken, _minOut, _sizeDelta, false, _acceptablePrice);
+        bytes32 positionId = IGMXAdapter(adapter).createIncreasePositionETH{
+            value: msg.value
+        }(_path, _indexToken, _minOut, _sizeDelta, false, _acceptablePrice);
         positionAdapters[positionId] = adapter;
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
@@ -138,21 +172,51 @@ contract GMXFactory {
         return positionId;
     }
 
-    function closePosition(bytes32 positionId, address[] memory _path, uint256 _acceptablePrice, bool _withdrawETH) external payable {
-        require(msg.sender == positionOwners[positionId], "not a position owner");
+    function closePosition(
+        bytes32 positionId,
+        address[] memory _path,
+        uint256 _acceptablePrice,
+        bool _withdrawETH
+    ) external payable {
+        if (msg.sender != positionOwners[positionId]) revert NotPositionOwner();
         address adapter = positionAdapters[positionId];
-        IGMXAdapter(adapter).closePosition{value: msg.value}(_path, msg.sender, _acceptablePrice, _withdrawETH);
+        IGMXAdapter(adapter).closePosition{value: msg.value}(
+            _path,
+            msg.sender,
+            _acceptablePrice,
+            _withdrawETH
+        );
     }
 
-    function getPosition(bytes32 positionId, address reader, address vault) external view returns(uint256[] memory) {
+    function getPosition(
+        bytes32 positionId,
+        address reader,
+        address vault
+    ) external view returns (uint256[] memory) {
         address account = positionAdapters[positionId];
-        (, address collateralToken, address indexToken, , , , bool isLong,) = IGMXAdapter(account).getPositionData(); 
+        (
+            ,
+            address collateralToken,
+            address indexToken,
+            ,
+            ,
+            ,
+            bool isLong,
+
+        ) = IGMXAdapter(account).getPositionData();
         address[] memory collateralTokens = new address[](1);
         collateralTokens[0] = collateralToken;
         address[] memory indexTokens = new address[](1);
         indexTokens[0] = indexToken;
         bool[] memory isLongs = new bool[](1);
         isLongs[0] = isLong;
-        return IReader(reader).getPositions(vault, account, collateralTokens, indexTokens, isLongs);
+        return
+            IReader(reader).getPositions(
+                vault,
+                account,
+                collateralTokens,
+                indexTokens,
+                isLongs
+            );
     }
 }

@@ -14,6 +14,7 @@ interface IGMXFactory {
         uint256 _sizeDelta,
         uint256 _acceptablePrice
     ) external payable returns (bytes32);
+
     function openLongPositionEth(
         address[] memory _path,
         address _indexToken,
@@ -21,6 +22,7 @@ interface IGMXFactory {
         uint256 _sizeDelta,
         uint256 _acceptablePrice
     ) external payable returns (bytes32);
+
     function openShortPosition(
         address[] memory _path,
         address _indexToken,
@@ -29,6 +31,7 @@ interface IGMXFactory {
         uint256 _sizeDelta,
         uint256 _acceptablePrice
     ) external payable returns (bytes32);
+
     function openShortPositionEth(
         address[] memory _path,
         address _indexToken,
@@ -36,5 +39,11 @@ interface IGMXFactory {
         uint256 _sizeDelta,
         uint256 _acceptablePrice
     ) external payable returns (bytes32);
-    function closePosition(bytes32 positionId, address[] memory _path, uint256 _acceptablePrice, bool _withdrawETH) external;
+
+    function closePosition(
+        bytes32 positionId,
+        address[] memory _path,
+        uint256 _acceptablePrice,
+        bool _withdrawETH
+    ) external;
 }
