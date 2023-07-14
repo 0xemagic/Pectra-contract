@@ -27,22 +27,15 @@ contract GMXFactoryV2 is GMXFactory {
         positionNFT.setBaseURI(_uri);
     }
 
-    /**
-     * @dev Create an NFT representing a pair of long and short positions.
-     * @param _path The token path for the position.
-     * @param _indexToken The index token for the position.
-     * @param _amountIn The amount of tokens to invest.
-     * @param _minOut The minimum acceptable amount of output tokens.
-     * @param _sizeDelta The change in position size.
-     * @param _acceptablePriceLong The acceptable price for the long position.
-     * @param _acceptablePriceShort The acceptable price for the short position.
-     */
     function createNFT(
-        address[] memory _path,
-        address _indexToken,
+        address[] memory _pathLong,
+        address[] memory _pathShort,
+        address _indexTokenLong,
+        address _indexTokenShort,
         uint256 _amountIn,
         uint256 _minOut,
-        uint256 _sizeDelta,
+        uint256 _sizeDeltaLong,
+        uint256 _sizeDeltaShort,
         uint256 _acceptablePriceLong,
         uint256 _acceptablePriceShort
     ) external payable  {
@@ -58,10 +51,10 @@ contract GMXFactoryV2 is GMXFactory {
         }
         IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender);
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
-        address collateral = _path[0];
+        address collateral = _pathLong[0];
         IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
         IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
-        longPositionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value/2}(_path, _indexToken, _amountIn, _minOut, _sizeDelta, true, _acceptablePriceLong);
+        longPositionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value/2}(_pathLong, _indexTokenLong, _amountIn, _minOut, _sizeDeltaLong, true, _acceptablePriceLong);
         positionAdapters[longPositionId] = adapter;
         positionOwners[longPositionId] = msg.sender;
         positions[msg.sender] += 1;
@@ -77,10 +70,10 @@ contract GMXFactoryV2 is GMXFactory {
         }
         IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender);
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
-        address collateral = _path[0];
+        address collateral = _pathShort[0];
         IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
         IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
-        shortPositionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value/2}(_path, _indexToken, _amountIn, _minOut, _sizeDelta, false, _acceptablePriceShort);
+        shortPositionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value/2}(_pathShort, _indexTokenShort, _amountIn, _minOut, _sizeDeltaShort, false, _acceptablePriceShort);
         positionAdapters[shortPositionId] = adapter;
         positionOwners[shortPositionId] = msg.sender;
         positions[msg.sender] += 1;
