@@ -5,6 +5,9 @@ pragma solidity ^0.8.13;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
+error NotFactory();
+error InvalidAddress();
+
 contract PositionNFT is ERC721Enumerable {
     uint256 public lastTokenId;
     string public baseURI;
@@ -17,7 +20,7 @@ contract PositionNFT is ERC721Enumerable {
     mapping(uint256 => PositionIDs) public tokenList;
 
     modifier onlyFactory() {
-        require(msg.sender == owner, "PositionNFT: NOT_FACTORY");
+        if (msg.sender != owner) revert NotFactory();
         _;
     }
 
@@ -27,7 +30,7 @@ contract PositionNFT is ERC721Enumerable {
         string memory symbol_,
         string memory uri_
     ) ERC721(name_, symbol_) {
-        require(owner_ != address(0), "PositionNFT: INVALID_ADDRESS");
+        if (owner_ == address(0)) revert InvalidAddress();
         owner = owner_;
         baseURI = uri_;
     }
@@ -56,7 +59,6 @@ contract PositionNFT is ERC721Enumerable {
     ) public view override(ERC721) returns (string memory) {
         _requireMinted(tokenId);
 
-        string memory baseURI = _baseURI();
         return
             bytes(baseURI).length > 0
                 ? string(abi.encodePacked(baseURI, Strings.toString(tokenId)))
