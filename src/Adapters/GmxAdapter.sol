@@ -3,8 +3,9 @@ pragma solidity ^0.8.13;
 
 import "../GMX/interfaces/IERC20.sol";
 import "../GMX/interfaces/IGMXAdapter.sol";
+import "../../lib/openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 
-contract GMXAdapter {
+contract GMXAdapter is Initializable {
 
     // Contract variables
     address public FACTORY;
