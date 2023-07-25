@@ -11,5 +11,4 @@ cache
 artifacts
 cache/
 out/
-cache_hardhat/
-
+cache_hardhat
