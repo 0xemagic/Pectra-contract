@@ -8,6 +8,10 @@ contract GMXFactoryV2 is GMXFactory {
     IPositionNFT public positionNFT;
     address public owner;
 
+    // Events
+    event PositionNFTSet(address indexed positionNFTAddress);
+    event BaseUriSet(string uri);
+
     /**
      * @dev Sets the values for Router and Position Router.
      *
@@ -29,6 +33,9 @@ contract GMXFactoryV2 is GMXFactory {
      */
     function setPositionNFT(address _positionNFTAddress) external onlyOwner {
         positionNFT = IPositionNFT(_positionNFTAddress);
+
+        // Emit the PositionNFTSet event.
+        emit PositionNFTSet(_positionNFTAddress);
     }
 
     /**
@@ -38,6 +45,9 @@ contract GMXFactoryV2 is GMXFactory {
      */
     function setBaseUri(string memory _uri) external onlyOwner {
         positionNFT.setBaseURI(_uri);
+
+        // Emit the BaseUriSet event.
+        emit BaseUriSet(_uri);
     }
 
     /**
