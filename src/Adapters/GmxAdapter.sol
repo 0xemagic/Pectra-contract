@@ -24,7 +24,13 @@ contract GMXAdapter is Initializable {
     uint256 sizeDelta;
     bool isLong;
     uint256 acceptablePrice;
-        
+
+    // Events
+    event TokenApproval(address indexed token, address indexed spender, uint256 amount);
+    event PluginApproval(address indexed plugin);
+    event TokenWithdrawal(address indexed token, address indexed to, uint256 amount);
+    event EthWithdrawal(address indexed to, uint256 amount);
+    
     // Modifier to restrict access to only the contract owner or factory contract.
     modifier onlyOwner() {
         require(OWNER == msg.sender || FACTORY == msg.sender, "caller is not the owner or factory");
@@ -55,7 +61,11 @@ contract GMXAdapter is Initializable {
 
     // Function to approve an ERC20 token for a spender.
     function approve(address token, address spender, uint256 amount) external onlyOwner returns (bool) {
-        return IERC20(token).approve(spender, amount);
+        bool success = IERC20(token).approve(spender, amount);
+        if (success) {
+            emit TokenApproval(token, spender, amount);
+        }
+        return success;
     }
 
     /**
@@ -65,6 +75,7 @@ contract GMXAdapter is Initializable {
      */
     function approvePlugin(address _plugin) external onlyOwner {
         IRouter(ROUTER).approvePlugin(_plugin);
+        emit PluginApproval(_plugin);
     }
 
     /**
@@ -140,7 +151,7 @@ contract GMXAdapter is Initializable {
         return result;
     }
     
-     /**
+    /**
      * @dev Close a position.
      *
      * @param _path The token path for the position to be closed.
@@ -196,7 +207,11 @@ contract GMXAdapter is Initializable {
      * @return true if the withdrawal was successful, otherwise false.
      */
     function withdrawToken(address _token, address _to, uint256 _amount) external onlyOwner returns (bool) {
-        return IERC20(_token).transfer(_to, _amount);
+        bool success = IERC20(_token).transfer(_to, _amount);
+        if (success) {
+            emit TokenWithdrawal(_token, _to, _amount);
+        }
+        return success;
     }
 
     /**
@@ -207,8 +222,12 @@ contract GMXAdapter is Initializable {
      * @return true if the withdrawal was successful, otherwise false.
      */
     function withdrawEth(address _to, uint256 _amount) external onlyOwner returns (bool) {
-        (bool success,) = _to.call{ value: _amount}("");
+        bool success;
+        (success,) = _to.call{ value: _amount }("");
         require(success, "Transfer failed!");
+        if (success) {
+            emit EthWithdrawal(_to, _amount);
+        }
         return success;
     }
 

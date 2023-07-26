@@ -8,7 +8,6 @@ import "../GMX/interfaces/IGMXAdapter.sol";
 import "../Adapters/GMXAdapter.sol";
 
 contract GMXFactory {
-    
     address public OWNER;
     address public ROUTER;
     address public POSITION_ROUTER;
@@ -16,20 +15,25 @@ contract GMXFactory {
     address public VAULT;
 
     // Mapping to store the GMXAdapter contract addresses associated with each position ID.
-    mapping (bytes32 => address) public positionAdapters;
+    mapping(bytes32 => address) public positionAdapters;
 
     // Mapping to store the owners of each position ID.
-    mapping (bytes32 => address) public positionOwners;
+    mapping(bytes32 => address) public positionOwners;
 
     // Mapping to store the number of positions owned by each address.
-    mapping (address => uint256) public positions;
+    mapping(address => uint256) public positions;
 
     // Mapping to store the position IDs associated with each address and their index.
-    mapping (address => mapping (uint => bytes32)) public indexedPositions;
+    mapping(address => mapping(uint => bytes32)) public indexedPositions;
 
     // Events
     event TokensWithdrawn(address token, address to, uint amount);
     event EthWithdrawn(address to, uint amount);
+    event LongPositionOpened(bytes32 positionId);
+    event ShortPositionOpened(bytes32 positionId);
+    event LongETHPositionOpened(bytes32 positionId);
+    event ShortETHPositionOpened(bytes32 positionId);
+    event PositionClosed(bytes32 positionId);
 
     /**
      * @dev Constructor to initialize the GMXFactory contract.
@@ -39,7 +43,12 @@ contract GMXFactory {
      * @param _reader The address of the GMX reader contract.
      * @param _vault The address of the GMX vault contract.
      */
-    constructor(address _router, address _positionRouter, address _reader, address _vault) {
+    constructor(
+        address _router,
+        address _positionRouter,
+        address _reader,
+        address _vault
+    ) {
         OWNER = msg.sender;
         ROUTER = _router;
         POSITION_ROUTER = _positionRouter;
@@ -61,7 +70,11 @@ contract GMXFactory {
      * @param _amount The amount of tokens to withdraw.
      * @return success Whether the token transfer was successful or not.
      */
-    function withdrawToken(address _token, address _to, uint256 _amount) external onlyOwner returns (bool success) {
+    function withdrawToken(
+        address _token,
+        address _to,
+        uint256 _amount
+    ) external onlyOwner returns (bool success) {
         success = IERC20(_token).transfer(_to, _amount);
         if (success) {
             emit TokensWithdrawn(_token, _to, _amount);
@@ -75,8 +88,11 @@ contract GMXFactory {
      * @param _amount The amount of ETH to withdraw.
      * @return success Whether the ETH transfer was successful or not.
      */
-    function withdrawEth(address _to, uint256 _amount) external onlyOwner returns (bool success) {
-        (success,) = _to.call{ value: _amount}("");
+    function withdrawEth(
+        address _to,
+        uint256 _amount
+    ) external onlyOwner returns (bool success) {
+        (success, ) = _to.call{value: _amount}("");
         require(success, "Transfer failed!");
         emit EthWithdrawn(_to, _amount);
     }
@@ -110,7 +126,9 @@ contract GMXFactory {
         address collateral = _path[0];
         IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
         IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
-        positionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value}(
+        positionId = IGMXAdapter(adapter).createIncreasePosition{
+            value: msg.value
+        }(
             _path,
             _indexToken,
             _amountIn,
@@ -123,6 +141,10 @@ contract GMXFactory {
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
+
+        // Emit the LongPositionOpened event.
+        emit LongPositionOpened(positionId);
+        return positionId;
     }
 
     /**
@@ -149,18 +171,17 @@ contract GMXFactory {
         }
         IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender);
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
-        positionId = IGMXAdapter(adapter).createIncreasePositionETH{value: msg.value}(
-            _path,
-            _indexToken,
-            _minOut,
-            _sizeDelta,
-            true,
-            _acceptablePrice
-        );
+        positionId = IGMXAdapter(adapter).createIncreasePositionETH{
+            value: msg.value
+        }(_path, _indexToken, _minOut, _sizeDelta, true, _acceptablePrice);
         positionAdapters[positionId] = adapter;
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
+
+        // Emit the LongETHPositionOpened event.
+        emit LongETHPositionOpened(positionId);
+        return positionId;
     }
 
     /**
@@ -179,7 +200,7 @@ contract GMXFactory {
         address _indexToken,
         uint256 _amountIn,
         uint256 _minOut,
-        uint256 _sizeDelta, 
+        uint256 _sizeDelta,
         uint256 _acceptablePrice
     ) external payable returns (bytes32 positionId) {
         bytes memory bytecode = type(GMXAdapter).creationCode;
@@ -192,7 +213,9 @@ contract GMXFactory {
         address collateral = _path[0];
         IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
         IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
-        positionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value}(
+        positionId = IGMXAdapter(adapter).createIncreasePosition{
+            value: msg.value
+        }(
             _path,
             _indexToken,
             _amountIn,
@@ -205,6 +228,10 @@ contract GMXFactory {
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
+
+        // Emit the ShortPositionOpened event.
+        emit ShortPositionOpened(positionId);
+        return positionId;
     }
 
     /**
@@ -231,18 +258,17 @@ contract GMXFactory {
         }
         IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender);
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
-        positionId = IGMXAdapter(adapter).createIncreasePositionETH{value: msg.value}(
-            _path,
-            _indexToken,
-            _minOut,
-            _sizeDelta,
-            false,
-            _acceptablePrice
-        );
+        positionId = IGMXAdapter(adapter).createIncreasePositionETH{
+            value: msg.value
+        }(_path, _indexToken, _minOut, _sizeDelta, false, _acceptablePrice);
         positionAdapters[positionId] = adapter;
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
+
+        // Emit the ShortETHPositionOpened event.
+        emit ShortPositionOpened(positionId);
+        return positionId;
     }
 
     /**
@@ -259,15 +285,25 @@ contract GMXFactory {
         uint256 _acceptablePrice,
         bool _withdrawETH
     ) external payable {
-        require(msg.sender == positionOwners[_positionId], "not a position owner");
+        require(
+            msg.sender == positionOwners[_positionId],
+            "not a position owner"
+        );
         uint256[] memory data = getPosition(_positionId);
         address adapter = positionAdapters[_positionId];
-        if (data[0] != 0){
-            IGMXAdapter(adapter).closePosition{value: msg.value}(_path, msg.sender, _acceptablePrice, _withdrawETH);
-        }
-        else {
+        if (data[0] != 0) {
+            IGMXAdapter(adapter).closePosition{value: msg.value}(
+                _path,
+                msg.sender,
+                _acceptablePrice,
+                _withdrawETH
+            );
+        } else {
             IGMXAdapter(adapter).closeFailedPosition(_path, msg.sender);
         }
+
+        // Emit the PositionClosed event.
+        emit PositionClosed(_positionId);
     }
 
     /**
@@ -276,15 +312,33 @@ contract GMXFactory {
      * @param _positionId The ID of the position to query.
      * @return An array containing the all the details associated with the position ID.
      */
-    function getPosition(bytes32 _positionId) public view returns(uint256[] memory) {
+    function getPosition(
+        bytes32 _positionId
+    ) public view returns (uint256[] memory) {
         address account = positionAdapters[_positionId];
-        (, address collateralToken, address indexToken, , , , bool isLong,) = IGMXAdapter(account).getPositionData(); 
+        (
+            ,
+            address collateralToken,
+            address indexToken,
+            ,
+            ,
+            ,
+            bool isLong,
+
+        ) = IGMXAdapter(account).getPositionData();
         address[] memory collateralTokens = new address[](1);
         collateralTokens[0] = collateralToken;
         address[] memory indexTokens = new address[](1);
         indexTokens[0] = indexToken;
         bool[] memory isLongs = new bool[](1);
         isLongs[0] = isLong;
-        return IReader(READER).getPositions(VAULT, account, collateralTokens, indexTokens, isLongs);
+        return
+            IReader(READER).getPositions(
+                VAULT,
+                account,
+                collateralTokens,
+                indexTokens,
+                isLongs
+            );
     }
 }
