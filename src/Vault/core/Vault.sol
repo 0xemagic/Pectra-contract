@@ -2,15 +2,15 @@
 
 pragma solidity 0.6.12;
 
-import '../libraries/math/SafeMath.sol';
-import '../libraries/token/IERC20.sol';
-import '../libraries/token/SafeERC20.sol';
-import '../libraries/utils/ReentrancyGuard.sol';
+import "../libraries/math/SafeMath.sol";
+import "../libraries/token/IERC20.sol";
+import "../libraries/token/SafeERC20.sol";
+import "../libraries/utils/ReentrancyGuard.sol";
 
-import '../tokens/interfaces/IUSDG.sol';
-import './interfaces/IVault.sol';
-import './interfaces/IVaultUtils.sol';
-import './interfaces/IVaultPriceFeed.sol';
+import "../tokens/interfaces/IUSDG.sol";
+import "./interfaces/IVault.sol";
+import "./interfaces/IVaultUtils.sol";
+import "./interfaces/IVaultPriceFeed.sol";
 
 contract Vault is ReentrancyGuard, IVault {
    using SafeMath for uint256;
@@ -256,7 +256,7 @@ contract Vault is ReentrancyGuard, IVault {
    }
 
    function setError(uint256 _errorCode, string calldata _error) external override {
-      require(msg.sender == errorController, 'Vault: invalid errorController');
+      require(msg.sender == errorController, "Vault: invalid errorController");
       errors[_errorCode] = _error;
    }
 
@@ -1402,14 +1402,14 @@ contract Vault is ReentrancyGuard, IVault {
    }
 
    function _decreasePoolAmount(address _token, uint256 _amount) private {
-      poolAmounts[_token] = poolAmounts[_token].sub(_amount, 'Vault: poolAmount exceeded');
+      poolAmounts[_token] = poolAmounts[_token].sub(_amount, "Vault: poolAmount exceeded");
       _validate(reservedAmounts[_token] <= poolAmounts[_token], 50);
       emit DecreasePoolAmount(_token, _amount);
    }
 
    function _validateBufferAmount(address _token) private view {
       if (poolAmounts[_token] < bufferAmounts[_token]) {
-         revert('Vault: poolAmount < buffer');
+         revert("Vault: poolAmount < buffer");
       }
    }
 
@@ -1443,7 +1443,7 @@ contract Vault is ReentrancyGuard, IVault {
    }
 
    function _decreaseReservedAmount(address _token, uint256 _amount) private {
-      reservedAmounts[_token] = reservedAmounts[_token].sub(_amount, 'Vault: insufficient reserve');
+      reservedAmounts[_token] = reservedAmounts[_token].sub(_amount, "Vault: insufficient reserve");
       emit DecreaseReservedAmount(_token, _amount);
    }
 
@@ -1462,7 +1462,7 @@ contract Vault is ReentrancyGuard, IVault {
 
       uint256 maxSize = maxGlobalShortSizes[_token];
       if (maxSize != 0) {
-         require(globalShortSizes[_token] <= maxSize, 'Vault: max shorts exceeded');
+         require(globalShortSizes[_token] <= maxSize, "Vault: max shorts exceeded");
       }
    }
 

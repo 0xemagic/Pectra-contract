@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
-import '@openzeppelin/contracts/utils/Strings.sol';
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract PositionNFT is ERC721Enumerable {
    uint256 public lastTokenId;
@@ -24,7 +24,7 @@ contract PositionNFT is ERC721Enumerable {
 
    // Modifier to restrict access to only the factory (owner) that mints NFTs.
    modifier onlyFactory() {
-      require(msg.sender == owner, 'PositionNFT: NOT_FACTORY');
+      require(msg.sender == owner, "PositionNFT: NOT_FACTORY");
       _;
    }
 
@@ -37,7 +37,7 @@ contract PositionNFT is ERC721Enumerable {
     * @param uri_ The base URI for the NFT contract.
     */
    constructor(address owner_, string memory name_, string memory symbol_, string memory uri_) ERC721(name_, symbol_) {
-      require(owner_ != address(0), 'PositionNFT: INVALID_ADDRESS');
+      require(owner_ != address(0), "PositionNFT: INVALID_ADDRESS");
       owner = owner_;
       baseURI = uri_;
    }
@@ -85,6 +85,6 @@ contract PositionNFT is ERC721Enumerable {
    function tokenURI(uint256 tokenId) public view override(ERC721) returns (string memory) {
       _requireMinted(tokenId);
 
-      return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, Strings.toString(tokenId))) : '';
+      return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, Strings.toString(tokenId))) : "";
    }
 }

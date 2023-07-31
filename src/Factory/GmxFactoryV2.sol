@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import '../Factory/GMXFactory.sol';
-import '../NFT/IPositionNFT.sol';
+import "../Factory/GMXFactory.sol";
+import "../NFT/IPositionNFT.sol";
 
 contract GMXFactoryV2 is GMXFactory {
    IPositionNFT public positionNFT;

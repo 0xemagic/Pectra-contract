@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import '../GMX/interfaces/IERC20.sol';
-import '../GMX/interfaces/IRouter.sol';
-import '../GMX/interfaces/IReader.sol';
-import '../GMX/interfaces/IGMXAdapter.sol';
-import '../Adapters/GMXAdapter.sol';
+import "../GMX/interfaces/IERC20.sol";
+import "../GMX/interfaces/IRouter.sol";
+import "../GMX/interfaces/IReader.sol";
+import "../GMX/interfaces/IGMXAdapter.sol";
+import "../Adapters/GMXAdapter.sol";
 
 contract GMXFactory {
    address public OWNER;
@@ -53,7 +53,7 @@ contract GMXFactory {
 
    // Modifier to restrict access to only the contract owner.
    modifier onlyOwner() {
-      require(OWNER == msg.sender, 'caller is not the owner');
+      require(OWNER == msg.sender, "caller is not the owner");
       _;
    }
 
@@ -80,8 +80,8 @@ contract GMXFactory {
     * @return success Whether the ETH transfer was successful or not.
     */
    function withdrawEth(address _to, uint256 _amount) external onlyOwner returns (bool success) {
-      (success, ) = _to.call{value: _amount}('');
-      require(success, 'Transfer failed!');
+      (success, ) = _to.call{value: _amount}("");
+      require(success, "Transfer failed!");
       emit EthWithdrawn(_to, _amount);
    }
 
@@ -279,7 +279,7 @@ contract GMXFactory {
       uint256 _acceptablePrice,
       bool _withdrawETH
    ) external payable {
-      require(msg.sender == positionOwners[_positionId], 'not a position owner');
+      require(msg.sender == positionOwners[_positionId], "not a position owner");
       uint256[] memory data = getPosition(_positionId);
       address adapter = positionAdapters[_positionId];
       if (data[0] != 0) {
