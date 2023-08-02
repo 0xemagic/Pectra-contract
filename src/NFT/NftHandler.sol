@@ -115,7 +115,7 @@ contract NFTHandler {
         if (success) {
             for (uint256 i = 0; i < positionIds.length; i++) {
                 address gmxAdapter = gmxFactoryContract.getPositionAdapter(positionIds[i]);
-                require(changeOwnerOfAdapter(gmxAdapter, _to) == true);
+                require(changeOwnerOfAdapter(gmxAdapter, to) == true);
             }
         }
     }
