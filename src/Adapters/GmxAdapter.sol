@@ -277,4 +277,13 @@ contract GMXAdapter is Initializable {
    {
       return (path, collateralToken, indexToken, amountIn, minOut, sizeDelta, isLong, acceptablePrice);
    }
+
+   /**
+    * @dev To change the owner of the position in case of NFT is transfereed.
+    *
+    * @param _newowner The address to which the position will be transferred.
+    */
+   function changePositonOwner(address _newowner) external onlyOwner{
+      OWNER = _newowner;
+   }
 }
