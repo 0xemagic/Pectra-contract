@@ -32,7 +32,7 @@ contract GMXAdapter is Initializable {
 
    // Modifier to restrict access to only the contract owner or factory contract.
    modifier onlyOwner() {
-      require(OWNER == msg.sender || FACTORY == msg.sender, "caller is not the owner or factory");
+      require(OWNER == msg.sender || FACTORY == msg.sender, "GMX ADAPTER: caller is not the owner or factory");
       _;
    }
 
@@ -52,7 +52,7 @@ contract GMXAdapter is Initializable {
     * @param _owner The owner address who can call certain functions.
     */
    function initialize(address _router, address _positionRouter, address _owner) external {
-      require(msg.sender == FACTORY, "GMXAdapter: FORBIDDEN"); // Sufficient check for factory contract.
+      require(msg.sender == FACTORY, "GMX ADAPTER:  FORBIDDEN"); // Sufficient check for factory contract.
       ROUTER = _router;
       POSITION_ROUTER = _positionRouter;
       OWNER = _owner;
@@ -197,7 +197,7 @@ contract GMXAdapter is Initializable {
          IERC20(collateral).transfer(_receiver, collateralBalance);
       } else if (address(this).balance > 0) {
          (bool success, ) = _receiver.call{value: address(this).balance}("");
-         require(success, "Transfer failed!");
+         require(success, "GMX ADAPTER: Transfer failed!");
       }
    }
 
@@ -227,7 +227,7 @@ contract GMXAdapter is Initializable {
    function withdrawEth(address _to, uint256 _amount) external onlyOwner returns (bool) {
       bool success;
       (success, ) = _to.call{value: _amount}("");
-      require(success, "Transfer failed!");
+      require(success, "GMX ADAPTER: Transfer failed!");
       if (success) {
          emit EthWithdrawal(_to, _amount);
       }
