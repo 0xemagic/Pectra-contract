@@ -11,15 +11,19 @@ contract NFTHandler {
     GMXFactory public gmxFactoryContract;
     GMXAdapter public gmxAdapterContract;
 
-    // Mapping to store whether an NFT with a specific set of position IDs has been minted or not.
-    mapping(bytes32 => bool) private mintedNFTs;
-
     // Mapping to store PositionIds against TokenId
-    mapping(uint256 => bytes32[]) private tokenIds;
+    mapping(uint256 => bytes32[]) private _tokenIds;
+
+    // Mapping to store which PositionId has been used for minting the NFT
+    mapping (bytes32 => bool) private _mintedPositionIds;
+
+    // Mapping that stores all the PositonIds against a TokenId individually
+    mapping (bytes32 => uint256) private _mappedTokenId;
 
     // Events
-    event NftMinted(bytes32[] positionID, address owner, uint256 tokenId);
-    event NftBurned(uint256 tokenId);
+    event NftMinted(bytes32[] indexed positionID, address indexed owner, uint256 indexed tokenId);
+    event NftBurned(uint256 indexed tokenId);
+    event NftTransferred(uint256 indexed tokenId, address indexed newOwner);
 
     /**
      * @dev Constructor to set the PositionNFT contract address.
@@ -43,26 +47,26 @@ contract NFTHandler {
         // Check if all position IDs exist in the GMXFactory contract
         for (uint256 i = 0; i < positionIDs.length; i++) {
             uint256[] memory data = gmxFactoryContract.getPosition(positionIDs[i]);
-            require(data[0] != 0, "Position does not exist in GMX");
-            require(gmxFactoryContract.getPositionOwner(positionIDs[i]) == msg.sender, "Not a position owner");
+            require(data[0] != 0, "NFT HANDLER: The position does not exist or already closed");
+            require(gmxFactoryContract.getPositionOwner(positionIDs[i]) == msg.sender, "NFT HANDLER: Not a position owner");
+            require(!_mintedPositionIds[positionIDs[i]], "NFT HANDLER: Position Id already minted");
         }
 
-        // Generate a unique identifier for the set of position IDs
-        bytes32 combinedPositionIDs = keccak256(abi.encodePacked(positionIDs));
-
-        // Check if the NFT with the same set of position IDs has already been minted
-        require(!mintedNFTs[combinedPositionIDs], "NFT already minted for these position IDs");
-
+        uint256 tokenId;    
         // Mint the NFT using the PositionNFT contract
-        uint256 tokenId = positionNFTContract.mint(to, positionIDs);
+        require(tokenId = positionNFTContract.mint(to, positionIDs), "NFT HANDLER: Error while minting the NFT");
 
-        // Mark the NFT as minted for the specific set of position IDs
-        mintedNFTs[combinedPositionIDs] = true;
+        for (uint256 i = 0; i < positionIDs.length; i++){
+            _mintedPositionIds[positionIDs[i]] = true;
+            _mappedTokenId[positionIDs[i]] = tokenId;
 
+        }
+        
         // Emit an event to indicate that the NFT has been minted and associated with the position IDs
         emit NftMinted(positionIDs, to, tokenId);
 
         return tokenId;
+    
     }
 
     /**
@@ -71,20 +75,17 @@ contract NFTHandler {
      * @param tokenId The token ID of the NFT to be burned.
      */
     function burnNFT(uint256 tokenId) external {
-        // Check if the token exists and belongs to the sender
-        require(positionNFTContract.ownerOf(tokenId) == msg.sender, "Not the NFT owner");
-
         // Get the associated position IDs for the given token ID
-        bytes32[] memory positionIds = positionNFTContract.getPositonIds(tokenId);
+        bytes32[] memory positionIds = _tokenIds[tokenId];
 
         // Check if all the associated positions are closed
         for (uint256 i = 0; i < positionIds.length; i++) {
             uint256[] memory data = gmxFactoryContract.getPosition(positionIds[i]);
-            require(data[0] == 0, "Not all positions are closed");
+            require(data[0] == 0, "NFT HANDLER: Not all positions are closed");
         }
 
         // Burn the NFT using the PositionNFT contract
-        positionNFTContract.burn(tokenId);
+        require(positionNFTContract.burn(tokenId));
 
         // Emit an event to indicate that the NFT has been burned
         emit NftBurned(tokenId);
@@ -98,16 +99,16 @@ contract NFTHandler {
      */
     function transferNft(uint256 tokenId, address to) external {
         // Check if the token exists and belongs to the sender
-        require(positionNFTContract.ownerOf(tokenId) == msg.sender, "Not the NFT owner");
+        require(positionNFTContract.ownerOf(tokenId) == msg.sender, "NFT HANDLER: Not the NFT owner");
 
         // Get the associated position IDs for the given token ID
-        bytes32[] memory positionIds = positionNFTContract.getPositonIds(tokenId);
+        bytes32[] memory positionIds = _tokenIds[tokenId];
 
         // Check if all position IDs exist in the GMXFactory contract
         for (uint256 i = 0; i < positionIds.length; i++) {
             uint256[] memory data = gmxFactoryContract.getPosition(positionIds[i]);
-            require(data[0] != 0, "Position does not exist in GMX");
-            require(gmxFactoryContract.getPositionOwner(positionIds[i]) == msg.sender, "Not a position owner");
+            require(data[0] != 0, "NFT HANDLER: Position does not or already closed");
+            require(gmxFactoryContract.getPositionOwner(positionIds[i]) == msg.sender, "NFT HANDLER: Not a position owner");
         }
 
         // Transfer the NFT using the PositionNFT contract
@@ -115,7 +116,8 @@ contract NFTHandler {
         if (success) {
             for (uint256 i = 0; i < positionIds.length; i++) {
                 address gmxAdapter = gmxFactoryContract.getPositionAdapter(positionIds[i]);
-                require(changeOwnerOfAdapter(gmxAdapter, to) == true);
+                require(_changeOwnerOfAdapter(gmxAdapter, to) == true, "NFT HANDLER: Error while changing the position owner from adapter");
+                emit NftTransferred(tokenId, to);
             }
         }
     }
@@ -126,7 +128,7 @@ contract NFTHandler {
      * @param _gmxAdapter The address of the adapter contract.
      * @param _newOwner The address of the new owner of that position.
      */
-    function changeOwnerOfAdapter(address _gmxAdapter, address _newOwner) internal returns (bool) {
+    function _changeOwnerOfAdapter(address _gmxAdapter, address _newOwner) internal returns (bool) {
         gmxAdapterContract = GMXAdapter(_gmxAdapter);
         require(gmxAdapterContract.changePositonOwner(_newOwner));
         return true;

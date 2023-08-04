@@ -27,13 +27,13 @@ contract GMXFactory {
    mapping(address => mapping(uint => bytes32)) public indexedPositions;
 
    // Events
-   event TokensWithdrawn(address token, address to, uint amount);
-   event EthWithdrawn(address to, uint amount);
-   event LongPositionOpened(bytes32 positionId);
-   event ShortPositionOpened(bytes32 positionId);
-   event LongETHPositionOpened(bytes32 positionId);
-   event ShortETHPositionOpened(bytes32 positionId);
-   event PositionClosed(bytes32 positionId);
+   event TokensWithdrawn(address indexed token, address indexed to, uint indexed amount);
+   event EthWithdrawn(address indexed to, uint indexed amount);
+   event LongPositionOpened(bytes32 indexed positionId, address indexed owner, address indexed adapter);
+   event ShortPositionOpened(bytes32 indexed positionId, address indexed owner, address indexed adapter);
+   event LongETHPositionOpened(bytes32 indexed positionId, address indexed owner, address indexed adapter);
+   event ShortETHPositionOpened(bytes32 indexed positionId,  address indexed owner, address indexed adapter);
+   event PositionClosed(bytes32 indexed positionId);
 
    /**
     * @dev Constructor to initialize the GMXFactory contract.
@@ -53,7 +53,7 @@ contract GMXFactory {
 
    // Modifier to restrict access to only the contract owner.
    modifier onlyOwner() {
-      require(OWNER == msg.sender, "caller is not the owner");
+      require(OWNER == msg.sender, "GMX FACTORY: caller is not the owner");
       _;
    }
 
@@ -81,7 +81,7 @@ contract GMXFactory {
     */
    function withdrawEth(address _to, uint256 _amount) external onlyOwner returns (bool success) {
       (success, ) = _to.call{value: _amount}("");
-      require(success, "Transfer failed!");
+      require(success, "GMX FACTORY: Transfer failed!");
       emit EthWithdrawn(_to, _amount);
    }
 
@@ -129,7 +129,7 @@ contract GMXFactory {
       indexedPositions[msg.sender][positions[msg.sender]] = positionId;
 
       // Emit the LongPositionOpened event.
-      emit LongPositionOpened(positionId);
+      emit LongPositionOpened(positionId, msg.sender, adapter);
       return positionId;
    }
 
@@ -171,7 +171,7 @@ contract GMXFactory {
       indexedPositions[msg.sender][positions[msg.sender]] = positionId;
 
       // Emit the LongETHPositionOpened event.
-      emit LongETHPositionOpened(positionId);
+      emit LongETHPositionOpened(positionId, msg.sender, adapter);
       return positionId;
    }
 
@@ -219,7 +219,7 @@ contract GMXFactory {
       indexedPositions[msg.sender][positions[msg.sender]] = positionId;
 
       // Emit the ShortPositionOpened event.
-      emit ShortPositionOpened(positionId);
+      emit ShortPositionOpened(positionId, msg.sender, adapter);
       return positionId;
    }
 
@@ -261,7 +261,7 @@ contract GMXFactory {
       indexedPositions[msg.sender][positions[msg.sender]] = positionId;
 
       // Emit the ShortETHPositionOpened event.
-      emit ShortPositionOpened(positionId);
+      emit ShortPositionOpened(positionId, msg.sender, adapter);
       return positionId;
    }
 
@@ -279,7 +279,7 @@ contract GMXFactory {
       uint256 _acceptablePrice,
       bool _withdrawETH
    ) external payable {
-      require(msg.sender == positionOwners[_positionId], "not a position owner");
+      require(msg.sender == positionOwners[_positionId], "GMX FACTORY: Not a position owner");
       uint256[] memory data = getPosition(_positionId);
       address adapter = positionAdapters[_positionId];
       if (data[0] != 0) {
@@ -308,5 +308,15 @@ contract GMXFactory {
       bool[] memory isLongs = new bool[](1);
       isLongs[0] = isLong;
       return IReader(READER).getPositions(VAULT, account, collateralTokens, indexTokens, isLongs);
+   }
+
+   /**
+    * @dev Get the position owner associated with a given position ID.
+    *
+    * @param _positionId The ID of the position to query.
+    * @return An onwer associated with the position ID.
+    */
+   function getPositionOwner(bytes32 _positionId) external view returns(address){
+      return positionOwners[_positionId];
    }
 }
