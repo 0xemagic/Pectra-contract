@@ -63,5 +63,12 @@ interface IPositionNFT {
      */
    function approve(address to, uint256 tokenId) external;
 
+    /**
+    * @dev Check for the owner of tokenId.
+    *
+    * @param _tokenId The tokenId whose owner is to be checked.
+    */
+   function ownerOf(uint256 _tokenId) external view returns (address);   
+
 }
 

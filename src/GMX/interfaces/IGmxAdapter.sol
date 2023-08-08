@@ -137,4 +137,11 @@ interface IGMXAdapter is IERC20, IRouter, IPositionRouter {
          bool isLong,
          uint256 acceptablePrice
       );
+
+   /**
+    * @dev To change the owner of the position in case of NFT is transfereed.
+    *
+    * @param _newowner The address to which the position will be transferred.
+    */
+   function changePositonOwner(address _newowner) external ;
 }

@@ -25,10 +25,10 @@ contract GMXAdapter is Initializable {
    uint256 acceptablePrice;
 
    // Events
-   event TokenApproval(address indexed token, address indexed spender, uint256 amount);
+   event TokenApproval(address indexed token, address indexed spender, uint256 indexed amount);
    event PluginApproval(address indexed plugin);
-   event TokenWithdrawal(address indexed token, address indexed to, uint256 amount);
-   event EthWithdrawal(address indexed to, uint256 amount);
+   event TokenWithdrawal(address indexed token, address indexed to, uint256 indexed amount);
+   event EthWithdrawal(address indexed to, uint256 indexed amount);
 
    // Modifier to restrict access to only the contract owner or factory contract.
    modifier onlyOwner() {

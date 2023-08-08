@@ -25,6 +25,8 @@ abstract contract ERC721 is Context, ERC165, IERC721, IERC721Metadata, IERC721Er
     // Token symbol
     string private _symbol;
 
+    address private _nftHandler;
+
     // Mapping from token ID to owner address
     mapping(uint256 => address) private _owners;
 

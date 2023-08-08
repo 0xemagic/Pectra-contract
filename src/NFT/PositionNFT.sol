@@ -17,7 +17,7 @@ contract PositionNFT is ERC721Enumerable {
 
     // Modifier to restrict access to only the factory (owner) that mints NFTs.
     modifier onlyNftHandler() {
-        require(owner == msg.sender, "PositionNFT: NOT_FACTORY");
+        require(owner == msg.sender, "PositionNFT: Caller is not NFT Handler");
         _;
     }
 
@@ -47,6 +47,17 @@ contract PositionNFT is ERC721Enumerable {
         tokenList[lastTokenId] = _positionIds;
         emit NftCreated(owner, lastTokenId, _positionIds);
         return lastTokenId;
+    }
+
+    /**
+     * @dev Override function to make sure that only NFT Handler is able to transfer the NFT.
+     *
+     * @param spender The address to which the NFT will be transferred.
+     * @param tokenId The Token Id of the NFT we are transferring NFT.
+     * @return true if the caller is NFT Handler contract.
+     */
+    function _isApprovedOrOwner(address spender, uint256 tokenId) internal view virtual override returns (bool) {
+        return (msg.sender == owner);
     }
 
     /**
@@ -82,20 +93,9 @@ contract PositionNFT is ERC721Enumerable {
      * @param tokenId The token ID for which to return the URI.
      * @return The URI for the specified token ID.
      */
-    function tokenURI(uint256 tokenId) public view override(ERC721, IERC721) returns (string memory) {
+    function tokenURI(uint256 tokenId) public view override(ERC721) returns (string memory) {
         _requireMinted(tokenId);
 
         return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, Strings.toString(tokenId))) : "";
-    }
-
-    /**
-     * @dev Safely transfers the ownership of a given NFT to another address.
-     *
-     * @param from The current owner of the NFT.
-     * @param to The new owner.
-     * @param tokenId The NFT to transfer.
-     */
-    function safeTransferFrom(address from, address to, uint256 tokenId) public override(ERC721, IERC721) onlyNftHandler {
-        super.safeTransferFrom(from, to, tokenId);
     }
 }
