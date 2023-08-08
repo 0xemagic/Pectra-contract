@@ -4,7 +4,6 @@ pragma solidity ^0.8.13;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
 contract PositionNFT is ERC721Enumerable {
-
     uint256 public lastTokenId;
     string public baseURI;
     address public owner;
@@ -29,7 +28,12 @@ contract PositionNFT is ERC721Enumerable {
      * @param symbol_ The symbol of the NFT contract.
      * @param uri_ The base URI for the NFT contract.
      */
-    constructor(address owner_, string memory name_, string memory symbol_, string memory uri_) ERC721(name_, symbol_) {
+    constructor(
+        address owner_,
+        string memory name_,
+        string memory symbol_,
+        string memory uri_
+    ) ERC721(name_, symbol_) {
         require(owner_ != address(0), "PositionNFT: INVALID_ADDRESS");
         owner = owner_;
         baseURI = uri_;
@@ -42,7 +46,10 @@ contract PositionNFT is ERC721Enumerable {
      * @param _positionIds The ID of one or more than one positions to be associated with the NFT.
      * @return The token ID of the newly minted NFT.
      */
-    function mint(address to, bytes32[] memory _positionIds) external onlyNftHandler returns (uint256) {
+    function mint(
+        address to,
+        bytes32[] memory _positionIds
+    ) external onlyNftHandler returns (uint256) {
         _mint(to, ++lastTokenId);
         tokenList[lastTokenId] = _positionIds;
         emit NftCreated(owner, lastTokenId, _positionIds);
@@ -56,7 +63,10 @@ contract PositionNFT is ERC721Enumerable {
      * @param tokenId The Token Id of the NFT we are transferring NFT.
      * @return true if the caller is NFT Handler contract.
      */
-    function _isApprovedOrOwner(address spender, uint256 tokenId) internal view virtual override returns (bool) {
+    function _isApprovedOrOwner(
+        address spender,
+        uint256 tokenId
+    ) internal view virtual override returns (bool) {
         return (msg.sender == owner);
     }
 
@@ -93,9 +103,14 @@ contract PositionNFT is ERC721Enumerable {
      * @param tokenId The token ID for which to return the URI.
      * @return The URI for the specified token ID.
      */
-    function tokenURI(uint256 tokenId) public view override(ERC721) returns (string memory) {
+    function tokenURI(
+        uint256 tokenId
+    ) public view override(ERC721) returns (string memory) {
         _requireMinted(tokenId);
 
-        return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, Strings.toString(tokenId))) : "";
+        return
+            bytes(baseURI).length > 0
+                ? string(abi.encodePacked(baseURI, Strings.toString(tokenId)))
+                : "";
     }
 }
