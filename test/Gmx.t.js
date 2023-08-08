@@ -37,19 +37,19 @@ describe("GMXFactory", async function () {
     tokenUSDT = await TokenUSDT.attach(process.env.TESTNET_USDT);
     tokenWETH = await TokenWETH.attach(process.env.TESTNET_WETH);
     positionKeeper = await PositionKeeper.attach(
-      process.env.TESTNET_POSITION_KEEPER
+      process.env.TESTNET_POSITION_KEEPER,
     );
     vault = await Vault.attach(process.env.TESTNET_VAULT);
 
     // * Calculating Values for Execution of Positions to be open by ETH * //
     //Get the Current ETH Price from the Vault in 1e30
     const _acceptablePriceETH = await vault.getMaxPrice(
-      process.env.TESTNET_WETH
+      process.env.TESTNET_WETH,
     );
 
     //Converting the Acceptable Price to 1e18 for Calculation of ETH in USD
     const _acceptablePriceETH1e18 = ethers.BigNumber.from(
-      _acceptablePriceETH
+      _acceptablePriceETH,
     ).div(ethers.BigNumber.from(10).pow(12));
 
     // Calculate amount of ETH for 10 USD
@@ -75,7 +75,7 @@ describe("GMXFactory", async function () {
 
     //Get the Current BTC Price from the Vault in 1e30
     const _acceptablePriceBTC = await vault.getMaxPrice(
-      process.env.TESTNET_WBTC
+      process.env.TESTNET_WBTC,
     );
 
     // Adjust the Prices by 0.3% for Acceptable Price for Long and Short
@@ -130,7 +130,7 @@ describe("GMXFactory", async function () {
         minOut,
         _sizeDelta,
         _acceptablePriceLongETH,
-        { value: value }
+        { value: value },
       );
     await creatingPositionTx.wait(10); // Wait for 10 blocks confirmations
 
@@ -147,7 +147,7 @@ describe("GMXFactory", async function () {
     // Get the number of positions for the deployer
     const positionId = await gmxFactory.indexedPositions(
       deployer.address,
-      positions
+      positions,
     );
 
     // Assert that the positionId is not Empty
@@ -174,7 +174,7 @@ describe("GMXFactory", async function () {
     // Get the number of positions for the deployer
     const positionId = await gmxFactory.indexedPositions(
       deployer.address,
-      positions
+      positions,
     );
 
     const closeTx = await gmxFactory.closePosition(
@@ -182,7 +182,7 @@ describe("GMXFactory", async function () {
       [process.env.TESTNET_WETH],
       _acceptablePriceLongETH,
       true,
-      { value: value }
+      { value: value },
     );
     await closeTx.wait(5);
   });
@@ -208,7 +208,7 @@ describe("GMXFactory", async function () {
         minOut,
         _sizeDelta,
         _acceptablePriceShortETH,
-        { value: value }
+        { value: value },
       );
     await creatingPositionTx.wait(10); // Wait for 10 blocks confirmations
 
@@ -233,7 +233,7 @@ describe("GMXFactory", async function () {
     // Get the number of positions for the deployer
     const positionId = await gmxFactory.indexedPositions(
       deployer.address,
-      positions
+      positions,
     );
 
     const closeTx = await gmxFactory.closePosition(
@@ -241,7 +241,7 @@ describe("GMXFactory", async function () {
       [process.env.TESTNET_WETH],
       _acceptablePriceShortETH,
       true,
-      { value: value }
+      { value: value },
     );
     await closeTx.wait(5);
   });
@@ -266,7 +266,7 @@ describe("GMXFactory", async function () {
         minOut,
         _sizeDelta,
         _acceptablePriceLongBTC,
-        { value: valueForEth }
+        { value: valueForEth },
       );
     await creatingPositionTx.wait(10); // Wait for 10 blocks confirmations
 
@@ -291,7 +291,7 @@ describe("GMXFactory", async function () {
     // Get the number of positions for the deployer
     const positionId = await gmxFactory.indexedPositions(
       deployer.address,
-      positions
+      positions,
     );
 
     const closeTx = await gmxFactory.closePosition(
@@ -299,7 +299,7 @@ describe("GMXFactory", async function () {
       [process.env.TESTNET_WBTC],
       _acceptablePriceLongBTC,
       false,
-      { value: value }
+      { value: value },
     );
     await closeTx.wait(5); // Wait for 5 blocks confirmations
   });
@@ -324,7 +324,7 @@ describe("GMXFactory", async function () {
         minOut,
         _sizeDelta,
         _acceptablePriceShortBTC,
-        { value: valueForEth }
+        { value: valueForEth },
       );
     await creatingPositionTx.wait(10); // Wait for 10 blocks confirmations
 
@@ -349,7 +349,7 @@ describe("GMXFactory", async function () {
     // Get the number of positions for the deployer
     const positionId = await gmxFactory.indexedPositions(
       deployer.address,
-      positions
+      positions,
     );
 
     const closeTx = await gmxFactory.closePosition(
@@ -357,7 +357,7 @@ describe("GMXFactory", async function () {
       [process.env.TESTNET_WBTC],
       _acceptablePriceShortBTC,
       false,
-      { value: value }
+      { value: value },
     );
     await closeTx.wait(5); // Wait for 5 blocks confirmations
   });
