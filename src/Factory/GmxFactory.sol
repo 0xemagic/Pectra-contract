@@ -319,4 +319,14 @@ contract GMXFactory {
    function getPositionOwner(bytes32 _positionId) external view returns(address){
       return positionOwners[_positionId];
    }
+
+   /**
+    * @dev Get the position adapter associated with a given position ID.
+    *
+    * @param _positionId The ID of the position to query.
+    * @return An adapter associated with the position ID.
+    */
+   function getPositionAdapter(bytes32 _positionId) external view returns(address){
+      return positionAdapters[_positionId];
+   }
 }

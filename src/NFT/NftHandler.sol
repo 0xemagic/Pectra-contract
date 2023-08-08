@@ -2,14 +2,15 @@
 pragma solidity ^0.8.13;
 
 // Import the PositionNFT contract
-import "./PositionNFT.sol";
-import "../Factory/GMXFactory.sol";
-import "../Adapters/GMXAdapter.sol";
+import "./IPositionNFT.sol";
+import "../GMX/interfaces/IGMXFactory.sol";
+import "../GMX/interfaces/IGMXAdapter.sol";
 
 contract NFTHandler {
-    PositionNFT public positionNFTContract;
-    GMXFactory public gmxFactoryContract;
-    GMXAdapter public gmxAdapterContract;
+    IPositionNFT public positionNFTContract;
+    IGMXFactory public gmxFactoryContract;
+    IGMXAdapter public gmxAdapterContract;
+    address public owner;
 
     // Mapping to store PositionIds against TokenId
     mapping(uint256 => bytes32[]) private _tokenIds;
@@ -25,15 +26,29 @@ contract NFTHandler {
     event NftBurned(uint256 indexed tokenId);
     event NftTransferred(uint256 indexed tokenId, address indexed newOwner);
 
+    // Modifier to restrict access to only the factory (owner) that mints NFTs.
+    modifier onlyOwner() {
+        require(owner == msg.sender, "PositionNFT: NOT_OWNER");
+        _;
+    }
+
     /**
      * @dev Constructor to set the PositionNFT contract address.
      *
-     * @param _positionNFTAddress The address of the PositionNFT contract.
      * @param _gmxFactoryContract The address of the PositionNFT contract.
      */
-    constructor(address _positionNFTAddress, address _gmxFactoryContract) {
-        positionNFTContract = PositionNFT(_positionNFTAddress);
-        gmxFactoryContract = GMXFactory(_gmxFactoryContract);
+    constructor(address _gmxFactoryContract) {
+        gmxFactoryContract = IGMXFactory(_gmxFactoryContract);
+        owner = msg.sender;
+    }
+
+    /**
+     * @dev Function to set the PositionNFT contract address.
+     *
+     * @param _positionNFTAddress The address of the PositionNFT contract.
+     */
+    function setPositionNft(address _positionNFTAddress) public onlyOwner {
+        positionNFTContract = IPositionNFT(_positionNFTAddress);
     }
 
     /**
@@ -54,7 +69,7 @@ contract NFTHandler {
 
         uint256 tokenId;    
         // Mint the NFT using the PositionNFT contract
-        require(tokenId = positionNFTContract.mint(to, positionIDs), "NFT HANDLER: Error while minting the NFT");
+        tokenId = positionNFTContract.mint(to, positionIDs);
 
         for (uint256 i = 0; i < positionIDs.length; i++){
             _mintedPositionIds[positionIDs[i]] = true;
@@ -85,7 +100,7 @@ contract NFTHandler {
         }
 
         // Burn the NFT using the PositionNFT contract
-        require(positionNFTContract.burn(tokenId));
+        positionNFTContract.burn(tokenId);
 
         // Emit an event to indicate that the NFT has been burned
         emit NftBurned(tokenId);
@@ -112,13 +127,11 @@ contract NFTHandler {
         }
 
         // Transfer the NFT using the PositionNFT contract
-        bool success = positionNFTContract.safeTransferFrom(msg.sender, to, tokenId);
-        if (success) {
-            for (uint256 i = 0; i < positionIds.length; i++) {
-                address gmxAdapter = gmxFactoryContract.getPositionAdapter(positionIds[i]);
-                require(_changeOwnerOfAdapter(gmxAdapter, to) == true, "NFT HANDLER: Error while changing the position owner from adapter");
-                emit NftTransferred(tokenId, to);
-            }
+        positionNFTContract.safeTransferFrom(msg.sender, to, tokenId);
+        for (uint256 i = 0; i < positionIds.length; i++) {
+            address gmxAdapter = gmxFactoryContract.getPositionAdapter(positionIds[i]);
+            require(_changeOwnerOfAdapter(gmxAdapter, to) == true, "NFT HANDLER: Error while changing the position owner from adapter");
+            emit NftTransferred(tokenId, to);
         }
     }
 
@@ -129,9 +142,18 @@ contract NFTHandler {
      * @param _newOwner The address of the new owner of that position.
      */
     function _changeOwnerOfAdapter(address _gmxAdapter, address _newOwner) internal returns (bool) {
-        gmxAdapterContract = GMXAdapter(_gmxAdapter);
-        require(gmxAdapterContract.changePositonOwner(_newOwner));
+        gmxAdapterContract = IGMXAdapter(_gmxAdapter);
+        gmxAdapterContract.changePositonOwner(_newOwner);
         return true;
     }
 
+    /**
+     * @dev Set the base URI for the NFT contract.
+     *
+     * @param _uri The new base URI for the NFT contract.
+     */
+    function setBaseUri (string memory _uri) external returns (bool) {
+        positionNFTContract.setBaseURI(_uri);
+        return true;
+    }
 }
