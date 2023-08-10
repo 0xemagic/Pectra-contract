@@ -400,8 +400,16 @@ contract GMXFactory {
             );
             IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
             address collateral = _nftData._pathLong[0];
-            IERC20(collateral).transferFrom(msg.sender, adapter, _nftData._amountIn);
-            IGMXAdapter(adapter).approve(collateral, ROUTER, _nftData._amountIn);
+            IERC20(collateral).transferFrom(
+                msg.sender,
+                adapter,
+                _nftData._amountIn
+            );
+            IGMXAdapter(adapter).approve(
+                collateral,
+                ROUTER,
+                _nftData._amountIn
+            );
             longPositionId = IGMXAdapter(adapter).createIncreasePosition{
                 value: msg.value / 2
             }(
@@ -435,8 +443,16 @@ contract GMXFactory {
             );
             IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
             address collateral = _nftData._pathShort[0];
-            IERC20(collateral).transferFrom(msg.sender, adapter, _nftData._amountIn);
-            IGMXAdapter(adapter).approve(collateral, ROUTER, _nftData._amountIn);
+            IERC20(collateral).transferFrom(
+                msg.sender,
+                adapter,
+                _nftData._amountIn
+            );
+            IGMXAdapter(adapter).approve(
+                collateral,
+                ROUTER,
+                _nftData._amountIn
+            );
             shortPositionId = IGMXAdapter(adapter).createIncreasePosition{
                 value: msg.value / 2
             }(

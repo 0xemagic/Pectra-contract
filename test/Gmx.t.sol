@@ -285,7 +285,6 @@ contract GMXFactoryTest is Test {
     }
 
     function testBurnNft() public {
-
         uint256 _tokenId = nftHandler.mintNFT(positionIDs, user);
 
         uint256 initialTotalSupply = positionNft.totalSupply();
