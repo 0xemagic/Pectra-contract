@@ -380,7 +380,7 @@ contract GMXFactory {
      *
      * @param _nftData The token data for the position.
      */
-    function createNFT(
+    function openPositions(
         nftData memory _nftData
     ) external payable returns (bytes32[2] memory) {
         bytes32 longPositionId;
@@ -427,6 +427,8 @@ contract GMXFactory {
             indexedPositions[msg.sender][
                 positions[msg.sender]
             ] = longPositionId;
+
+            emit LongPositionOpened(longPositionId, msg.sender, adapter);
         }
 
         {
@@ -470,6 +472,8 @@ contract GMXFactory {
             indexedPositions[msg.sender][
                 positions[msg.sender]
             ] = shortPositionId;
+
+            emit ShortPositionOpened(shortPositionId, msg.sender, adapter);
         }
 
         return [longPositionId, shortPositionId];
