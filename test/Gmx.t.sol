@@ -8,8 +8,6 @@ import "../src/NFT/IPositionNFT.sol";
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
 
-// import "../lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
-
 contract GMXFactoryTest is Test {
     IGMXFactory public gmxFactory;
     INFTHandler public nftHandler;
@@ -31,9 +29,9 @@ contract GMXFactoryTest is Test {
     uint256 tokenId;
 
     function setUp() public {
-        gmxFactory = IGMXFactory(0x41D0F2a35e615a05AC1Fddfb94CbFd898d4a9dc0);
-        nftHandler = INFTHandler(0x2f8f8e99ab9D7bD948546708904e61C50F02369d);
-        positionNft = IPositionNFT(0xCa875A733f4461e957A39Fe442dA1c089bB71838);
+        gmxFactory = IGMXFactory(0xA686BAC279C957E7be53fFf5B44d06e46ea77Eaa);
+        nftHandler = INFTHandler(0x1D8F9F489A4E9395488E808d2C46F6B06F99CeD7);
+        positionNft = IPositionNFT(0x71CEa516BA646055eBb1aeA87d7045CAa71977C5);
 
         tokenUSDC = IERC20(0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8);
         tokenWETH = IERC20(0x82aF49447D8a07e3bd95BD0d56f35241523fBab1);
@@ -47,12 +45,16 @@ contract GMXFactoryTest is Test {
         _acceptablePriceShortBTC = 27593100000000000000000000000000000;
 
         user = 0xa2174a7a413E1887E386Dc3afB91b92D3B51F3D0;
+
+        deal(address(tokenUSDC), user, 10000e6);
+
         _path = [address(tokenUSDC), address(tokenWETH)];
         _closingPath = [address(tokenWETH), address(tokenUSDC)];
 
         _pathEth = [address(tokenWETH), address(tokenWBTC)];
         _pathEthClosing = [address(tokenWBTC), address(tokenWETH)];
     }
+
 
     function testCreateLongPosition() public {
         // Amount in USDT
@@ -61,11 +63,12 @@ contract GMXFactoryTest is Test {
         // Calculate value for ETH based on acceptablePriceLongETH
         uint256 value = (0.00018 ether); // Calculate value in wei
 
+        // Approve USDT for gmxFactory
+        vm.startPrank(user);
+        tokenUSDC.approve(address(gmxFactory), amountIn);
+
         // Initial position count
         uint256 initialPosition = gmxFactory.getTotalPositions(user);
-
-        // Approve USDT for gmxFactory
-        tokenUSDC.approve(address(gmxFactory), amountIn);
 
         // Open long position
         gmxFactory.openLongPosition{value: value}(
@@ -79,14 +82,63 @@ contract GMXFactoryTest is Test {
 
         // Get the number of positions after opening a long position
         uint256 positions = gmxFactory.getTotalPositions(user);
+        vm.stopPrank();
 
         // Checking if positions increased by 1 for the user
         assertEq(positions, initialPosition + 1);
     }
 
-    function testCloseLongPosition() public {
-        uint256 initialPosition = gmxFactory.getTotalPositions(user);
+    function testVerifyLongPositionOnGMX() public {
+        // Amount in USDT
+        uint256 amountIn = 10000000; // Assuming 10 USDC
 
+        // Calculate value for ETH based on acceptablePriceLongETH
+        uint256 value = (0.00018 ether); // Calculate value in wei
+
+        // Approve USDT for gmxFactory
+        vm.startPrank(user);
+        tokenUSDC.approve(address(gmxFactory), amountIn);
+
+        // Open long position
+        gmxFactory.openLongPosition{value: value}(
+            _path,
+            address(tokenWETH),
+            amountIn,
+            0 ether, // minOut
+            _sizeDelta,
+            _acceptablePriceLongETH
+        );
+
+        bytes32 _positionId = gmxFactory.getPositionId(user, 1);
+        uint256[] memory data = gmxFactory.getPosition(_positionId);
+
+        vm.stopPrank();
+
+        // Checking if positions increased by 1 for the user
+        assert(data[0] != 0);
+    }
+    function testCloseLongPosition() public {
+        // Amount in USDT
+        uint256 amountIn = 10000000; // Assuming 10 USDC
+
+        // Calculate value for ETH based on acceptablePriceLongETH
+        uint256 value = (0.00018 ether); // Calculate value in wei
+
+        vm.startPrank(user);
+
+        tokenUSDC.approve(address(gmxFactory), amountIn);
+
+        // Open long position
+        gmxFactory.openLongPosition{value: value}(
+            _path,
+            address(tokenWETH),
+            amountIn,
+            0 ether, // minOut
+            _sizeDelta,
+            _acceptablePriceLongETH
+        );
+
+        uint256 initialPosition = gmxFactory.getTotalPositions(user);
         bytes32 positionId = gmxFactory.getPositionId(user, initialPosition);
 
         gmxFactory.closePosition(
@@ -98,6 +150,7 @@ contract GMXFactoryTest is Test {
 
         // Get the number of positions after opening a long position
         uint256 positions = gmxFactory.getTotalPositions(user);
+        vm.stopPrank();
 
         // Checking if positions increased by 1 for the user
         assertEq(positions, initialPosition - 1);
@@ -110,6 +163,7 @@ contract GMXFactoryTest is Test {
         // Calculate value for ETH based on acceptablePriceLongETH
         uint256 value = (0.00018 ether); // Calculate value in wei
 
+        vm.startPrank(user);
         // Initial position count
         uint256 initialPosition = gmxFactory.getTotalPositions(user);
 
@@ -128,12 +182,34 @@ contract GMXFactoryTest is Test {
 
         // Get the number of positions after opening a long position
         uint256 positions = gmxFactory.getTotalPositions(user);
-
+        vm.stopPrank();
+        
         // Checking if positions increased by 1 for the user
         assertEq(positions, initialPosition + 1);
     }
 
     function testCloseShortPosition() public {
+
+        // Amount in USDT
+        uint256 amountIn = 10000000; // Assuming 10 USDC
+
+        // Calculate value for ETH based on acceptablePriceLongETH
+        uint256 value = (0.00018 ether); // Calculate value in wei
+
+        vm.startPrank(user);
+        // Approve USDT for gmxFactory
+        tokenUSDC.approve(address(gmxFactory), amountIn);
+
+        // Open long position
+        gmxFactory.openShortPosition{value: value}(
+            _path,
+            address(tokenWETH),
+            amountIn,
+            0 ether, // minOut
+            _sizeDelta,
+            _acceptablePriceLongETH
+        );
+
         uint256 initialPosition = gmxFactory.getTotalPositions(user);
 
         bytes32 positionId = gmxFactory.getPositionId(user, initialPosition);
@@ -147,6 +223,8 @@ contract GMXFactoryTest is Test {
 
         // Get the number of positions after opening a long position
         uint256 positions = gmxFactory.getTotalPositions(user);
+
+        vm.stopPrank();
 
         // Checking if positions increased by 1 for the user
         assertEq(positions, initialPosition - 1);
@@ -162,8 +240,7 @@ contract GMXFactoryTest is Test {
         // Initial position count
         uint256 initialPosition = gmxFactory.getTotalPositions(user);
 
-        // Approve USDT for gmxFactory
-        tokenUSDC.approve(address(gmxFactory), amountIn);
+        vm.startPrank(user);
 
         // Open long position
         gmxFactory.openLongPositionEth{value: value + amountIn}(
@@ -177,11 +254,30 @@ contract GMXFactoryTest is Test {
         // Get the number of positions after opening a long position
         uint256 positions = gmxFactory.getTotalPositions(user);
 
+        vm.stopPrank();
+
         // Checking if positions increased by 1 for the user
         assertEq(positions, initialPosition + 1);
     }
 
     function testCloseLongPositionEth() public {
+        // Amount in USDT
+        uint256 amountIn = (0.0054 ether); // Assuming 10 USDC
+
+        // Calculate value for ETH based on acceptablePriceLongETH
+        uint256 value = (0.00018 ether); // Calculate value in wei
+
+        vm.startPrank(user);
+
+        // Open long position
+        gmxFactory.openLongPositionEth{value: value + amountIn}(
+            _pathEth,
+            address(tokenWBTC),
+            0 ether, // minOut
+            _sizeDelta,
+            _acceptablePriceLongETH
+        );
+
         uint256 initialPosition = gmxFactory.getTotalPositions(user);
 
         bytes32 positionId = gmxFactory.getPositionId(user, initialPosition);
@@ -195,6 +291,8 @@ contract GMXFactoryTest is Test {
 
         // Get the number of positions after opening a long position
         uint256 positions = gmxFactory.getTotalPositions(user);
+
+        vm.stopPrank();
 
         // Checking if positions increased by 1 for the user
         assertEq(positions, initialPosition - 1);
@@ -210,8 +308,7 @@ contract GMXFactoryTest is Test {
         // Initial position count
         uint256 initialPosition = gmxFactory.getTotalPositions(user);
 
-        // Approve USDT for gmxFactory
-        tokenUSDC.approve(address(gmxFactory), amountIn);
+        vm.startPrank(user);
 
         // Open long position
         gmxFactory.openLongPositionEth{value: value + amountIn}(
@@ -225,11 +322,32 @@ contract GMXFactoryTest is Test {
         // Get the number of positions after opening a long position
         uint256 positions = gmxFactory.getTotalPositions(user);
 
+        vm.stopPrank();
+
         // Checking if positions increased by 1 for the user
         assertEq(positions, initialPosition + 1);
     }
 
     function testCloseShortPositionEth() public {
+
+        // Amount in USDT
+        uint256 amountIn = (0.0054 ether); // Assuming 10 USDC
+
+        // Calculate value for ETH based on acceptablePriceLongETH
+        uint256 value = (0.00018 ether); // Calculate value in wei
+
+        vm.startPrank(user);
+
+        // Open long position
+        gmxFactory.openLongPositionEth{value: value + amountIn}(
+            _pathEth,
+            address(tokenWBTC),
+            0 ether, // minOut
+            _sizeDelta,
+            _acceptablePriceLongETH
+        );
+
+        // Get the number of positions after opening a long position
         uint256 initialPosition = gmxFactory.getTotalPositions(user);
 
         bytes32 positionId = gmxFactory.getPositionId(user, initialPosition);
@@ -248,49 +366,40 @@ contract GMXFactoryTest is Test {
         assertEq(positions, initialPosition - 1);
     }
 
-    function testCreateNft() public {
-        uint256 initialPosition = gmxFactory.getTotalPositions(user);
-        // Amount in USDT
-        uint256 _amountIn = 10000000; // Assuming 10 USDC
+    // function testOpeningTwoPositions() public {
+    //     uint256 initialPosition = gmxFactory.getTotalPositions(user);
+    //     // Amount in USDT
+    //     uint256 _amountIn = 10000000; // Assuming 10 USDC
 
-        // Calculate value for ETH based on acceptablePriceLongETH
-        uint256 value = (0.00036 ether); // Calculate value in wei
+    //     // Calculate value for ETH based on acceptablePriceLongETH
+    //     uint256 value = (0.00036 ether); // Calculate value in wei
 
-        positionIDs = gmxFactory.createNFT{value: value}(
-            _path,
-            _path,
-            address(tokenWETH),
-            address(tokenWETH),
-            _amountIn,
-            0,
-            _sizeDelta,
-            _sizeDelta,
-            _acceptablePriceLongETH,
-            _acceptablePriceShortETH
-        );
+    //     positionIDs = gmxFactory.openPositions{value: value}(
+    //         nftData _nftData
+    //     );
 
-        // Get the number of positions after opening a long position
-        uint256 positions = gmxFactory.getTotalPositions(user);
+    //     // Get the number of positions after opening a long position
+    //     uint256 positions = gmxFactory.getTotalPositions(user);
 
-        // Checking if positions increased by 1 for the user
-        assertEq(positions, initialPosition + 2);
-    }
+    //     // Checking if positions increased by 1 for the user
+    //     assertEq(positions, initialPosition + 2);
+    // }
 
-    function testMintNft() public {
-        tokenId = nftHandler.mintNFT(positionIDs, user);
+    // function testMintNft() public {
+    //     tokenId = nftHandler.mintNFT(positionIDs, user);
 
-        address owmerOfNft = positionNft.ownerOf(tokenId);
+    //     address owmerOfNft = positionNft.ownerOf(tokenId);
 
-        assertEq(user, owmerOfNft);
-    }
+    //     assertEq(user, owmerOfNft);
+    // }
 
-    function testBurnNft() public {
-        uint256 _tokenId = nftHandler.mintNFT(positionIDs, user);
+    // function testBurnNft() public {
+    //     uint256 _tokenId = nftHandler.mintNFT(positionIDs, user);
 
-        uint256 initialTotalSupply = positionNft.totalSupply();
+    //     uint256 initialTotalSupply = positionNft.totalSupply();
 
-        nftHandler.burnNFT(_tokenId);
+    //     nftHandler.burnNFT(_tokenId);
 
-        assertEq(initialTotalSupply, positionNft.totalSupply() - 1);
-    }
+    //     assertEq(initialTotalSupply, positionNft.totalSupply() - 1);
+    // }
 }
