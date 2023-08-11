@@ -55,7 +55,6 @@ contract GMXFactoryTest is Test {
         _pathEthClosing = [address(tokenWBTC), address(tokenWETH)];
     }
 
-
     function testCreateLongPosition() public {
         // Amount in USDT
         uint256 amountIn = 10000000; // Assuming 10 USDC
@@ -117,6 +116,7 @@ contract GMXFactoryTest is Test {
         // Checking if positions increased by 1 for the user
         assert(data[0] != 0);
     }
+
     function testCloseLongPosition() public {
         // Amount in USDT
         uint256 amountIn = 10000000; // Assuming 10 USDC
@@ -183,13 +183,12 @@ contract GMXFactoryTest is Test {
         // Get the number of positions after opening a long position
         uint256 positions = gmxFactory.getTotalPositions(user);
         vm.stopPrank();
-        
+
         // Checking if positions increased by 1 for the user
         assertEq(positions, initialPosition + 1);
     }
 
     function testCloseShortPosition() public {
-
         // Amount in USDT
         uint256 amountIn = 10000000; // Assuming 10 USDC
 
@@ -329,7 +328,6 @@ contract GMXFactoryTest is Test {
     }
 
     function testCloseShortPositionEth() public {
-
         // Amount in USDT
         uint256 amountIn = (0.0054 ether); // Assuming 10 USDC
 
