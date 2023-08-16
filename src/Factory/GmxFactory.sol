@@ -55,6 +55,19 @@ contract GMXFactory {
     );
     event PositionClosed(bytes32 indexed positionId);
 
+    struct nftData {
+        address[] _pathLong;
+        address[] _pathShort;
+        address _indexTokenLong;
+        address _indexTokenShort;
+        uint256 _amountIn;
+        uint256 _minOut;
+        uint256 _sizeDeltaLong;
+        uint256 _sizeDeltaShort;
+        uint256 _acceptablePriceLong;
+        uint256 _acceptablePriceShort;
+    }
+
     /**
      * @dev Constructor to initialize the GMXFactory contract.
      *
@@ -363,6 +376,110 @@ contract GMXFactory {
     }
 
     /**
+     * @dev Create an NFT representing a pair of long and short positions.
+     *
+     * @param _nftData The token data for the position.
+     */
+    function openPositions(
+        nftData memory _nftData
+    ) external payable returns (bytes32[2] memory) {
+        bytes32 longPositionId;
+        bytes32 shortPositionId;
+
+        {
+            // Call the original `openLongPosition` function
+            bytes memory bytecode = type(GMXAdapter).creationCode;
+            address adapter;
+            assembly {
+                adapter := create(0, add(bytecode, 32), mload(bytecode))
+            }
+            IGMXAdapter(adapter).initialize(
+                ROUTER,
+                POSITION_ROUTER,
+                msg.sender
+            );
+            IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
+            address collateral = _nftData._pathLong[0];
+            IERC20(collateral).transferFrom(
+                msg.sender,
+                adapter,
+                _nftData._amountIn
+            );
+            IGMXAdapter(adapter).approve(
+                collateral,
+                ROUTER,
+                _nftData._amountIn
+            );
+            longPositionId = IGMXAdapter(adapter).createIncreasePosition{
+                value: msg.value / 2
+            }(
+                _nftData._pathLong,
+                _nftData._indexTokenLong,
+                _nftData._amountIn,
+                _nftData._minOut,
+                _nftData._sizeDeltaLong,
+                true,
+                _nftData._acceptablePriceLong
+            );
+            positionAdapters[longPositionId] = adapter;
+            positionOwners[longPositionId] = msg.sender;
+            positions[msg.sender] += 1;
+            indexedPositions[msg.sender][
+                positions[msg.sender]
+            ] = longPositionId;
+
+            emit LongPositionOpened(longPositionId, msg.sender, adapter);
+        }
+
+        {
+            // Call the original `openShortPosition` function
+            bytes memory bytecode = type(GMXAdapter).creationCode;
+            address adapter;
+            assembly {
+                adapter := create(0, add(bytecode, 32), mload(bytecode))
+            }
+            IGMXAdapter(adapter).initialize(
+                ROUTER,
+                POSITION_ROUTER,
+                msg.sender
+            );
+            IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
+            address collateral = _nftData._pathShort[0];
+            IERC20(collateral).transferFrom(
+                msg.sender,
+                adapter,
+                _nftData._amountIn
+            );
+            IGMXAdapter(adapter).approve(
+                collateral,
+                ROUTER,
+                _nftData._amountIn
+            );
+            shortPositionId = IGMXAdapter(adapter).createIncreasePosition{
+                value: msg.value / 2
+            }(
+                _nftData._pathShort,
+                _nftData._indexTokenShort,
+                _nftData._amountIn,
+                _nftData._minOut,
+                _nftData._sizeDeltaShort,
+                false,
+                _nftData._acceptablePriceShort
+            );
+            positionAdapters[shortPositionId] = adapter;
+            positionOwners[shortPositionId] = msg.sender;
+            positions[msg.sender] += 1;
+            indexedPositions[msg.sender][
+                positions[msg.sender]
+            ] = shortPositionId;
+
+            emit ShortPositionOpened(shortPositionId, msg.sender, adapter);
+        }
+
+        return [longPositionId, shortPositionId];
+    }
+
+    /**
      * @dev Get the position owner associated with a given position ID.
      *
      * @param _positionId The ID of the position to query.
@@ -384,5 +501,31 @@ contract GMXFactory {
         bytes32 _positionId
     ) external view returns (address) {
         return positionAdapters[_positionId];
+    }
+
+    /**
+     * @dev Get the total number of positions associated with a given address.
+     *
+     * @param _address The address of the user to query.
+     * @return Number of IDs associated with the address.
+     */
+    function getTotalPositions(
+        address _address
+    ) external view returns (uint256) {
+        return positions[_address];
+    }
+
+    /**
+     * @dev Get the positionID associated with a given address on index.
+     *
+     * @param _address The address of the user to query.
+     * @param _index The index of the position to query.
+     * @return Position ID associated with the address on that index.
+     */
+    function getPositionId(
+        address _address,
+        uint256 _index
+    ) external view returns (bytes32) {
+        return indexedPositions[_address][_index];
     }
 }

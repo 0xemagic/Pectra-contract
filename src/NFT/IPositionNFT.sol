@@ -76,4 +76,11 @@ interface IPositionNFT {
      * @param _tokenId The tokenId whose owner is to be checked.
      */
     function ownerOf(uint256 _tokenId) external view returns (address);
+
+    /**
+     * @dev Check total supply of the NFT.
+     *
+     * @return Total Supply of the NFT.
+     */
+    function totalSupply() external view returns (uint256);
 }

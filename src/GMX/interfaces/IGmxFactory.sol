@@ -129,4 +129,54 @@ interface IGMXFactory {
     function getPositionOwner(
         bytes32 _positionId
     ) external view returns (address);
+
+    /**
+     * @dev Get the total number of positions associated with a given address.
+     *
+     * @param _address The address of the user to query.
+     * @return Number of IDs associated with the address.
+     */
+    function getTotalPositions(
+        address _address
+    ) external view returns (uint256);
+
+    /**
+     * @dev Create an NFT representing a pair of long and short positions.
+     *
+     * @param _pathLong The token path for the long position.
+     * @param _pathShort The token path for the short position.
+     * @param _indexTokenLong The index token for the long position.
+     * @param _indexTokenShort The index token for the short position.
+     * @param _amountIn The amount of tokens to invest.
+     * @param _minOut The minimum acceptable amount of output tokens.
+     * @param _sizeDeltaLong The amount of leverage taken from the exchange for the long position.
+     * @param _sizeDeltaShort The amount of leverage taken from the exchange for the short position.
+     * @param _acceptablePriceLong The acceptable price for the long position.
+     * @param _acceptablePriceShort The acceptable price for the short position.
+     * @return Position IDs array.
+     */
+    function createNFT(
+        address[] memory _pathLong,
+        address[] memory _pathShort,
+        address _indexTokenLong,
+        address _indexTokenShort,
+        uint256 _amountIn,
+        uint256 _minOut,
+        uint256 _sizeDeltaLong,
+        uint256 _sizeDeltaShort,
+        uint256 _acceptablePriceLong,
+        uint256 _acceptablePriceShort
+    ) external payable returns (bytes32[] memory);
+
+    /**
+     * @dev Get the positionID associated with a given address on index.
+     *
+     * @param _address The address of the user to query.
+     * @param _index The index of the position to query.
+     * @return Position ID associated with the address on that index.
+     */
+    function getPositionId(
+        address _address,
+        uint256 _index
+    ) external view returns (bytes32);
 }
