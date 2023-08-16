@@ -7,11 +7,11 @@ import "../src/NFT/INftHandler.sol";
 import "../src/NFT/IPositionNFT.sol";
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
-    
+
 /**
-* @title GMXFactoryTest
-* @dev Test contract for GMX Factory functionality
-*/
+ * @title GMXFactoryTest
+ * @dev Test contract for GMX Factory functionality
+ */
 contract GMXFactoryTest is Test {
     IGMXFactory public gmxFactory;
     INFTHandler public nftHandler;
