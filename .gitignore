@@ -9,6 +9,7 @@ typechain-types
 # Hardhat files
 cache
 artifacts
+artifacts/
 cache/
 out/
 cache_hardhat
