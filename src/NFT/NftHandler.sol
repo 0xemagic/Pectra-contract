@@ -191,7 +191,7 @@ contract NFTHandler {
      *
      * @param _uri The new base URI for the NFT contract.
      */
-    function setBaseUri(string memory _uri) external returns (bool) {
+    function setBaseUri(string memory _uri) external onlyOwner returns (bool) {
         positionNFTContract.setBaseURI(_uri);
         return true;
     }
