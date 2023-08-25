@@ -5,6 +5,19 @@ import "./IERC20.sol";
 import "./IRouter.sol";
 import "./IPositionRouter.sol";
 
+struct nftData {
+    address[] _pathLong;
+    address[] _pathShort;
+    address _indexTokenLong;
+    address _indexTokenShort;
+    uint256 _amountIn;
+    uint256 _minOut;
+    uint256 _sizeDeltaLong;
+    uint256 _sizeDeltaShort;
+    uint256 _acceptablePriceLong;
+    uint256 _acceptablePriceShort;
+}
+
 /**
  * @dev Interface of the GMX Factory contract.
  */
@@ -143,30 +156,11 @@ interface IGMXFactory {
     /**
      * @dev Create an NFT representing a pair of long and short positions.
      *
-     * @param _pathLong The token path for the long position.
-     * @param _pathShort The token path for the short position.
-     * @param _indexTokenLong The index token for the long position.
-     * @param _indexTokenShort The index token for the short position.
-     * @param _amountIn The amount of tokens to invest.
-     * @param _minOut The minimum acceptable amount of output tokens.
-     * @param _sizeDeltaLong The amount of leverage taken from the exchange for the long position.
-     * @param _sizeDeltaShort The amount of leverage taken from the exchange for the short position.
-     * @param _acceptablePriceLong The acceptable price for the long position.
-     * @param _acceptablePriceShort The acceptable price for the short position.
-     * @return Position IDs array.
+     * @param _nftData The token data for the position.
      */
-    function createNFT(
-        address[] memory _pathLong,
-        address[] memory _pathShort,
-        address _indexTokenLong,
-        address _indexTokenShort,
-        uint256 _amountIn,
-        uint256 _minOut,
-        uint256 _sizeDeltaLong,
-        uint256 _sizeDeltaShort,
-        uint256 _acceptablePriceLong,
-        uint256 _acceptablePriceShort
-    ) external payable returns (bytes32[] memory);
+    function openPositions(
+        nftData memory _nftData
+    ) external payable returns (bytes32[2] memory);
 
     /**
      * @dev Get the positionID associated with a given address on index.

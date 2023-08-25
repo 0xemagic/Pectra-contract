@@ -14,6 +14,18 @@ interface IERC20 {
     function balanceOf(address account) external view returns (uint256);
 
     /**
+     * @dev Returns the remaining number of tokens that `spender` will be
+     * allowed to spend on behalf of `owner` through {transferFrom}. This is
+     * zero by default.
+     *
+     * This value changes when {approve} or {transferFrom} are called.
+     */
+    function allowance(
+        address owner,
+        address spender
+    ) external view returns (uint256);
+
+    /**
      * @dev Transfer an amount of tokens to a specified recipient.
      *
      * @param to The address of the recipient to transfer tokens to.

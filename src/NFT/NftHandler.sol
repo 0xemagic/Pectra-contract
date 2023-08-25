@@ -13,13 +13,13 @@ contract NFTHandler {
     address public owner;
 
     // Mapping to store PositionIds against TokenId
-    mapping(uint256 => bytes32[]) private _tokenIds;
+    mapping(uint256 => bytes32[]) public _tokenIds;
 
     // Mapping to store which PositionId has been used for minting the NFT
-    mapping(bytes32 => bool) private _mintedPositionIds;
+    mapping(bytes32 => bool) public _mintedPositionIds;
 
     // Mapping that stores all the PositonIds against a TokenId individually
-    mapping(bytes32 => uint256) private _mappedTokenId;
+    mapping(bytes32 => uint256) public _mappedTokenId;
 
     // Events
     event NftMinted(
@@ -191,7 +191,7 @@ contract NFTHandler {
      *
      * @param _uri The new base URI for the NFT contract.
      */
-    function setBaseUri(string memory _uri) external returns (bool) {
+    function setBaseUri(string memory _uri) external onlyOwner returns (bool) {
         positionNFTContract.setBaseURI(_uri);
         return true;
     }
