@@ -59,10 +59,6 @@ contract GMXFactory {
         address indexed adapter,
         bool isLong
     );
-    event nftCreated(
-        bytes32 indexed longPositionId,
-        bytes32 indexed shortPositionId
-    );
 
     struct nftData {
         address[] _pathLong;
