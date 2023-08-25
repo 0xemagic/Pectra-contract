@@ -344,7 +344,16 @@ contract GMXFactory {
             IGMXAdapter(adapter).closeFailedPosition(_path, msg.sender);
         }
 
-        (address[] memory path, address collateralToken, address indexToken, uint256 amountIn, uint256 minOut, uint256 sizeDelta, bool isLong, uint256 acceptablePrice) = IGMXAdapter(adapter).getPositionData();
+        (
+            address[] memory path,
+            address collateralToken,
+            address indexToken,
+            uint256 amountIn,
+            uint256 minOut,
+            uint256 sizeDelta,
+            bool isLong,
+            uint256 acceptablePrice
+        ) = IGMXAdapter(adapter).getPositionData();
         // Emit the PositionClosed event.
         emit PositionClosed(_positionId, msg.sender, adapter, isLong);
     }
