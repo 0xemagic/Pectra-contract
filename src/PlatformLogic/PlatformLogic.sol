@@ -2,6 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 error CanOnlyAddYourself();
 error Unavailable();
@@ -9,6 +10,7 @@ error NotAdmin();
 error WrongFeeAmount();
 error GivenZeroAddress();
 error TransactionFailed();
+error ExceedsAllowance();
 
 contract PlatformLogic {
     bytes32 constant ZERO_VALUE =
@@ -225,15 +227,14 @@ contract PlatformLogic {
         uint256 _amount,
         IERC20 _token
     ) internal notZeroAddress(_referrer) {
-        // edit the pendingWithdrawals mapping to contain to be
-        // pendingTokenWithdrawals
-        // mapping(address => uint256) public pendingWithdrawals;
         // add a withdrawTokenFee function
+        pendingTokenWithdrawals[_referrer][_token] += _amount;
+        emit PendingWithdrawal(_amount);
     }
 
     /// @notice lets user withdraw all the Eth fees that have been collected from refering
     /// @dev should be called from the frontend directly
-    function withdralEthFees() public {
+    function withdrawEthFees() public nonReentrant {
         uint256 _balance = pendingEthWithdrawals[msg.sender];
         (bool success, ) = payable(msg.sender).call{value: _balance}("");
         if (!success) revert TransactionFailed();
@@ -243,7 +244,7 @@ contract PlatformLogic {
 
     /// @notice lets user withdraw all the Token fees that have been collected from refering
     /// @dev should be called from the frontend directly
-    function withdralTokenFees(IERC20 _token) public {
+    function withdrawTokenFees(IERC20 _token) public nonReentrant {
         uint256 _balance = pendingTokenWithdrawals[msg.sender][_token];
         bool success = _token.transfer(msg.sender, _balance);
         if (!success) revert TransactionFailed();
@@ -253,7 +254,7 @@ contract PlatformLogic {
 
     /// @dev splits amount between stakers and treasury, and make calls to stakers contract and spectra treasury with the amount given
     /// @dev amount in % are managed from treasuryFeeSplit variable
-    function _splitBetweenStakersAndTreasury(uint256 _amount) internal {
+    function _splitBetweenStakersAndTreasuryEth(uint256 _amount) internal {
         // calculate % to be send to treasury
         uint256 _amountToBeSendToTreasury = calculateFees(
             _amount,
@@ -274,11 +275,40 @@ contract PlatformLogic {
         if (!_successStakers) revert TransactionFailed();
     }
 
+    /// @dev splits amount between stakers and treasury, and make calls to stakers contract and spectra treasury with the amount given
+    /// @dev amount in % are managed from treasuryFeeSplit variable
+    function _splitBetweenStakersAndTreasuryToken(
+        uint256 _amount,
+        IERC20 _tokenAddress
+    ) internal {
+        // calculate % to be send to treasury
+        uint256 _amountToBeSendToTreasury = calculateFees(
+            _amount,
+            treasuryFeeSplit
+        );
+
+        // send the amount to the Treasury
+        bool _successTreasury = _tokenAddress.transfer(
+            PectraTreasury,
+            _amountToBeSendToTreasury
+        );
+        if (!_successTreasury) revert TransactionFailed();
+
+        uint256 _amountToBeSendToStakers = _amount - _amountToBeSendToTreasury;
+
+        bool _successStakers = _tokenAddress.transfer(
+            PectraStakingContract,
+            _amountToBeSendToStakers
+        );
+
+        if (!_successStakers) revert TransactionFailed();
+    }
+
     /// @dev use the _erc20Payment to determite erc20 values and convert them if needed?
     function _applyPlatformFeeEth(
         address _referee,
         uint256 _grossAmount
-    ) internal returns (uint256 feeAmount) {
+    ) internal {
         // calculate the grossAmount -> if erc20Payment == true -> convertErc20ToFee, if not convertEthToFee
         // now we have the fee amount
         uint256 _feeAmount = calculateFees(_grossAmount, platformFee);
@@ -313,7 +343,7 @@ contract PlatformLogic {
         }
 
         // the remaining amount is split 80/20 between stakers and spectra treasury
-        _splitBetweenStakersAndTreasury(_feeAmount);
+        _splitBetweenStakersAndTreasuryEth(_feeAmount);
     }
 
     /// @notice user needs to give allowance to the contract first so it can send the tokens
@@ -323,6 +353,12 @@ contract PlatformLogic {
         uint256 _grossAmount,
         IERC20 _tokenAddress
     ) internal {
+        // Returns the remaining number of tokens that spender
+        // will be allowed to spend on behalf of owner through transferFrom.
+        // This is zero by default.
+        if (_tokenAddress.allowance(_referee, address(this)) < _grossAmount)
+            revert ExceedsAllowance();
+
         // should check if the user is approved from the approved mapping if not revert
         // should check if the token is whitelisted to be used from Factory mapping?
 
@@ -364,15 +400,14 @@ contract PlatformLogic {
         }
 
         // should call transfer on the token
-        _splitBetweenStakersAndTreasury(_feeAmount);
-        // can make _splitBetweenStakersAndTreasury accept bool token and address,
-        // and add if checks
+        // the remaining amount is split 80/20 between stakers and spectra treasury
+        _splitBetweenStakersAndTreasuryToken(_feeAmount, _tokenAddress);
     }
 
     function applyPlatformFeeEth(
         address _referee,
         uint256 _grossAmount
-    ) external {
+    ) external nonReentrant {
         _applyPlatformFeeEth(_referee, _grossAmount);
     }
 
@@ -380,22 +415,9 @@ contract PlatformLogic {
         address _referee,
         uint256 _grossAmount,
         IERC20 _tokenAddress
-    ) external {
+    ) external nonReentrant {
+        // _tokenAddress.
         _applyPlatformFeeErc20(_referee, _grossAmount, _tokenAddress);
-    }
-
-    // function should implement logic to give % of the fees to referrers,
-    // should be invoked by users and passed the code of the referrer
-    // then % of the fees of the transaction should be added to a mapping that stores the withdrawing
-    // fee possibilities
-    function implementReferralCode(bytes32 _referralCode) external {
-        if (referralCodes[_referralCode] == address(0x0)) revert Unavailable();
-        // logic to give % fee to referrer
-    }
-
-    //
-    function implementReferrerCode(bytes32 _referralCode) external {
-        // logic to give % fee discount to user
     }
 
     ///******************************** */
