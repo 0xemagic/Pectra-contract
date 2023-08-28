@@ -1,0 +1,499 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.13;
+
+error CanOnlyAddYourself();
+error Unavailable();
+error NotAdmin();
+error WrongFeeAmount();
+error GivenZeroAddress();
+error TransactionFailed();
+
+contract PlatformLogic {
+    bytes32 constant ZERO_VALUE =
+        0x0000000000000000000000000000000000000000000000000000000000000000;
+
+    /// @notice 10000 = 100%, so platform fee is 500 = 5%
+    uint256 public platformFee = 500;
+
+    // caclculate how much is it possible to be devided by ex. 10000 = 100% probably will be little
+    /// @notice this is a percantage of the platformFee
+    /// @dev 5% = 500
+    /// @dev has a setter, consider view function
+    uint256 public referrerFee = 500;
+
+    /// @notice this is a percantage of the platformFee
+    /// @dev 10% = 1000
+    /// @dev has a setter, consider view function
+    uint256 public refereeDiscount = 1000;
+
+    /// @notice part of the fees(after referrers) that need to be send to Pectra Treasury
+    /// @dev 8000 = 80%
+    /// @dev has a setter, consider view function
+    uint256 public treasuryFeeSplit = 8000;
+
+    /// @notice part of the fees(after referrers) that need to be send to Pectra Staking
+    /// @dev 2000 = 20%
+    /// @dev not used atm cause the _splitBetweenStakersAndTreasury just - the leftover from the fee amount
+    uint256 public stakersFeeSplit = 2000;
+
+    address payable public PectraTreasury;
+
+    address payable public PectraStakingContract;
+
+    event PlatformFeeChanged(uint256 oldPlatformFee, uint256 newPlatformFee);
+    event RefereeDiscountChanged(
+        uint256 oldRefereeDiscount,
+        uint256 newRefereeDiscount
+    );
+    event ReferrerFeeChanged(
+        uint256 oldReferrerFeeChanged,
+        uint256 newReferrerFeeChanged
+    );
+
+    event PectraTreasuryChanged(address oldTreasury, address newTreasury);
+    event PectraStakingContractChanged(
+        address oldPectraStakingContract,
+        address newPectraStakingContract
+    );
+
+    event StakersFeeSplit(uint256 oldStakersFee, uint256 newStakersFeeSplit);
+    event TreasuryFeeSplitChanged(
+        uint256 oldTreasuryFee,
+        uint256 newTreasuryFee
+    );
+
+    event ReferralCodeAdded(address indexed referrer, bytes32 code);
+    event RefereeAdded(address indexed referee, bytes32 code);
+
+    event FactorySet(address factory);
+
+    event PendingWithdrawal(uint256 amount);
+    event Withdraw(address withdrawer, uint256 amount);
+
+    /// @notice store the Factory Addresses
+    mapping(address => bool) private factories;
+
+    /// @notice storing the referral codes
+    mapping(bytes32 => address) public referralCodes;
+
+    /// @notice mapping to store the Refferal codes to user's addresses(creator of referral codes)
+    mapping(address => bytes32) public referrers;
+
+    /// @notice mapping to store the Reffered users to referral codes(users being referred)
+    mapping(address => bytes32) public referredUsers;
+
+    /// @notice mapping to store the pending withdrawals user address to amount
+    mapping(address => uint256) public pendingWithdrawals;
+
+    modifier onlyFactory() {
+        if (factories[msg.sender] != true) revert NotAdmin();
+        _;
+    }
+
+    modifier notZeroAddress(address _address) {
+        if (_address == address(0x0)) {
+            revert GivenZeroAddress();
+        }
+        _;
+    }
+
+    /// @param _factory the initial Factory address
+    constructor(
+        address _factory,
+        address payable _PectraTreasury,
+        address payable _PectraStakingContract
+    ) {
+        factories[_factory] = true;
+        PectraTreasury = _PectraTreasury;
+        PectraStakingContract = _PectraStakingContract;
+    }
+
+    ///******************************** */
+
+    // remember to add a setter from the factory
+    function setRefereeDiscount(uint256 _refereeDiscount) external onlyFactory {
+        emit RefereeDiscountChanged(refereeDiscount, _refereeDiscount);
+        refereeDiscount = _refereeDiscount;
+    }
+
+    // remember to add a setter from the factory
+    function setReferrerFee(uint256 _referrerFee) external onlyFactory {
+        emit ReferrerFeeChanged(referrerFee, _referrerFee);
+        referrerFee = _referrerFee;
+    }
+
+    // set platformFee
+    // remember to add a setPlatformFee function in the factory that calls to this one
+    function setPlatformFee(uint256 _platformFee) external onlyFactory {
+        emit PlatformFeeChanged(platformFee, _platformFee);
+        platformFee = _platformFee;
+    }
+
+    function setTreasuryFeeSplit(
+        uint256 _treasuryFeeSplit
+    ) external onlyFactory {
+        emit TreasuryFeeSplitChanged(treasuryFeeSplit, _treasuryFeeSplit);
+        treasuryFeeSplit = _treasuryFeeSplit;
+    }
+
+    function setStakersFeeSplit(uint256 _stakersFeeSplit) external onlyFactory {
+        emit StakersFeeSplit(stakersFeeSplit, _stakersFeeSplit);
+        stakersFeeSplit = _stakersFeeSplit;
+    }
+
+    // remember to add a changePectraTreasury function in the factory that calls to this one
+    function changePectraTreasury(
+        address payable _newTreasury
+    ) external onlyFactory {
+        emit PectraTreasuryChanged(PectraTreasury, _newTreasury);
+        PectraTreasury = _newTreasury;
+    }
+
+    // remember to add a changePectraStakingContract function in the factory that calls to this one
+    function changePectraStakingContract(
+        address payable _newStakingContract
+    ) external onlyFactory {
+        emit PectraStakingContractChanged(
+            PectraStakingContract,
+            _newStakingContract
+        );
+        PectraTreasury = _newStakingContract;
+    }
+
+    // get platformFee
+    function viewPlatformFee() public view returns (uint256) {
+        return platformFee;
+    }
+
+    function viewRefereeDiscount() public view returns (uint256) {
+        return refereeDiscount;
+    }
+
+    function viewReferrerFee() public view returns (uint256) {
+        return referrerFee;
+    }
+
+    // calculate/implement platformFee
+    // function that adds calculates the platformFee amount when given a value
+
+    // public pure function takes in amount of eth/erc20tokens and returns the fee needed to be paid
+
+    // add this function before sending msg.value or transferFrom in the Adapters
+
+    // pass in value, this value gets applied to the platform fee
+    // takes in address of person(referee) and amount
+
+    function _convertErc20ToFee(
+        uint256 _amount,
+        uint256 _decimals
+    ) internal pure {}
+
+    function _convertEthToFee(uint256 _amount) internal pure {}
+
+    /// @dev this function is left public for testing, can be private once deployed on mainnet
+    /// @notice takes amount and bps(1000 = 10%)
+    function calculateFees(
+        uint256 _amount,
+        uint256 _bps
+    ) public pure returns (uint256) {
+        /// @notice Check that the amount multiplied by the Basis Points is greater than or equal to 10.000
+        // This ensures that we're not running into the issue of values being rounded down to 0.
+        if ((_amount * _bps) <= 10000) revert WrongFeeAmount();
+        return (_amount * _bps) / 10000;
+    }
+
+    /// @dev funciton that adds the ETH fees available for withdrawal from the referrer
+    function _addEthFeesForWithdrawal(
+        address _referrer,
+        uint256 _amount
+    ) internal notZeroAddress(_referrer) {
+        // some checks, like cannot be address 0 - can be made into a modifer and appied to the applyPlatformFee too
+        // add  fees to pendingWithdrawal mapping referrer address to uint256 amount
+        pendingWithdrawals[_referrer] += _amount;
+        // emit event
+        emit PendingWithdrawal(_amount);
+    }
+
+     /// @dev funciton that adds the Token fees available for withdrawal from the referrer
+    function _addTokenFeesForWithdrawal(
+        address _referrer,
+        uint256 _amount,
+        address _token) internal notZeroAddress(_referrer) {
+            // edit the pendingWithdrawals mapping to contain to be 
+            // pendingTokenWithdrawals 
+    // address referrer => tokenAddress => amount
+    // mapping (address => mapping (address => uint256)) pendingTokenWithdrawals
+    // mapping(address => uint256) public pendingWithdrawals;
+            // add a withdrawTokenFee function
+
+        }
+
+    /// @notice lets user withdraw all the fees that have been collected from refering
+    /// @dev should be called from the frontend directly
+    function withdralFees() public {
+        uint256 _balance = pendingWithdrawals[msg.sender];
+        (bool success, ) = payable(msg.sender).call{value: _balance}("");
+        if (!success) revert TransactionFailed();
+        pendingWithdrawals[msg.sender] = 0;
+        emit Withdraw(msg.sender, _balance);
+    }
+
+    /// @dev splits amount between stakers and treasury, and make calls to stakers contract and spectra treasury with the amount given
+    /// @dev amount in % are managed from treasuryFeeSplit variable
+    function _splitBetweenStakersAndTreasury(uint256 _amount) internal {
+        // calculate % to be send to treasury
+        uint256 _amountToBeSendToTreasury = calculateFees(
+            _amount,
+            treasuryFeeSplit
+        );
+
+        // send the amount to the Treasury
+        (bool _successTreasury, ) = PectraTreasury.call{
+            value: _amountToBeSendToTreasury
+        }("");
+        if (!_successTreasury) revert TransactionFailed();
+
+        uint256 _amountToBeSendToStakers = _amount - _amountToBeSendToTreasury;
+
+        (bool _successStakers, ) = PectraStakingContract.call{
+            value: _amountToBeSendToStakers
+        }("");
+        if (!_successStakers) revert TransactionFailed();
+    }
+
+    /// @dev use the _erc20Payment to determite erc20 values and convert them if needed?
+    function _applyPlatformFeeEth(
+        address _referee,
+        uint256 _grossAmount
+    ) internal returns (uint256 feeAmount) {
+        // calculate the grossAmount -> if erc20Payment == true -> convertErc20ToFee, if not convertEthToFee
+        // now we have the fee amount
+        uint256 _feeAmount = calculateFees(_grossAmount, platformFee);
+
+        // check referree (if user is referred) -> if true add 10% discount -> continue to the next check, if not skip to the end
+        if (referredUsers[_referee] != ZERO_VALUE) {
+            // calculate the referree discount %
+            // for testing the refereeDiscount is set to 10 bps
+            uint256 _refereeDiscount = calculateFees(
+                _feeAmount,
+                refereeDiscount
+            );
+
+            // calculate the referrer discount
+            // for testing the referralFee is set to 5 bps
+            uint256 _referrerWithdrawal = calculateFees(
+                referrerFee,
+                referrerFee
+            );
+
+            // remove the discounted % from the referee fees and referrer withdrawals
+            // that have to be paid at the end
+            /// @dev underflow check? test if needed
+            _feeAmount -= (_refereeDiscount + _referrerWithdrawal);
+
+            // next if check for referrer -> mapping if true (referrer exists) -> commision 5% to referrer (implement to withdraw)
+            /// @notice adds the fees pending for withdrawal to the user that referred this user (referrer)
+            _addEthFeesForWithdrawal(
+                checkReferredUser(_referee),
+                _referrerWithdrawal
+            );
+        }
+
+        // the remaining amount is split 80/20 between stakers and spectra treasury
+        _splitBetweenStakersAndTreasury(_feeAmount);
+    }
+
+    /// @notice user needs to give allowance to the contract first so it can send the tokens 
+    // allowance to Factory, because it will call this
+    function _applyPlatformFeeErc20(
+        address _referee,
+        uint256 _grossAmount,
+        address _tokenAddress
+    ) internal {
+        // should check if the user is approved from the approved mapping if not revert
+        // should check if the token is whitelisted to be used from Factory mapping?
+        
+        // can also call to check if the token is erc20 complient? - maybe not needed,
+        // since they are already filtered through a mapping
+
+        // shoould calculate the fees with the given amount from calculateFees
+
+         uint256 _feeAmount = calculateFees(_grossAmount, platformFee);
+
+        // check referree (if user is referred) -> if true add 10% discount -> continue to the next check, if not skip to the end
+        if (referredUsers[_referee] != ZERO_VALUE) {
+            // calculate the referree discount %
+            // for testing the refereeDiscount is set to 10 bps
+            uint256 _refereeDiscount = calculateFees(
+                _feeAmount,
+                refereeDiscount
+            );
+
+            // calculate the referrer discount
+            // for testing the referralFee is set to 5 bps
+            uint256 _referrerWithdrawal = calculateFees(
+                referrerFee,
+                referrerFee
+            );
+
+            // remove the discounted % from the referee fees and referrer withdrawals
+            // that have to be paid at the end
+            /// @dev underflow check? test if needed
+            _feeAmount -= (_refereeDiscount + _referrerWithdrawal);
+
+            // next if check for referrer -> mapping if true (referrer exists) -> commision 5% to referrer (implement to withdraw)
+            /// @notice adds the fees pending for withdrawal to the user that referred this user (referrer)
+            _addTokenFeesForWithdrawal(
+                checkReferredUser(_referee),
+                _referrerWithdrawal
+            );
+        }
+
+
+        // should call transfer on the token
+
+        // can make _splitBetweenStakersAndTreasury accept bool token and address,
+        // and add if checks
+    }
+
+    function applyPlatformFeeEth(
+        address _referee,
+        uint256 _grossAmount,
+    ) external {
+        _applyPlatformFeeEth(_referee, _grossAmount);
+    }
+
+    function applyPlatformFeeErc20(
+        address _referee,
+        uint256 _grossAmount,
+        address _tokenAddress
+    ) external {
+        _applyPlatformFeeErc20(_referee,_grossAmount,_tokenAddress);
+    }
+
+    // function should implement logic to give % of the fees to referrers,
+    // should be invoked by users and passed the code of the referrer
+    // then % of the fees of the transaction should be added to a mapping that stores the withdrawing
+    // fee possibilities
+    function implementReferralCode(bytes32 _referralCode) external {
+        if (referralCodes[_referralCode] == address(0x0)) revert Unavailable();
+        // logic to give % fee to referrer
+    }
+
+    //
+    function implementReferrerCode(bytes32 _referralCode) external {
+        // logic to give % fee discount to user
+    }
+
+    ///******************************** */
+
+    /// @notice function to create referral codes, invoked when a user wants to get a code
+    /// @dev should check if code is not used yet, should not allow a user to edit his referral code
+    /// @notice function uses tx.origin, this way the EOA that invoked the transaction from the Adapter
+    // will be recorded, another more complex approach that we can use is by utilising allowances
+    function createReferralCode(bytes32 _referralCode) external returns (bool) {
+        /// @dev ensure that the referral code is not used yet
+        // check that address can be only one
+        if (
+            referrers[tx.origin] != ZERO_VALUE ||
+            referralCodes[_referralCode] != address(0x0)
+        ) revert Unavailable();
+        // write the EOA's referral code
+        referrers[tx.origin] = _referralCode;
+        // write the referral code
+        referralCodes[_referralCode] = tx.origin;
+        emit ReferralCodeAdded(tx.origin, _referralCode);
+        return true;
+    }
+
+    // function to add to the referredUsers mapping
+    /// @notice function is invoked when a user adds another users referral code (is referred)
+    function addReferee(bytes32 _referralCode) external returns (bool) {
+        /// @dev ensure that the referee has not assigned code is not used yet
+        // check to ensure the code is valid / exists
+        // check that user is not adding himself as referee
+        if (
+            referredUsers[tx.origin] != ZERO_VALUE ||
+            referralCodes[_referralCode] == address(0x0) ||
+            referrers[tx.origin] == _referralCode
+        ) revert Unavailable();
+        // save referee and code relation
+        referredUsers[tx.origin] = _referralCode;
+        // index the event
+        emit RefereeAdded(tx.origin, _referralCode);
+        return true;
+    }
+
+    /// @dev function that allows factories to to edit the codes
+    // remember to implement admin rights on the factory side as well, should not be accesible by everyone
+    function editReferralCode(
+        address _referrer,
+        bytes32 _referralCode
+    ) external onlyFactory {
+        // write the address's referral code
+        referrers[_referrer] = _referralCode;
+        // write the referral code
+        referralCodes[_referralCode] = _referrer;
+        // emit event for indexing
+        emit ReferralCodeAdded(_referrer, _referralCode);
+    }
+
+    /// @dev function that allows factories to to edit the referees
+    // remember to implement admin rights on the factory side as well, should not be accesible by everyone
+    function editReferredUsers(
+        address _referrer,
+        bytes32 _referralCode
+    ) external onlyFactory {
+        // write the address's referral code
+        referredUsers[_referrer] = _referralCode;
+        // emit event for indexing
+        emit RefereeAdded(_referrer, _referralCode);
+    }
+
+    /// @notice function to add or remove factories
+    /// @dev this is implemented because we can have more than 1 factory (ex. GMXFactory, VertexFactory..)
+    function setFactory(address _factory, bool _state) external onlyFactory {
+        // consider adding a check that a factory cannot remove itself
+        factories[_factory] = _state;
+        emit FactorySet(_factory);
+    }
+
+    /// @notice checks the referralCode's owner
+    function viewReferralCodeOwner(
+        bytes32 _referralCode
+    ) external view returns (address codeOwner) {
+        return referralCodes[_referralCode];
+    }
+
+    /// @notice checks the referrer's referralCode (code owner)
+    function viewReferrersCode(
+        address _referrer
+    ) public view returns (bytes32 code) {
+        return referrers[_referrer];
+    }
+
+    /// @notice returns the referred user's referral code (code that referred the user)
+    function viewReferredUser(
+        address _referredUser
+    ) public view returns (bytes32 code) {
+        return referredUsers[_referredUser];
+    }
+
+    /// @notice checks who referred the given user
+    function checkReferredUser(
+        address _referredUser
+    ) public view returns (address referrer) {
+        bytes32 _code = referredUsers[_referredUser];
+        // returns the referral code owner
+        return referralCodes[_code];
+    }
+
+    function checkFactory(
+        address _factory
+    ) public view onlyFactory returns (bool) {
+        return factories[_factory];
+    }
+    // function to store the royalty %
+
+    // should this contract manage royalty logic? - consider tier implementation
+}
