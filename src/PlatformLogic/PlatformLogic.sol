@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
 error CanOnlyAddYourself();
 error Unavailable();
 error NotAdmin();
@@ -40,6 +42,24 @@ contract PlatformLogic {
 
     address payable public PectraStakingContract;
 
+    /// @notice store the Factory Addresses
+    mapping(address => bool) private factories;
+
+    /// @notice storing the referral codes
+    mapping(bytes32 => address) public referralCodes;
+
+    /// @notice mapping to store the Refferal codes to user's addresses(creator of referral codes)
+    mapping(address => bytes32) public referrers;
+
+    /// @notice mapping to store the Reffered users to referral codes(users being referred)
+    mapping(address => bytes32) public referredUsers;
+
+    /// @notice mapping to store the pending withdrawals user address to amount
+    mapping(address => uint256) public pendingEthWithdrawals;
+
+    // address referrer => tokenAddress => amount
+    mapping(address => mapping(IERC20 => uint256)) pendingTokenWithdrawals;
+
     event PlatformFeeChanged(uint256 oldPlatformFee, uint256 newPlatformFee);
     event RefereeDiscountChanged(
         uint256 oldRefereeDiscount,
@@ -69,21 +89,6 @@ contract PlatformLogic {
 
     event PendingWithdrawal(uint256 amount);
     event Withdraw(address withdrawer, uint256 amount);
-
-    /// @notice store the Factory Addresses
-    mapping(address => bool) private factories;
-
-    /// @notice storing the referral codes
-    mapping(bytes32 => address) public referralCodes;
-
-    /// @notice mapping to store the Refferal codes to user's addresses(creator of referral codes)
-    mapping(address => bytes32) public referrers;
-
-    /// @notice mapping to store the Reffered users to referral codes(users being referred)
-    mapping(address => bytes32) public referredUsers;
-
-    /// @notice mapping to store the pending withdrawals user address to amount
-    mapping(address => uint256) public pendingWithdrawals;
 
     modifier onlyFactory() {
         if (factories[msg.sender] != true) revert NotAdmin();
@@ -209,32 +214,40 @@ contract PlatformLogic {
     ) internal notZeroAddress(_referrer) {
         // some checks, like cannot be address 0 - can be made into a modifer and appied to the applyPlatformFee too
         // add  fees to pendingWithdrawal mapping referrer address to uint256 amount
-        pendingWithdrawals[_referrer] += _amount;
+        pendingEthWithdrawals[_referrer] += _amount;
         // emit event
         emit PendingWithdrawal(_amount);
     }
 
-     /// @dev funciton that adds the Token fees available for withdrawal from the referrer
+    /// @dev funciton that adds the Token fees available for withdrawal from the referrer
     function _addTokenFeesForWithdrawal(
         address _referrer,
         uint256 _amount,
-        address _token) internal notZeroAddress(_referrer) {
-            // edit the pendingWithdrawals mapping to contain to be 
-            // pendingTokenWithdrawals 
-    // address referrer => tokenAddress => amount
-    // mapping (address => mapping (address => uint256)) pendingTokenWithdrawals
-    // mapping(address => uint256) public pendingWithdrawals;
-            // add a withdrawTokenFee function
+        IERC20 _token
+    ) internal notZeroAddress(_referrer) {
+        // edit the pendingWithdrawals mapping to contain to be
+        // pendingTokenWithdrawals
+        // mapping(address => uint256) public pendingWithdrawals;
+        // add a withdrawTokenFee function
+    }
 
-        }
-
-    /// @notice lets user withdraw all the fees that have been collected from refering
+    /// @notice lets user withdraw all the Eth fees that have been collected from refering
     /// @dev should be called from the frontend directly
-    function withdralFees() public {
-        uint256 _balance = pendingWithdrawals[msg.sender];
+    function withdralEthFees() public {
+        uint256 _balance = pendingEthWithdrawals[msg.sender];
         (bool success, ) = payable(msg.sender).call{value: _balance}("");
         if (!success) revert TransactionFailed();
-        pendingWithdrawals[msg.sender] = 0;
+        pendingEthWithdrawals[msg.sender] = 0;
+        emit Withdraw(msg.sender, _balance);
+    }
+
+    /// @notice lets user withdraw all the Token fees that have been collected from refering
+    /// @dev should be called from the frontend directly
+    function withdralTokenFees(IERC20 _token) public {
+        uint256 _balance = pendingTokenWithdrawals[msg.sender][_token];
+        bool success = _token.transfer(msg.sender, _balance);
+        if (!success) revert TransactionFailed();
+        pendingTokenWithdrawals[msg.sender][_token] = 0;
         emit Withdraw(msg.sender, _balance);
     }
 
@@ -303,22 +316,22 @@ contract PlatformLogic {
         _splitBetweenStakersAndTreasury(_feeAmount);
     }
 
-    /// @notice user needs to give allowance to the contract first so it can send the tokens 
+    /// @notice user needs to give allowance to the contract first so it can send the tokens
     // allowance to Factory, because it will call this
     function _applyPlatformFeeErc20(
         address _referee,
         uint256 _grossAmount,
-        address _tokenAddress
+        IERC20 _tokenAddress
     ) internal {
         // should check if the user is approved from the approved mapping if not revert
         // should check if the token is whitelisted to be used from Factory mapping?
-        
+
         // can also call to check if the token is erc20 complient? - maybe not needed,
         // since they are already filtered through a mapping
 
         // shoould calculate the fees with the given amount from calculateFees
 
-         uint256 _feeAmount = calculateFees(_grossAmount, platformFee);
+        uint256 _feeAmount = calculateFees(_grossAmount, platformFee);
 
         // check referree (if user is referred) -> if true add 10% discount -> continue to the next check, if not skip to the end
         if (referredUsers[_referee] != ZERO_VALUE) {
@@ -345,20 +358,20 @@ contract PlatformLogic {
             /// @notice adds the fees pending for withdrawal to the user that referred this user (referrer)
             _addTokenFeesForWithdrawal(
                 checkReferredUser(_referee),
-                _referrerWithdrawal
+                _referrerWithdrawal,
+                _tokenAddress
             );
         }
 
-
         // should call transfer on the token
-
+        _splitBetweenStakersAndTreasury(_feeAmount);
         // can make _splitBetweenStakersAndTreasury accept bool token and address,
         // and add if checks
     }
 
     function applyPlatformFeeEth(
         address _referee,
-        uint256 _grossAmount,
+        uint256 _grossAmount
     ) external {
         _applyPlatformFeeEth(_referee, _grossAmount);
     }
@@ -366,9 +379,9 @@ contract PlatformLogic {
     function applyPlatformFeeErc20(
         address _referee,
         uint256 _grossAmount,
-        address _tokenAddress
+        IERC20 _tokenAddress
     ) external {
-        _applyPlatformFeeErc20(_referee,_grossAmount,_tokenAddress);
+        _applyPlatformFeeErc20(_referee, _grossAmount, _tokenAddress);
     }
 
     // function should implement logic to give % of the fees to referrers,
