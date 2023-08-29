@@ -103,7 +103,10 @@ contract GMXFactory {
 
     // Modifier to restrict access to only the contract owner.
     modifier onlyNftHandler() {
-        require(NFT_HANDLER == msg.sender, "GMX FACTORY: Caller is not NFT Handler");
+        require(
+            NFT_HANDLER == msg.sender,
+            "GMX FACTORY: Caller is not NFT Handler"
+        );
         _;
     }
 
@@ -112,10 +115,10 @@ contract GMXFactory {
      *
      * @param _nftHandler The address of the nft Handler contract.
      */
-    function setNftHandler (address _nftHandler) public onlyOwner{
+    function setNftHandler(address _nftHandler) public onlyOwner {
         NFT_HANDLER = _nftHandler;
     }
-    
+
     /**
      * @dev Withdraw tokens from the contract.
      *
