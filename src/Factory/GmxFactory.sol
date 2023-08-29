@@ -13,6 +13,7 @@ contract GMXFactory {
     address public POSITION_ROUTER;
     address public READER;
     address public VAULT;
+    address public NFT_HANDLER;
 
     // Mapping to store the GMXAdapter contract addresses associated with each position ID.
     mapping(bytes32 => address) public positionAdapters;
@@ -100,6 +101,21 @@ contract GMXFactory {
         _;
     }
 
+    // Modifier to restrict access to only the contract owner.
+    modifier onlyNftHandler() {
+        require(NFT_HANDLER == msg.sender, "GMX FACTORY: Caller is not NFT Handler");
+        _;
+    }
+
+    /**
+     * @dev Setter function for NFT Handler contract.
+     *
+     * @param _nftHandler The address of the nft Handler contract.
+     */
+    function setNftHandler (address _nftHandler) public onlyOwner{
+        NFT_HANDLER = _nftHandler;
+    }
+    
     /**
      * @dev Withdraw tokens from the contract.
      *
@@ -547,7 +563,7 @@ contract GMXFactory {
         address _oldOwner,
         address _newOwner,
         bytes32 _positionId
-    ) external returns (bool) {
+    ) external onlyNftHandler returns (bool) {
         positionOwners[_positionId] = _newOwner;
         positions[_oldOwner] -= 1;
         positions[_newOwner] += 1;
