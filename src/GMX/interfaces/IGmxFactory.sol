@@ -173,4 +173,18 @@ interface IGMXFactory {
         address _address,
         uint256 _index
     ) external view returns (bytes32);
+
+    /**
+     * @dev Update the mappings upon NFT Transfer.
+     *
+     * @param _oldOwner The address of the previous owner of the Position.
+     * @param _newOwner The address of the new owner of the Position.
+     * @param _positionId The positionId whose ownership is to be transferred.
+     * @return true if the transfer of the ownership is successful.
+     */
+    function updateOwner(
+        address _oldOwner,
+        address _newOwner,
+        bytes32 _positionId
+    ) external returns (bool);
 }

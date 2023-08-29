@@ -340,16 +340,7 @@ contract GMXFactory {
             IGMXAdapter(adapter).closeFailedPosition(_path, msg.sender);
         }
 
-        (
-            address[] memory path,
-            address collateralToken,
-            address indexToken,
-            uint256 amountIn,
-            uint256 minOut,
-            uint256 sizeDelta,
-            bool isLong,
-            uint256 acceptablePrice
-        ) = IGMXAdapter(adapter).getPositionData();
+        (, , , , , , bool isLong, ) = IGMXAdapter(adapter).getPositionData();
         // Emit the PositionClosed event.
         emit PositionClosed(_positionId, msg.sender, adapter, isLong);
     }
@@ -542,5 +533,25 @@ contract GMXFactory {
         uint256 _index
     ) external view returns (bytes32) {
         return indexedPositions[_address][_index];
+    }
+
+    /**
+     * @dev Update the mappings upon NFT Transfer.
+     *
+     * @param _oldOwner The address of the previous owner of the Position.
+     * @param _newOwner The address of the new owner of the Position.
+     * @param _positionId The positionId whose ownership is to be transferred.
+     * @return true if the transfer of the ownership is successful.
+     */
+    function updateOwner(
+        address _oldOwner,
+        address _newOwner,
+        bytes32 _positionId
+    ) external returns (bool) {
+        positionOwners[_positionId] = _newOwner;
+        positions[_oldOwner] -= 1;
+        positions[_newOwner] += 1;
+        indexedPositions[_newOwner][positions[_newOwner]] = _positionId;
+        return true;
     }
 }

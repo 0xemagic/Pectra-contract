@@ -167,6 +167,7 @@ contract NFTHandler {
                 _changeOwnerOfAdapter(gmxAdapter, to) == true,
                 "NFT HANDLER: Error while changing the position owner from adapter"
             );
+            gmxFactoryContract.updateOwner(msg.sender, to, positionIds[i]);
             emit NftTransferred(tokenId, to);
         }
     }
