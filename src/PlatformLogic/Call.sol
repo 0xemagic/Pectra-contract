@@ -11,6 +11,40 @@ contract Call {
         platformLogic = PlatformLogic(_addr);
     }
 
+    // fee logic functions
+
+    function callApplyPlatformFeeEth(
+        address _referee,
+        uint256 _grossAmount
+    ) external payable {
+        platformLogic.applyPlatformFeeEth{value: msg.value}(
+            _referee,
+            _grossAmount
+        );
+    }
+
+    function callApplyPlatformFeeErc20(
+        address _referee,
+        uint256 _grossAmount,
+        IERC20 _tokenAddress
+    ) external {
+        platformLogic.applyPlatformFeeErc20(
+            _referee,
+            _grossAmount,
+            _tokenAddress
+        );
+    }
+
+    function callWithdrawEthFees() external {
+        platformLogic.withdrawEthFees();
+    }
+
+    function callWithdrawTokenFees(IERC20 _token) external {
+        platformLogic.withdrawTokenFees(_token);
+    }
+
+    // referral logic functions
+
     function callCreate(bytes32 _referralCode) external {
         platformLogic.createReferralCode(_referralCode);
     }

@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "forge-std/console.sol";
 
 error CanOnlyAddYourself();
 error Unavailable();
@@ -11,8 +12,9 @@ error WrongFeeAmount();
 error GivenZeroAddress();
 error TransactionFailed();
 error ExceedsAllowance();
+error WrongValueSent();
 
-contract PlatformLogic {
+contract PlatformLogic is ReentrancyGuard {
     bytes32 constant ZERO_VALUE =
         0x0000000000000000000000000000000000000000000000000000000000000000;
 
@@ -190,13 +192,6 @@ contract PlatformLogic {
     // pass in value, this value gets applied to the platform fee
     // takes in address of person(referee) and amount
 
-    function _convertErc20ToFee(
-        uint256 _amount,
-        uint256 _decimals
-    ) internal pure {}
-
-    function _convertEthToFee(uint256 _amount) internal pure {}
-
     /// @dev this function is left public for testing, can be private once deployed on mainnet
     /// @notice takes amount and bps(1000 = 10%)
     function calculateFees(
@@ -265,13 +260,19 @@ contract PlatformLogic {
         (bool _successTreasury, ) = PectraTreasury.call{
             value: _amountToBeSendToTreasury
         }("");
+
         if (!_successTreasury) revert TransactionFailed();
 
         uint256 _amountToBeSendToStakers = _amount - _amountToBeSendToTreasury;
+        // calculateFees(
+        //     _amount,
+        //     stakersFeeSplit
+        // );
 
         (bool _successStakers, ) = PectraStakingContract.call{
             value: _amountToBeSendToStakers
         }("");
+
         if (!_successStakers) revert TransactionFailed();
     }
 
@@ -305,6 +306,7 @@ contract PlatformLogic {
     }
 
     /// @dev use the _erc20Payment to determite erc20 values and convert them if needed?
+    /// @dev add a check if msg.value != _amount need to be spent revert
     function _applyPlatformFeeEth(
         address _referee,
         uint256 _grossAmount
@@ -313,6 +315,7 @@ contract PlatformLogic {
         // now we have the fee amount
         uint256 _feeAmount = calculateFees(_grossAmount, platformFee);
 
+        if (msg.value != _feeAmount) revert WrongValueSent();
         // check referree (if user is referred) -> if true add 10% discount -> continue to the next check, if not skip to the end
         if (referredUsers[_referee] != ZERO_VALUE) {
             // calculate the referree discount %
@@ -407,7 +410,7 @@ contract PlatformLogic {
     function applyPlatformFeeEth(
         address _referee,
         uint256 _grossAmount
-    ) external nonReentrant {
+    ) external payable nonReentrant {
         _applyPlatformFeeEth(_referee, _grossAmount);
     }
 
