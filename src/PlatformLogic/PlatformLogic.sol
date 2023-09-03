@@ -3,7 +3,6 @@ pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "forge-std/console.sol";
 
 error CanOnlyAddYourself();
 error Unavailable();
@@ -13,6 +12,9 @@ error GivenZeroAddress();
 error TransactionFailed();
 error ExceedsAllowance();
 error WrongValueSent();
+error NotEnoughBalance();
+/// @dev is this event necessary?
+error ReferrerAmountExceedsFeeAmount();
 
 contract PlatformLogic is ReentrancyGuard {
     bytes32 constant ZERO_VALUE =
@@ -166,7 +168,7 @@ contract PlatformLogic is ReentrancyGuard {
             PectraStakingContract,
             _newStakingContract
         );
-        PectraTreasury = _newStakingContract;
+        PectraStakingContract = _newStakingContract;
     }
 
     // get platformFee
@@ -217,6 +219,7 @@ contract PlatformLogic is ReentrancyGuard {
     }
 
     /// @dev funciton that adds the Token fees available for withdrawal from the referrer
+    /// @dev add a check for allowed tokens(token) - this mapping can be stored in the Factory with a public getter
     function _addTokenFeesForWithdrawal(
         address _referrer,
         uint256 _amount,
@@ -231,6 +234,7 @@ contract PlatformLogic is ReentrancyGuard {
     /// @dev should be called from the frontend directly
     function withdrawEthFees() public nonReentrant {
         uint256 _balance = pendingEthWithdrawals[msg.sender];
+        if (_balance == 0) revert NotEnoughBalance();
         (bool success, ) = payable(msg.sender).call{value: _balance}("");
         if (!success) revert TransactionFailed();
         pendingEthWithdrawals[msg.sender] = 0;
@@ -239,9 +243,16 @@ contract PlatformLogic is ReentrancyGuard {
 
     /// @notice lets user withdraw all the Token fees that have been collected from refering
     /// @dev should be called from the frontend directly
+    /// @dev maybe the transferFromFunction should be on the Factory side for the platformLogic Transfers,
+    // since the allowance is there for the usdc tokens?
+    /// @dev add a modifier that checks the token address is whitelisted
+    /// @dev minimum tokens for transfer are 2? Make sure there is a check for that probably too before hitting the transfer
+    // read ERC20InsufficientBalance for more info
     function withdrawTokenFees(IERC20 _token) public nonReentrant {
         uint256 _balance = pendingTokenWithdrawals[msg.sender][_token];
+        if (_balance == 0) revert NotEnoughBalance();
         bool success = _token.transfer(msg.sender, _balance);
+        // bool success = _token.transferFrom(address(this), msg.sender, _balance);
         if (!success) revert TransactionFailed();
         pendingTokenWithdrawals[msg.sender][_token] = 0;
         emit Withdraw(msg.sender, _balance);
@@ -279,6 +290,7 @@ contract PlatformLogic is ReentrancyGuard {
     /// @dev splits amount between stakers and treasury, and make calls to stakers contract and spectra treasury with the amount given
     /// @dev amount in % are managed from treasuryFeeSplit variable
     function _splitBetweenStakersAndTreasuryToken(
+        address _referee,
         uint256 _amount,
         IERC20 _tokenAddress
     ) internal {
@@ -289,15 +301,29 @@ contract PlatformLogic is ReentrancyGuard {
         );
 
         // send the amount to the Treasury
-        bool _successTreasury = _tokenAddress.transfer(
+        bool _successTreasury = _tokenAddress.transferFrom(
+            _referee,
             PectraTreasury,
             _amountToBeSendToTreasury
         );
         if (!_successTreasury) revert TransactionFailed();
 
+        /// @dev why does this give 8 and the calculatefees approach 9 when given 1000 as token amount?
         uint256 _amountToBeSendToStakers = _amount - _amountToBeSendToTreasury;
 
-        bool _successStakers = _tokenAddress.transfer(
+        // calculate fees approach
+        // uint256 _amountToBeSendToStakers = calculateFees(
+        //     _amount,
+        //     stakersFeeSplit
+        // );
+
+        // console.log(
+        //     // _amount - _amountToBeSendToTreasury,
+        //     _amountToBeSendToStakers
+        // );
+
+        bool _successStakers = _tokenAddress.transferFrom(
+            _referee,
             PectraStakingContract,
             _amountToBeSendToStakers
         );
@@ -328,10 +354,14 @@ contract PlatformLogic is ReentrancyGuard {
             // calculate the referrer discount
             // for testing the referralFee is set to 5 bps
             uint256 _referrerWithdrawal = calculateFees(
-                referrerFee,
+                _feeAmount,
                 referrerFee
             );
 
+            /// @dev maybe add a check that _referrerWithdrawal + _refereeDiscount does not
+            // get greater than _feeAmount
+            if (_feeAmount <= (refereeDiscount + _referrerWithdrawal))
+                revert ReferrerAmountExceedsFeeAmount();
             // remove the discounted % from the referee fees and referrer withdrawals
             // that have to be paid at the end
             /// @dev underflow check? test if needed
@@ -339,6 +369,7 @@ contract PlatformLogic is ReentrancyGuard {
 
             // next if check for referrer -> mapping if true (referrer exists) -> commision 5% to referrer (implement to withdraw)
             /// @notice adds the fees pending for withdrawal to the user that referred this user (referrer)
+
             _addEthFeesForWithdrawal(
                 checkReferredUser(_referee),
                 _referrerWithdrawal
@@ -351,6 +382,8 @@ contract PlatformLogic is ReentrancyGuard {
 
     /// @notice user needs to give allowance to the contract first so it can send the tokens
     // allowance to Factory, because it will call this
+    /// @dev check if there should be access control for the _referee param
+    // can users abuse this?
     function _applyPlatformFeeErc20(
         address _referee,
         uint256 _grossAmount,
@@ -384,7 +417,7 @@ contract PlatformLogic is ReentrancyGuard {
             // calculate the referrer discount
             // for testing the referralFee is set to 5 bps
             uint256 _referrerWithdrawal = calculateFees(
-                referrerFee,
+                _feeAmount,
                 referrerFee
             );
 
@@ -401,12 +434,18 @@ contract PlatformLogic is ReentrancyGuard {
                 _tokenAddress
             );
         }
+        // console.log("fee", _feeAmount);
 
         // should call transfer on the token
         // the remaining amount is split 80/20 between stakers and spectra treasury
-        _splitBetweenStakersAndTreasuryToken(_feeAmount, _tokenAddress);
+        _splitBetweenStakersAndTreasuryToken(
+            _referee,
+            _feeAmount,
+            _tokenAddress
+        );
     }
 
+    /// @dev add access control only from factory?
     function applyPlatformFeeEth(
         address _referee,
         uint256 _grossAmount
@@ -414,6 +453,7 @@ contract PlatformLogic is ReentrancyGuard {
         _applyPlatformFeeEth(_referee, _grossAmount);
     }
 
+    /// @dev add access control only from factory?
     function applyPlatformFeeErc20(
         address _referee,
         uint256 _grossAmount,
@@ -530,6 +570,13 @@ contract PlatformLogic is ReentrancyGuard {
         address _factory
     ) public view onlyFactory returns (bool) {
         return factories[_factory];
+    }
+
+    function checkPendingTokenWithdrawals(
+        address _referrer,
+        IERC20 _token
+    ) public view returns (uint256) {
+        return pendingTokenWithdrawals[_referrer][_token];
     }
     // function to store the royalty %
 

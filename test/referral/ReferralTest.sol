@@ -225,7 +225,7 @@ contract ReferralTest is Test {
     }
 
     // Factory add test
-    function test_setFactory() public {
+    function setFactory() public {
         address factory = vm.addr(9);
         vm.prank(factory, factory);
 
@@ -234,13 +234,18 @@ contract ReferralTest is Test {
 
         // assertEq newFactory true
         //   vm.prank(factory, factory);
-        //   assertEq(referral.checkFactory(newFactory), true);
+        // assertEq(platformLogic.checkFactory(newFactory), true);
 
         vm.prank(newFactory, newFactory);
         call.callSetFactory(factory, false);
 
         // assertEq factory false
         // assertEq(referral.checkFactory(factory), false);
+    }
+
+    function test_setFactory() public {
+        setFactory();
+        // assertEq(platformLogic.checkFactory(vm.addr(4)), true);
     }
 
     // Set Factory Access Control Test
