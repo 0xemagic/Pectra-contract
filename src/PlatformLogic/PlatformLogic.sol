@@ -23,7 +23,7 @@ contract PlatformLogic is ReentrancyGuard {
     /// @notice 10000 = 100%, so platform fee is 500 = 5%
     uint256 public platformFee = 500;
 
-    // caclculate how much is it possible to be devided by ex. 10000 = 100% probably will be little
+    // caclculate how much it is possible to be devided by ex. 10000 = 100% probably will be little
     /// @notice this is a percantage of the platformFee
     /// @dev 5% = 500
     /// @dev has a setter, consider view function
@@ -184,18 +184,9 @@ contract PlatformLogic is ReentrancyGuard {
         return referrerFee;
     }
 
-    // calculate/implement platformFee
-    // function that adds calculates the platformFee amount when given a value
-
-    // public pure function takes in amount of eth/erc20tokens and returns the fee needed to be paid
-
-    // add this function before sending msg.value or transferFrom in the Adapters
-
-    // pass in value, this value gets applied to the platform fee
-    // takes in address of person(referee) and amount
-
     /// @dev this function is left public for testing, can be private once deployed on mainnet
-    /// @notice takes amount and bps(1000 = 10%)
+    /// @dev function that  calculates the platformFee amount when given a value
+    /// @notice takes amount and bps(10000 = 100%)
     function calculateFees(
         uint256 _amount,
         uint256 _bps
@@ -248,6 +239,7 @@ contract PlatformLogic is ReentrancyGuard {
     /// @dev add a modifier that checks the token address is whitelisted
     /// @dev minimum tokens for transfer are 2? Make sure there is a check for that probably too before hitting the transfer
     // read ERC20InsufficientBalance for more info
+    /// @dev when performing transferFrom the function can revert if it takes out all of the tokens
     function withdrawTokenFees(IERC20 _token) public nonReentrant {
         uint256 _balance = pendingTokenWithdrawals[msg.sender][_token];
         if (_balance == 0) revert NotEnoughBalance();
@@ -311,15 +303,11 @@ contract PlatformLogic is ReentrancyGuard {
         /// @dev why does this give 8 and the calculatefees approach 9 when given 1000 as token amount?
         uint256 _amountToBeSendToStakers = _amount - _amountToBeSendToTreasury;
 
+        /// @dev remove before merging, leave for testing and integration
         // calculate fees approach
         // uint256 _amountToBeSendToStakers = calculateFees(
         //     _amount,
         //     stakersFeeSplit
-        // );
-
-        // console.log(
-        //     // _amount - _amountToBeSendToTreasury,
-        //     _amountToBeSendToStakers
         // );
 
         bool _successStakers = _tokenAddress.transferFrom(
@@ -337,7 +325,6 @@ contract PlatformLogic is ReentrancyGuard {
         address _referee,
         uint256 _grossAmount
     ) internal {
-        // calculate the grossAmount -> if erc20Payment == true -> convertErc20ToFee, if not convertEthToFee
         // now we have the fee amount
         uint256 _feeAmount = calculateFees(_grossAmount, platformFee);
 
@@ -380,10 +367,15 @@ contract PlatformLogic is ReentrancyGuard {
         _splitBetweenStakersAndTreasuryEth(_feeAmount);
     }
 
-    /// @notice user needs to give allowance to the contract first so it can send the tokens
-    // allowance to Factory, because it will call this
-    /// @dev check if there should be access control for the _referee param
-    // can users abuse this?
+    /**
+     * @notice user needs to give allowance to the contract first so it can send the tokens,
+     * allowance to Factory, because it will call this
+     * @dev check if there should be access control for the _referee param
+     * can users abuse this?
+     * @dev should check if the token is whitelisted to be used from Factory mapping?
+     * @dev can also call to check if the token is erc20 complient? - maybe not needed,
+     * since they are already filtered through a mapping
+     */
     function _applyPlatformFeeErc20(
         address _referee,
         uint256 _grossAmount,
@@ -395,14 +387,7 @@ contract PlatformLogic is ReentrancyGuard {
         if (_tokenAddress.allowance(_referee, address(this)) < _grossAmount)
             revert ExceedsAllowance();
 
-        // should check if the user is approved from the approved mapping if not revert
-        // should check if the token is whitelisted to be used from Factory mapping?
-
-        // can also call to check if the token is erc20 complient? - maybe not needed,
-        // since they are already filtered through a mapping
-
-        // shoould calculate the fees with the given amount from calculateFees
-
+        // calculates the fees with the given gross amount
         uint256 _feeAmount = calculateFees(_grossAmount, platformFee);
 
         // check referree (if user is referred) -> if true add 10% discount -> continue to the next check, if not skip to the end
@@ -426,7 +411,6 @@ contract PlatformLogic is ReentrancyGuard {
             /// @dev underflow check? test if needed
             _feeAmount -= (_refereeDiscount + _referrerWithdrawal);
 
-            // next if check for referrer -> mapping if true (referrer exists) -> commision 5% to referrer (implement to withdraw)
             /// @notice adds the fees pending for withdrawal to the user that referred this user (referrer)
             _addTokenFeesForWithdrawal(
                 checkReferredUser(_referee),
@@ -434,7 +418,6 @@ contract PlatformLogic is ReentrancyGuard {
                 _tokenAddress
             );
         }
-        // console.log("fee", _feeAmount);
 
         // should call transfer on the token
         // the remaining amount is split 80/20 between stakers and spectra treasury
@@ -462,8 +445,6 @@ contract PlatformLogic is ReentrancyGuard {
         // _tokenAddress.
         _applyPlatformFeeErc20(_referee, _grossAmount, _tokenAddress);
     }
-
-    ///******************************** */
 
     /// @notice function to create referral codes, invoked when a user wants to get a code
     /// @dev should check if code is not used yet, should not allow a user to edit his referral code

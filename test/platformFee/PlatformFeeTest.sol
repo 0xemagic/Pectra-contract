@@ -68,8 +68,6 @@ contract PlatformFeeTest is Test {
         platformLogic.setFactory(address(call), true);
 
         ReferralSetup(referrer, referee, referralCode1);
-
-        // CreateReferralCode && AddReferee
     }
 
     function test_CalculateFees() public {
@@ -122,8 +120,6 @@ contract PlatformFeeTest is Test {
 
         assertEq(treasury.balance, treasuryFeeSplit);
         assertEq(staking.balance, stakersFeeSplit);
-
-        // assertEq(addr.balance, addr.balance - (feeAmount));
     }
 
     function ApplyPlatformFeeEthWithSmallValue(
@@ -238,7 +234,6 @@ contract PlatformFeeTest is Test {
         uint256 _tokenAmount
     ) public {
         // should mint to address for allowance
-
         /// @dev spender = referee
 
         erc20.mint(allowerAddress, _tokenAmount);
@@ -314,23 +309,13 @@ contract PlatformFeeTest is Test {
         //     platformLogic.stakersFeeSplit()
         // );
 
-        // console.log(erc20.balanceOf(staking), _amountToBeSendToStakers);
-
         assertEq(erc20.balanceOf(treasury), _amountToBeSendToTreasury);
         assertEq(erc20.balanceOf(staking), _amountToBeSendToStakers);
-
-        // console.log("ref balance", erc20.balanceOf(_referrer));
 
         assertEq(
             platformLogic.checkPendingTokenWithdrawals(_referrer, erc20),
             _referrerWithdrawal
         );
-
-        // console.log(
-        //     "referrer withdrawal check",
-        //     platformLogic.checkPendingTokenWithdrawals(_referrer, erc20),
-        //     _referrerWithdrawal
-        // );
     }
 
     function test_ApplyPlatformFeeErc20WithoutRefereeLogic() public {
@@ -379,9 +364,6 @@ contract PlatformFeeTest is Test {
     function test_ApplyPlatformFeeErc20() public {
         ApplyPlatformFeeErc20(referee, referrer, referralCode1, 1000);
         assertEq(platformLogic.checkReferredUser(referee), referrer);
-
-        // check that referrer has a amount to withdraw
-        // assertEq()
     }
 
     function test_RevertWhen_ValueExceedsAllowanceErc20() public {
@@ -393,15 +375,11 @@ contract PlatformFeeTest is Test {
     // make this for the 4 calls _successStakers, _successTreasury
     function test_RevertWhen_CannotSendToStakers() public {}
 
-    // transaction failed on sending to address
-
-    //
     function test_WithdrawTokenFees() public {
         uint256 grossAmount = 1000;
 
         ApplyPlatformFeeErc20(referee, referrer, referralCode1, grossAmount);
 
-        // erc20.mint(referrer, 5);
         erc20.mint(address(platformLogic), 15);
 
         uint256 feeAmount = platformLogic.calculateFees(
@@ -419,38 +397,8 @@ contract PlatformFeeTest is Test {
             _referrerWithdrawal
         );
 
-        // uint256 referrerBalanceBefore = erc20.balanceOf(referrer);
-
-        // vm.prank(referrer, referrer);
-
-        // uint256 referrerFee = platformLogic.checkPendingTokenWithdrawals(
-        //     referrer,
-        //     erc20
-        // );
-
-        // console.log(referrerFee);
-        // console.log(
-        //     platformLogic.checkPendingTokenWithdrawals(referrer, erc20)
-        // );
-        // console.log(erc20.balanceOf(referrer));
-        // assertEq(referrer, referrerFee);
-
-        // assertEq(erc20.balanceOf(address(platformLogic)), referrerFee);
-
-        // 0x2e234DAe75C793f67A35089C9d99245E1C58470b
-        // console.log(address(referrer));
-        // console.log(address(referee));
-        // console.log(vm.addr(6));
-
-        // console.log(address(erc20));
-        // console.log(address(call));
-        // console.log(address(refuseEther));
         vm.prank(referrer, referrer);
 
-        // vm.expectEmit(address(platformLogic));
-        // emit platformLogic.Withdraw(referrer, _referrerWithdrawal);
-
-        // vm.expectEmit(referrer, _referrerWithdrawal);
         platformLogic.withdrawTokenFees(erc20);
 
         assertEq(erc20.balanceOf(referrer), _referrerWithdrawal);
@@ -461,10 +409,7 @@ contract PlatformFeeTest is Test {
         test_ApplyPlatformFeeErc20();
         vm.prank(factory, factory);
         bool statement = platformLogic.checkFactory(factory);
-        // assertEq(statement, true);
-        // console.log(statement);
-        // test_WithdrawEthFees();
-        // test_WithdrawTokenFees();
+
         uint256 viewPlatformFee = platformLogic.viewPlatformFee();
         assertEq(platformLogic.platformFee(), viewPlatformFee);
 
