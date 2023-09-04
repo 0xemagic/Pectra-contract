@@ -119,8 +119,6 @@ contract PlatformLogic is ReentrancyGuard {
         PectraStakingContract = _PectraStakingContract;
     }
 
-    ///******************************** */
-
     // remember to add a setter from the factory
     function setRefereeDiscount(uint256 _refereeDiscount) external onlyFactory {
         emit RefereeDiscountChanged(refereeDiscount, _refereeDiscount);

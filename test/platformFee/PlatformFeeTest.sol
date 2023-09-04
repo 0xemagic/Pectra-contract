@@ -304,6 +304,7 @@ contract PlatformFeeTest is Test {
         uint256 _amountToBeSendToStakers = feeAmount -
             _amountToBeSendToTreasury;
 
+        /// @dev leave for testing
         // uint256 _amountToBeSendToStakers = platformLogic.calculateFees(
         //     feeAmount,
         //     platformLogic.stakersFeeSplit()
@@ -371,9 +372,6 @@ contract PlatformFeeTest is Test {
 
         call.callApplyPlatformFeeErc20(referee, 10, erc20);
     }
-
-    // make this for the 4 calls _successStakers, _successTreasury
-    function test_RevertWhen_CannotSendToStakers() public {}
 
     function test_WithdrawTokenFees() public {
         uint256 grossAmount = 1000;
