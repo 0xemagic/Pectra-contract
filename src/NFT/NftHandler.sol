@@ -5,6 +5,7 @@ pragma solidity ^0.8.13;
 import "./IPositionNFT.sol";
 import "../GMX/interfaces/IGMXFactory.sol";
 import "../GMX/interfaces/IGMXAdapter.sol";
+import "forge-std/console.sol";
 
 contract NFTHandler {
     IPositionNFT public positionNFTContract;
@@ -18,7 +19,7 @@ contract NFTHandler {
     // Mapping to store which PositionId has been used for minting the NFT
     mapping(bytes32 => bool) public _mintedPositionIds;
 
-    // Mapping that stores all the PositonIds against a TokenId individually
+    // Mapping that stores TokenId for multiple positions
     mapping(bytes32 => uint256) public _mappedTokenId;
 
     // Events
@@ -88,15 +89,14 @@ contract NFTHandler {
 
         uint256 tokenId;
         // Mint the NFT using the PositionNFT contract
-        tokenId = positionNFTContract.mint(to, positionIDs);
+        tokenId = positionNFTContract.safeMint(to, positionIDs);
+
+        _tokenIds[tokenId] = positionIDs;
 
         for (uint256 i = 0; i < positionIDs.length; i++) {
             _mintedPositionIds[positionIDs[i]] = true;
             _mappedTokenId[positionIDs[i]] = tokenId;
         }
-
-        // Emit an event to indicate that the NFT has been minted and associated with the position IDs
-        emit NftMinted(positionIDs, to, tokenId);
 
         return tokenId;
     }
@@ -120,6 +120,7 @@ contract NFTHandler {
 
         // Burn the NFT using the PositionNFT contract
         positionNFTContract.burn(tokenId);
+        delete _tokenIds[tokenId];
 
         // Emit an event to indicate that the NFT has been burned
         emit NftBurned(tokenId);
@@ -163,35 +164,12 @@ contract NFTHandler {
             address gmxAdapter = gmxFactoryContract.getPositionAdapter(
                 positionIds[i]
             );
-            require(
-                _changeOwnerOfAdapter(gmxAdapter, to) == true,
-                "NFT HANDLER: Error while changing the position owner from adapter"
-            );
-            require(
-                gmxFactoryContract.updateOwner(
-                    msg.sender,
-                    to,
-                    positionIds[i]
-                ) == true,
-                "NFT HANDLER: Error while changing the position owner from gmx factory"
-            );
+
+            gmxAdapterContract = IGMXAdapter(gmxAdapter);
+            gmxAdapterContract.changePositonOwner(to);
+            gmxFactoryContract.updateOwner(msg.sender, to, positionIds[i]);
             emit NftTransferred(tokenId, to);
         }
-    }
-
-    /**
-     * @dev Change Ownership of Adapter contract.
-     *
-     * @param _gmxAdapter The address of the adapter contract.
-     * @param _newOwner The address of the new owner of that position.
-     */
-    function _changeOwnerOfAdapter(
-        address _gmxAdapter,
-        address _newOwner
-    ) internal returns (bool) {
-        gmxAdapterContract = IGMXAdapter(_gmxAdapter);
-        gmxAdapterContract.changePositonOwner(_newOwner);
-        return true;
     }
 
     /**

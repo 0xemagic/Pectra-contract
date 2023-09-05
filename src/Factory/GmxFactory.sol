@@ -15,6 +15,12 @@ contract GMXFactory {
     address public VAULT;
     address public NFT_HANDLER;
 
+    enum PositionStatus {
+        Opened,
+        Closed,
+        Transferred
+    }
+
     // Mapping to store the GMXAdapter contract addresses associated with each position ID.
     mapping(bytes32 => address) public positionAdapters;
 
@@ -26,6 +32,10 @@ contract GMXFactory {
 
     // Mapping to store the position IDs associated with each address and their index.
     mapping(address => mapping(uint => bytes32)) public indexedPositions;
+
+    //Mapping to store the status of the PositonId
+    mapping(bytes32 => mapping(address => PositionStatus))
+        public positionDetails;
 
     // Events
     event TokensWithdrawn(
@@ -178,7 +188,12 @@ contract GMXFactory {
         assembly {
             adapter := create(0, add(bytecode, 32), mload(bytecode))
         }
-        IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender);
+        IGMXAdapter(adapter).initialize(
+            ROUTER,
+            POSITION_ROUTER,
+            msg.sender,
+            NFT_HANDLER
+        );
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
         address collateral = _path[0];
         IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
@@ -198,6 +213,7 @@ contract GMXFactory {
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
+        positionDetails[positionId][msg.sender] = PositionStatus.Opened;
 
         // Emit the LongPositionOpened event.
         emit LongPositionOpened(positionId, msg.sender, adapter);
@@ -226,7 +242,12 @@ contract GMXFactory {
         assembly {
             adapter := create(0, add(bytecode, 32), mload(bytecode))
         }
-        IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender);
+        IGMXAdapter(adapter).initialize(
+            ROUTER,
+            POSITION_ROUTER,
+            msg.sender,
+            NFT_HANDLER
+        );
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
         positionId = IGMXAdapter(adapter).createIncreasePositionETH{
             value: msg.value
@@ -235,6 +256,7 @@ contract GMXFactory {
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
+        positionDetails[positionId][msg.sender] = PositionStatus.Opened;
 
         // Emit the LongETHPositionOpened event.
         emit LongETHPositionOpened(positionId, msg.sender, adapter);
@@ -259,13 +281,18 @@ contract GMXFactory {
         uint256 _minOut,
         uint256 _sizeDelta,
         uint256 _acceptablePrice
-    ) external payable returns (bytes32 positionId) {
+    ) public payable returns (bytes32 positionId) {
         bytes memory bytecode = type(GMXAdapter).creationCode;
         address adapter;
         assembly {
             adapter := create(0, add(bytecode, 32), mload(bytecode))
         }
-        IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender);
+        IGMXAdapter(adapter).initialize(
+            ROUTER,
+            POSITION_ROUTER,
+            msg.sender,
+            NFT_HANDLER
+        );
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
         address collateral = _path[0];
         IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
@@ -285,6 +312,7 @@ contract GMXFactory {
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
+        positionDetails[positionId][msg.sender] = PositionStatus.Opened;
 
         // Emit the ShortPositionOpened event.
         emit ShortPositionOpened(positionId, msg.sender, adapter);
@@ -313,7 +341,12 @@ contract GMXFactory {
         assembly {
             adapter := create(0, add(bytecode, 32), mload(bytecode))
         }
-        IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender);
+        IGMXAdapter(adapter).initialize(
+            ROUTER,
+            POSITION_ROUTER,
+            msg.sender,
+            NFT_HANDLER
+        );
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
         positionId = IGMXAdapter(adapter).createIncreasePositionETH{
             value: msg.value
@@ -322,6 +355,7 @@ contract GMXFactory {
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
+        positionDetails[positionId][msg.sender] = PositionStatus.Opened;
 
         // Emit the ShortETHPositionOpened event.
         emit ShortPositionOpened(positionId, msg.sender, adapter);
@@ -360,6 +394,9 @@ contract GMXFactory {
         }
 
         (, , , , , , bool isLong, ) = IGMXAdapter(adapter).getPositionData();
+
+        positionDetails[_positionId][msg.sender] = PositionStatus.Closed;
+
         // Emit the PositionClosed event.
         emit PositionClosed(_positionId, msg.sender, adapter, isLong);
     }
@@ -407,7 +444,7 @@ contract GMXFactory {
      */
     function openPositions(
         nftData memory _nftData
-    ) external payable returns (bytes32[2] memory) {
+    ) external payable returns (bytes32, bytes32) {
         bytes32 longPositionId;
         bytes32 shortPositionId;
 
@@ -421,7 +458,8 @@ contract GMXFactory {
             IGMXAdapter(adapter).initialize(
                 ROUTER,
                 POSITION_ROUTER,
-                msg.sender
+                msg.sender,
+                NFT_HANDLER
             );
             IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
             address collateral = _nftData._pathLong[0];
@@ -452,6 +490,7 @@ contract GMXFactory {
             indexedPositions[msg.sender][
                 positions[msg.sender]
             ] = longPositionId;
+            positionDetails[longPositionId][msg.sender] = PositionStatus.Opened;
 
             emit LongPositionOpened(longPositionId, msg.sender, adapter);
         }
@@ -466,7 +505,8 @@ contract GMXFactory {
             IGMXAdapter(adapter).initialize(
                 ROUTER,
                 POSITION_ROUTER,
-                msg.sender
+                msg.sender,
+                NFT_HANDLER
             );
             IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
             address collateral = _nftData._pathShort[0];
@@ -497,11 +537,13 @@ contract GMXFactory {
             indexedPositions[msg.sender][
                 positions[msg.sender]
             ] = shortPositionId;
+            positionDetails[shortPositionId][msg.sender] = PositionStatus
+                .Opened;
 
             emit ShortPositionOpened(shortPositionId, msg.sender, adapter);
         }
 
-        return [longPositionId, shortPositionId];
+        return (longPositionId, shortPositionId);
     }
 
     /**
@@ -514,6 +556,20 @@ contract GMXFactory {
         bytes32 _positionId
     ) external view returns (address) {
         return positionOwners[_positionId];
+    }
+
+    /**
+     * @dev Get the position status for a specific address associated with a given position ID.
+     *
+     * @param _positionId The ID of the position to query.
+     * @param _address The address whose status to query.
+     * @return An status of that specific position ID for the user.
+     */
+    function getPositionStatus(
+        bytes32 _positionId,
+        address _address
+    ) external view returns (PositionStatus) {
+        return positionDetails[_positionId][_address];
     }
 
     /**
@@ -568,9 +624,11 @@ contract GMXFactory {
         bytes32 _positionId
     ) external onlyNftHandler returns (bool) {
         positionOwners[_positionId] = _newOwner;
-        positions[_oldOwner] -= 1;
         positions[_newOwner] += 1;
         indexedPositions[_newOwner][positions[_newOwner]] = _positionId;
+        positionDetails[_positionId][_oldOwner] = PositionStatus.Transferred;
+        positionDetails[_positionId][_newOwner] = PositionStatus.Opened;
+
         return true;
     }
 }

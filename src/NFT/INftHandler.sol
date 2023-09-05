@@ -17,7 +17,7 @@ interface INFTHandler {
      * @return The token ID of the newly minted NFT.
      */
     function mintNFT(
-        bytes32[] calldata positionIDs,
+        bytes32[] memory positionIDs,
         address to
     ) external returns (uint256);
 

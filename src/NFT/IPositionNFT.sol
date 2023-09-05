@@ -12,7 +12,7 @@ interface IPositionNFT {
      * @param _positionIds The IDs of the positions opened.
      * @return tokenId The ID of the minted NFT.
      */
-    function mint(
+    function safeMint(
         address _to,
         bytes32[] memory _positionIds
     ) external returns (uint256);
@@ -21,9 +21,8 @@ interface IPositionNFT {
      * @dev Burn a NFT representing a pair of long and short positions.
      *
      * @param _tokenId The token Id to which the NFT will be burnt.
-     * @return bool if burning was successful or not.
      */
-    function burn(uint256 _tokenId) external returns (bool);
+    function burn(uint256 _tokenId) external;
 
     /**
      * @dev Set the base URI for the NFT contract.
