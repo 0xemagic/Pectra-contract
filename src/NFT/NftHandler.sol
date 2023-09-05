@@ -29,7 +29,11 @@ contract NFTHandler {
         uint256 indexed tokenId
     );
     event NftBurned(uint256 indexed tokenId);
-    event UpdateOwner(address indexed _oldOwner, address indexed _newOwner, bytes32[] indexed _positionId);
+    event UpdateOwner(
+        address indexed _oldOwner,
+        address indexed _newOwner,
+        bytes32[] indexed _positionId
+    );
 
     // Modifier to restrict access to only the factory (owner) that mints NFTs.
     modifier onlyOwner() {
