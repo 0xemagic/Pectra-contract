@@ -29,7 +29,7 @@ contract NFTHandler {
         uint256 indexed tokenId
     );
     event NftBurned(uint256 indexed tokenId);
-    event NftTransferred(uint256 indexed tokenId, address indexed newOwner);
+    event UpdateOwner(address indexed _oldOwner, address indexed _newOwner, bytes32[] indexed _positionId);
 
     // Modifier to restrict access to only the factory (owner) that mints NFTs.
     modifier onlyOwner() {
@@ -168,7 +168,7 @@ contract NFTHandler {
             gmxAdapterContract = IGMXAdapter(gmxAdapter);
             gmxAdapterContract.changePositonOwner(to);
             gmxFactoryContract.updateOwner(msg.sender, to, positionIds[i]);
-            emit NftTransferred(tokenId, to);
+            emit UpdateOwner(msg.sender, to, positionIds);
         }
     }
 
