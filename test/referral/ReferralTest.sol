@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
-import "../../src/Referral/Call.sol";
-import "../../src/Referral/Referral.sol";
-import "../../src/Referral/IReferral.sol";
+import "../../src/PlatformLogic/Call.sol";
+import "../../src/PlatformLogic/PlatformLogic.sol";
+import "../../src/PlatformLogic/IPlatformLogic.sol";
 import "forge-std/console.sol";
 
 contract ReferralTest is Test {
-    Referral referral;
+    PlatformLogic platformLogic;
 
     // Call is a mock caller pretenting to be GMX Adapter or Factory
     Call call;
@@ -20,14 +20,20 @@ contract ReferralTest is Test {
 
     function setUp() public {
         address factory = vm.addr(9);
+        address treasury = vm.addr(10);
+        address staking = vm.addr(10);
 
-        referral = new Referral(factory);
+        platformLogic = new PlatformLogic(
+            factory,
+            payable(treasury),
+            payable(staking)
+        );
 
-        call = new Call(address(referral));
+        call = new Call(address(platformLogic));
 
         vm.prank(factory, factory);
 
-        referral.setFactory(address(call), true);
+        platformLogic.setFactory(address(call), true);
     }
 
     // createReferralCode function test
@@ -39,7 +45,7 @@ contract ReferralTest is Test {
 
         call.callCreate(referralCode1);
 
-        assertEq(referral.viewReferralCodeOwner(referralCode1), account2);
+        assertEq(platformLogic.viewReferralCodeOwner(referralCode1), account2);
     }
 
     // createReferralCode function test
@@ -78,7 +84,7 @@ contract ReferralTest is Test {
 
         call.callAddReferee(referralCode1);
 
-        assertEq(referral.viewReferredUser(account2), referralCode1);
+        assertEq(platformLogic.viewReferredUser(account2), referralCode1);
     }
 
     // AddReferee function test
@@ -122,7 +128,7 @@ contract ReferralTest is Test {
 
         call.callAddReferee(referralCode1);
 
-        assertEq(referral.checkReferredUser(account2), account1);
+        assertEq(platformLogic.checkReferredUser(account2), account1);
     }
 
     // AddReferee function test
@@ -143,7 +149,7 @@ contract ReferralTest is Test {
         call.callCreate(referralCode1);
 
         // asserts users code to ref code 1
-        assertEq(referral.viewReferrersCode(user), referralCode1);
+        assertEq(platformLogic.viewReferrersCode(user), referralCode1);
 
         address factory = vm.addr(9);
         vm.prank(factory, factory);
@@ -151,7 +157,7 @@ contract ReferralTest is Test {
         call.callEditReferralCode(user, referralCode2);
 
         // asserts users code to ref code 2
-        assertEq(referral.viewReferrersCode(user), referralCode2);
+        assertEq(platformLogic.viewReferrersCode(user), referralCode2);
     }
 
     // Factory edit referral code access control test
@@ -164,10 +170,10 @@ contract ReferralTest is Test {
         call.callCreate(referralCode1);
 
         // asserts users code to ref code 1
-        assertEq(referral.viewReferrersCode(user), referralCode1);
+        assertEq(platformLogic.viewReferrersCode(user), referralCode1);
 
         // no factory access control, not whitelisted address
-        Call call2 = new Call(address(referral));
+        Call call2 = new Call(address(platformLogic));
 
         address notfactory = vm.addr(9);
         vm.prank(notfactory, notfactory);
@@ -185,14 +191,14 @@ contract ReferralTest is Test {
         call.callAddReferee(referralCode1);
 
         // assertEq users code to ref code 1
-        assertEq(referral.viewReferredUser(user), referralCode1);
+        assertEq(platformLogic.viewReferredUser(user), referralCode1);
 
         address factory = vm.addr(9);
         vm.prank(factory, factory);
 
         call.callEditReferredUsers(user, referralCode2);
         // assertEq users code to ref code 2
-        assertEq(referral.viewReferredUser(user), referralCode2);
+        assertEq(platformLogic.viewReferredUser(user), referralCode2);
     }
 
     // Factory edit referral users test
@@ -206,10 +212,10 @@ contract ReferralTest is Test {
         call.callAddReferee(referralCode1);
 
         // assertEq users code to ref code 1
-        assertEq(referral.viewReferredUser(user), referralCode1);
+        assertEq(platformLogic.viewReferredUser(user), referralCode1);
 
         // no factory access control, not whitelisted address
-        Call call2 = new Call(address(referral));
+        Call call2 = new Call(address(platformLogic));
 
         address notfactory = vm.addr(7);
         vm.prank(notfactory, notfactory);
@@ -219,7 +225,7 @@ contract ReferralTest is Test {
     }
 
     // Factory add test
-    function test_setFactory() public {
+    function setFactory() public {
         address factory = vm.addr(9);
         vm.prank(factory, factory);
 
@@ -228,13 +234,18 @@ contract ReferralTest is Test {
 
         // assertEq newFactory true
         //   vm.prank(factory, factory);
-        //   assertEq(referral.checkFactory(newFactory), true);
+        // assertEq(platformLogic.checkFactory(newFactory), true);
 
         vm.prank(newFactory, newFactory);
         call.callSetFactory(factory, false);
 
         // assertEq factory false
         // assertEq(referral.checkFactory(factory), false);
+    }
+
+    function test_setFactory() public {
+        setFactory();
+        // assertEq(platformLogic.checkFactory(vm.addr(4)), true);
     }
 
     // Set Factory Access Control Test
@@ -248,7 +259,7 @@ contract ReferralTest is Test {
         call.callSetFactory(newFactory, true);
 
         // no factory access control, not whitelisted address
-        Call call2 = new Call(address(referral));
+        Call call2 = new Call(address(platformLogic));
 
         vm.prank(newFactory, newFactory);
         vm.expectRevert(NotAdmin.selector);

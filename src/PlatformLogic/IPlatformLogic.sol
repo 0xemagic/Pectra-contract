@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-interface IReferral {
+interface IPlatformLogic {
     function createReferralCode(bytes32 _referralCode) external returns (bool);
 
     function addReferee(bytes32 _referralCode) external returns (bool);
