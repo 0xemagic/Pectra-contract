@@ -4,8 +4,9 @@ pragma solidity ^0.8.13;
 import "../GMX/interfaces/IERC20.sol";
 import "../GMX/interfaces/IGMXAdapter.sol";
 import "../../lib/openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
+import "../utils/MultiCall3.sol";
 
-contract GMXAdapter is Initializable {
+contract GMXAdapter is Initializable, MultiCall3 {
     // Contract variables
     address public FACTORY;
     address public OWNER;
@@ -126,12 +127,14 @@ contract GMXAdapter is Initializable {
             ZERO_VALUE,
             ZERO_ADDRESS
         );
+        // to reflect the increase when called to increase the existin position
+        _amountIn += amountIn;
         setPositionData(_path, _indexToken, _amountIn, _minOut, _sizeDelta, _isLong, _acceptablePrice);
         return result;
     }
 
     /**
-     * @dev Create a long position using ETH as collateral.
+     * @dev Create a position using ETH as collateral.
      *
      * @param _path The token path for the long position.
      * @param _indexToken The index token for the long position.
@@ -153,7 +156,80 @@ contract GMXAdapter is Initializable {
         bytes32 result = IPositionRouter(POSITION_ROUTER).createIncreasePositionETH{value: msg.value}(
             _path, _indexToken, _minOut, _sizeDelta, _isLong, _acceptablePrice, _executionFee, ZERO_VALUE, ZERO_ADDRESS
         );
-        setPositionData(_path, _indexToken, msg.value - _executionFee, _minOut, _sizeDelta, _isLong, _acceptablePrice);
+
+        // to reflect the increase when called to increase the existin position
+        uint256 _amountIn = (msg.value - _executionFee) + amountIn;
+        setPositionData(_path, _indexToken, _amountIn, _minOut, _sizeDelta, _isLong, _acceptablePrice);
+        return result;
+    }
+
+    /**
+     * @dev Decrease a position using tokens as collateral.
+     *
+     * @param _path The token path for the long position.
+     * @param _indexToken The index token for the long position.
+     * @param _amountIn The amount of tokens to invest.
+     * @param _minOut The minimum acceptable amount of output tokens.
+     * @param _sizeDelta The amount of leverage taken from the Exchange for the long position.
+     * @param _isLong Whether the position is a long position (true) or a short position (false).
+     * @param _acceptablePrice The acceptable price for the long position.
+     * @return positionId The ID of the newly created long position.
+     */
+    function createDecreasePosition(
+        address[] memory _path,
+        address _indexToken,
+        uint256 _amountIn,
+        uint256 _minOut,
+        uint256 _sizeDelta,
+        bool _isLong,
+        uint256 _acceptablePrice
+    ) external payable onlyFactory returns (bytes32 positionId) {
+        uint256 _executionFee = IPositionRouter(POSITION_ROUTER).minExecutionFee();
+        bytes32 result = IPositionRouter(POSITION_ROUTER).createDecreasePosition{value: msg.value}(
+            _path,
+            _indexToken,
+            _amountIn,
+            _minOut,
+            _sizeDelta,
+            _isLong,
+            _acceptablePrice,
+            _executionFee,
+            ZERO_VALUE,
+            ZERO_ADDRESS
+        );
+        // to reflect the decrease when called to increase the existin position
+        _amountIn -= amountIn;
+        setPositionData(_path, _indexToken, _amountIn, _minOut, _sizeDelta, _isLong, _acceptablePrice);
+        return result;
+    }
+
+    /**
+     * @dev Decrease a position using ETH as collateral.
+     *
+     * @param _path The token path for the long position.
+     * @param _indexToken The index token for the long position.
+     * @param _minOut The minimum acceptable amount of output tokens.
+     * @param _sizeDelta The amount of leverage taken from the Exchange for the long position.
+     * @param _isLong Whether the position is a long position (true) or a short position (false).
+     * @param _acceptablePrice The acceptable price for the long position.
+     * @return positionId The ID of the newly created long position.
+     */
+    function createDecreasePositionETH(
+        address[] memory _path,
+        address _indexToken,
+        uint256 _minOut,
+        uint256 _sizeDelta,
+        bool _isLong,
+        uint256 _acceptablePrice
+    ) external payable onlyFactory returns (bytes32 positionId) {
+        uint256 _executionFee = IPositionRouter(POSITION_ROUTER).minExecutionFee();
+        bytes32 result = IPositionRouter(POSITION_ROUTER).createDecreasePositionETH{value: msg.value}(
+            _path, _indexToken, _minOut, _sizeDelta, _isLong, _acceptablePrice, _executionFee, ZERO_VALUE, ZERO_ADDRESS
+        );
+
+        // to reflect the increase when called to increase the existin position
+        uint256 _amountIn = (msg.value - _executionFee) - amountIn;
+        setPositionData(_path, _indexToken, _amountIn, _minOut, _sizeDelta, _isLong, _acceptablePrice);
         return result;
     }
 
