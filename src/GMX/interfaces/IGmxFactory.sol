@@ -5,6 +5,12 @@ import "./IERC20.sol";
 import "./IRouter.sol";
 import "./IPositionRouter.sol";
 
+enum PositionStatus {
+    Opened,
+    Closed,
+    Transferred
+}
+
 struct nftData {
     address[] _pathLong;
     address[] _pathShort;
@@ -111,7 +117,7 @@ interface IGMXFactory {
         address[] memory _path,
         uint256 _acceptablePrice,
         bool _withdrawETH
-    ) external;
+    ) external payable;
 
     /**
      * @dev Get the position adapter associated with a given position ID.
@@ -160,7 +166,7 @@ interface IGMXFactory {
      */
     function openPositions(
         nftData memory _nftData
-    ) external payable returns (bytes32[2] memory);
+    ) external payable returns (bytes32, bytes32);
 
     /**
      * @dev Get the positionID associated with a given address on index.
@@ -187,4 +193,16 @@ interface IGMXFactory {
         address _newOwner,
         bytes32 _positionId
     ) external returns (bool);
+
+    /**
+     * @dev Get the position status for a specific address associated with a given position ID.
+     *
+     * @param _positionId The ID of the position to query.
+     * @param _address The address whose status to query.
+     * @return An status of that specific position ID for the user.
+     */
+    function getPositionStatus(
+        bytes32 _positionId,
+        address _address
+    ) external view returns (PositionStatus);
 }

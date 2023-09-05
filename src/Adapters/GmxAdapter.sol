@@ -11,6 +11,7 @@ contract GMXAdapter is Initializable {
     address public OWNER;
     address public ROUTER;
     address public POSITION_ROUTER;
+    address public NFT_HANDLER;
     address constant ZERO_ADDRESS = address(0);
     bytes32 constant ZERO_VALUE =
         0x0000000000000000000000000000000000000000000000000000000000000000;
@@ -48,6 +49,15 @@ contract GMXAdapter is Initializable {
         _;
     }
 
+    // Modifier to restrict access to only the contract owner or factory contract.
+    modifier onlyNftHandler() {
+        require(
+            NFT_HANDLER == msg.sender,
+            "GMX ADAPTER: caller is not the nft handler"
+        );
+        _;
+    }
+
     // Fallback function to receive ETH.
     receive() external payable {}
 
@@ -62,16 +72,19 @@ contract GMXAdapter is Initializable {
      * @param _router The address of the GMX Router Contract.
      * @param _positionRouter The address of the GMX Position Router Contract.
      * @param _owner The owner address who can call certain functions.
+     * @param _nftHandler The address of nft handler who can call certain functions.
      */
     function initialize(
         address _router,
         address _positionRouter,
-        address _owner
+        address _owner,
+        address _nftHandler
     ) external {
         require(msg.sender == FACTORY, "GMX ADAPTER:  FORBIDDEN"); // Sufficient check for factory contract.
         ROUTER = _router;
         POSITION_ROUTER = _positionRouter;
         OWNER = _owner;
+        NFT_HANDLER = _nftHandler;
     }
 
     // Function to approve an ERC20 token for a spender.
@@ -353,7 +366,7 @@ contract GMXAdapter is Initializable {
      *
      * @param _newowner The address to which the position will be transferred.
      */
-    function changePositonOwner(address _newowner) external onlyOwner {
+    function changePositonOwner(address _newowner) external onlyNftHandler {
         OWNER = _newowner;
     }
 }
