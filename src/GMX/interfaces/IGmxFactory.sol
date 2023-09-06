@@ -105,6 +105,54 @@ interface IGMXFactory {
     ) external payable returns (bytes32);
 
     /**
+     * @dev Create a position using tokens as collateral.
+     *
+     * @param _positionId The id of the position
+     * @param _path The token path for the position.
+     * @param _indexToken The index token for the position.
+     * @param _amountIn The amount of tokens to invest.
+     * @param _minOut The minimum acceptable amount of output tokens.
+     * @param _sizeDelta The amount of leverage taken from the Exchange for the position.
+     * @param _isLong Whether the position is a position (true) or a short position (false).
+     * @param _acceptablePrice The acceptable price for the position.
+     * @return positionId The ID of the position.
+     */
+    function createIncreasePosition(
+        bytes32 _positionId,
+        address[] memory _path,
+        address _indexToken,
+        uint256 _amountIn,
+        uint256 _minOut,
+        uint256 _sizeDelta,
+        bool _isLong,
+        uint256 _acceptablePrice
+    ) external returns (bytes32 positionId);
+
+    /**
+     * @dev Decrease a position using tokens as collateral.
+     *
+     * @param _positionId The id of the position
+     * @param _path The token path for the position.
+     * @param _indexToken The index token for the position.
+     * @param _amountIn The amount of tokens to invest.
+     * @param _minOut The minimum acceptable amount of output tokens.
+     * @param _sizeDelta The amount of leverage taken from the Exchange for the position.
+     * @param _isLong Whether the position is a position (true) or a short position (false).
+     * @param _acceptablePrice The acceptable price for the position.
+     * @return positionId The ID of the position.
+     */
+    function createDecreasePosition(
+        bytes32 _positionId,
+        address[] memory _path,
+        address _indexToken,
+        uint256 _amountIn,
+        uint256 _minOut,
+        uint256 _sizeDelta,
+        bool _isLong,
+        uint256 _acceptablePrice
+    ) external returns (bytes32);
+
+    /**
      * @dev Close an open position in the GMX Factory.
      *
      * @param positionId The ID of the position to be closed.

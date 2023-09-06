@@ -74,12 +74,14 @@ contract GMXFactory is MultiCall3 {
     event CreateIncreasePosition(
         bytes32 indexed positionId,
         address indexed owner,
-        address indexed adapter
+        address indexed adapter,
+        uint256 amountIn
     );
     event CreateDecreasePosition(
         bytes32 indexed positionId,
         address indexed owner,
-        address indexed adapter
+        address indexed adapter,
+        uint256 amountIn
     );
 
     struct nftData {
@@ -376,14 +378,15 @@ contract GMXFactory is MultiCall3 {
     /**
      * @dev Create a position using tokens as collateral.
      *
-     * @param _path The token path for the long position.
-     * @param _indexToken The index token for the long position.
+     * @param _positionId The id of the position
+     * @param _path The token path for the position.
+     * @param _indexToken The index token for the position.
      * @param _amountIn The amount of tokens to invest.
      * @param _minOut The minimum acceptable amount of output tokens.
-     * @param _sizeDelta The amount of leverage taken from the Exchange for the long position.
-     * @param _isLong Whether the position is a long position (true) or a short position (false).
-     * @param _acceptablePrice The acceptable price for the long position.
-     * @return positionId The ID of the newly created long position.
+     * @param _sizeDelta The amount of leverage taken from the Exchange for the position.
+     * @param _isLong Whether the position is a position (true) or a short position (false).
+     * @param _acceptablePrice The acceptable price for the position.
+     * @return positionId The ID of the newly created position.
      */
     function createIncreasePosition(
         bytes32 _positionId,
@@ -420,24 +423,19 @@ contract GMXFactory is MultiCall3 {
     /**
      * @dev Decrease a position using tokens as collateral.
      *
-     * @param _path The token path for the long position.
-     * @param _indexToken The index token for the long position.
+     * @param _positionId The id of the position
+     * @param _path The token path for the position.
      * @param _amountIn The amount of tokens to invest.
-     * @param _minOut The minimum acceptable amount of output tokens.
-     * @param _sizeDelta The amount of leverage taken from the Exchange for the long position.
-     * @param _isLong Whether the position is a long position (true) or a short position (false).
-     * @param _acceptablePrice The acceptable price for the long position.
-     * @return positionId The ID of the newly created long position.
+     * @param _acceptablePrice The acceptable price for the position.
+     * @param _withdrawETH Whether to withdraw ETH after closing the position.
+     * @return positionId The ID of the newly created position.
      */
     function createDecreasePosition(
         bytes32 _positionId,
         address[] memory _path,
-        address _indexToken,
         uint256 _amountIn,
-        uint256 _minOut,
-        uint256 _sizeDelta,
-        bool _isLong,
-        uint256 _acceptablePrice
+        uint256 _acceptablePrice,
+        bool _withdrawETH
     ) external returns (bytes32 positionId) {
         require(
             msg.sender == positionOwners[_positionId],
@@ -450,11 +448,9 @@ contract GMXFactory is MultiCall3 {
         address adapter = positionAdapters[_positionId];
         positionId = IGMXAdapter(adapter).createDecreasePosition(
             _path,
-            _indexToken,
             _amountIn,
-            _minOut,
-            _sizeDelta,
-            _isLong,
+            msg.sender,
+            _withdrawETH,
             _acceptablePrice
         );
 
