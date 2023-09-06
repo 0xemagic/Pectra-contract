@@ -3,9 +3,16 @@ pragma solidity ^0.8.13;
 
 import "../GMX/interfaces/IERC20.sol";
 import "../GMX/interfaces/IGMXAdapter.sol";
+import "../GMX/interfaces/IPositionRouterCallbackReceiver.sol";
 import "../../lib/openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 
-contract GMXAdapter is Initializable {
+contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
+    enum ExecutionState {
+        Pending,
+        Success,
+        Failed
+    }
+
     // Contract variables
     address public FACTORY;
     address public OWNER;
@@ -25,6 +32,8 @@ contract GMXAdapter is Initializable {
     uint256 sizeDelta;
     bool isLong;
     uint256 acceptablePrice;
+    ExecutionState increaseExecuted;
+    ExecutionState decreaseExecuted;
 
     // Events
     event TokenApproval(
@@ -39,8 +48,14 @@ contract GMXAdapter is Initializable {
         uint256 indexed amount
     );
     event EthWithdrawal(address indexed to, uint256 indexed amount);
+    event Callback(
+        address indexed adapter,
+        bytes32 key,
+        bool isExecuted,
+        bool isIncrease
+    );
 
-    // Modifier to restrict access to only the contract owner.
+    // Modifier to restrict access to only the contract owner or factory contract.
     modifier onlyOwner() {
         require(OWNER == msg.sender, "GMX ADAPTER: caller is not the owner");
         _;
@@ -50,6 +65,15 @@ contract GMXAdapter is Initializable {
     modifier onlyFactory() {
         require(
             FACTORY == msg.sender,
+            "GMX ADAPTER: caller is not the factory"
+        );
+        _;
+    }
+
+    // Modifier to restrict access to only the factory & position router contract.
+    modifier onlyFactoryOrRouter() {
+        require(
+            FACTORY == msg.sender || POSITION_ROUTER == msg.sender,
             "GMX ADAPTER: caller is not the factory"
         );
         _;
@@ -150,7 +174,7 @@ contract GMXAdapter is Initializable {
             _acceptablePrice,
             _executionFee,
             ZERO_VALUE,
-            ZERO_ADDRESS
+            address(this)
         );
         setPositionData(
             _path,
@@ -240,7 +264,7 @@ contract GMXAdapter is Initializable {
             0,
             _executionFee,
             _withdrawETH,
-            ZERO_ADDRESS
+            address(this)
         );
         return result;
     }
@@ -254,7 +278,7 @@ contract GMXAdapter is Initializable {
     function closeFailedPosition(
         address[] memory _path,
         address _receiver
-    ) external payable onlyFactory {
+    ) external payable onlyFactoryOrRouter {
         address collateral = _path[_path.length - 1];
         uint256 collateralBalance = IERC20(collateral).balanceOf(address(this));
         if (collateralBalance > 0) {
@@ -374,5 +398,29 @@ contract GMXAdapter is Initializable {
      */
     function changePositonOwner(address _newowner) external onlyNftHandler {
         OWNER = _newowner;
+    }
+
+    /// @notice IPositionRouterCallbackReceiver callback function
+    /// @dev updates whether position execution state
+    /// @param positionKey position key
+    /// @param isExecuted whether position increase/decrease was executed
+    /// @param isIncrease whether positon action was increase/decrease
+    function gmxPositionCallback(
+        bytes32 positionKey,
+        bool isExecuted,
+        bool isIncrease
+    ) external {
+        emit Callback(address(this), positionKey, isExecuted, isIncrease);
+
+        if (isExecuted && isIncrease) {
+            increaseExecuted = ExecutionState.Success;
+        } else if (isExecuted && !isIncrease) {
+            decreaseExecuted = ExecutionState.Success;
+        } else if (!isExecuted && !isIncrease) {
+            decreaseExecuted = ExecutionState.Failed;
+        } else {
+            increaseExecuted = ExecutionState.Failed;
+            closeFailedPosition(path, OWNER);
+        }
     }
 }

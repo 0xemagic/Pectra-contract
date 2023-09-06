@@ -31,7 +31,7 @@ contract GMXFactory {
     mapping(address => uint256) public positions;
 
     // Mapping to store the position IDs associated with each address and their index.
-    mapping(address => mapping(uint => bytes32)) public indexedPositions;
+    mapping(address => mapping(uint256 => bytes32)) public indexedPositions;
 
     //Mapping to store the status of the PositonId
     mapping(bytes32 => mapping(address => PositionStatus))
@@ -41,9 +41,9 @@ contract GMXFactory {
     event TokensWithdrawn(
         address indexed token,
         address indexed to,
-        uint indexed amount
+        uint256 indexed amount
     );
-    event EthWithdrawn(address indexed to, uint indexed amount);
+    event EthWithdrawn(address indexed to, uint256 indexed amount);
     event LongPositionOpened(
         bytes32 indexed positionId,
         address indexed owner,
