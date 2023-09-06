@@ -631,7 +631,6 @@ contract GMXFactoryTest is Test {
             gmxFactory.getPositionStatus(positionId2, user) ==
                 GMXFactory.PositionStatus.Closed
         );
-        
     }
 
     function testTransferNft() public {
