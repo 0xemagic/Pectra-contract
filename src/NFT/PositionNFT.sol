@@ -1,10 +1,14 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "../../lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
+import "../../lib/openzeppelin-contracts/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "../../lib/openzeppelin-contracts/contracts/token/ERC721/extensions/ERC721Burnable.sol";
+import "../../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 
-contract PositionNFT is ERC721Enumerable {
-    uint256 public lastTokenId;
+contract PositionNFT is ERC721, ERC721Enumerable, ERC721Burnable {
+    uint256 private _tokenIdCounter;
+
     string public baseURI;
     address public owner;
 
@@ -46,14 +50,17 @@ contract PositionNFT is ERC721Enumerable {
      * @param _positionIds The ID of one or more than one positions to be associated with the NFT.
      * @return The token ID of the newly minted NFT.
      */
-    function mint(
+
+    function safeMint(
         address to,
         bytes32[] memory _positionIds
-    ) external onlyNftHandler returns (uint256) {
-        _mint(to, ++lastTokenId);
-        tokenList[lastTokenId] = _positionIds;
-        emit NftCreated(owner, lastTokenId, _positionIds);
-        return lastTokenId;
+    ) public onlyNftHandler returns (uint256) {
+        uint256 tokenId = _tokenIdCounter;
+        _tokenIdCounter++;
+        _safeMint(to, tokenId);
+        tokenList[tokenId] = _positionIds;
+        emit NftCreated(owner, tokenId, _positionIds);
+        return tokenId;
     }
 
     /**
@@ -71,15 +78,6 @@ contract PositionNFT is ERC721Enumerable {
     }
 
     /**
-     * @dev Burn an NFT representing a pair of long and short positions.
-     *
-     * @param _tokenId The ID of the NFT to be burnt.
-     */
-    function burn(uint256 _tokenId) external onlyNftHandler {
-        _burn(_tokenId);
-    }
-
-    /**
      * @dev Set the base URI for the NFT contract.
      *
      * @param uri_ The new base URI for the NFT contract.
@@ -88,29 +86,20 @@ contract PositionNFT is ERC721Enumerable {
         baseURI = uri_;
     }
 
-    /**
-     * @dev Internal function to return the base URI for the NFT token.
-     *
-     * @return The base URI for the NFT token.
-     */
-    function _baseURI() internal view override returns (string memory) {
-        return baseURI;
+    // The following functions are overrides required by Solidity.
+
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId,
+        uint256 batchSize
+    ) internal override(ERC721, ERC721Enumerable) {
+        super._beforeTokenTransfer(from, to, tokenId, batchSize);
     }
 
-    /**
-     * @dev Returns the URI for a given NFT token ID.
-     *
-     * @param tokenId The token ID for which to return the URI.
-     * @return The URI for the specified token ID.
-     */
-    function tokenURI(
-        uint256 tokenId
-    ) public view override(ERC721) returns (string memory) {
-        _requireMinted(tokenId);
-
-        return
-            bytes(baseURI).length > 0
-                ? string(abi.encodePacked(baseURI, Strings.toString(tokenId)))
-                : "";
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view override(ERC721, ERC721Enumerable) returns (bool) {
+        return super.supportsInterface(interfaceId);
     }
 }

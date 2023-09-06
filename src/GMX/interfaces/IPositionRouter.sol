@@ -94,4 +94,30 @@ interface IPositionRouter {
         bool _withdrawETH,
         address _callbackTarget
     ) external payable returns (bytes32);
+
+    /**
+     * @dev Set the Position Keeper to excecute the position.
+     *
+     * @param _account The account address that is set to be the position keeper.
+     * @param _isActive The boolean parameter to set if the position keeper is active or not.
+     */
+    function setPositionKeeper(address _account, bool _isActive) external;
+
+    /**
+     * @dev Checks if the address is the position keeper or not.
+     *
+     * @param _account The account address that is set to be the position keeper.
+     * @return The boolean parameter telling if position keeper is active or not.
+     */
+    function isPositionKeeper(address _account) external view returns (bool);
+
+    function executeIncreasePosition(
+        bytes32 _key,
+        address payable _executionFeeReceiver
+    ) external returns (bool);
+
+    function executeDecreasePosition(
+        bytes32 _key,
+        address payable _executionFeeReceiver
+    ) external returns (bool);
 }
