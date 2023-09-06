@@ -45,6 +45,8 @@ contract GMXFactory is MultiCall3 {
     event LongETHPositionOpened(bytes32 indexed positionId, address indexed owner, address indexed adapter);
     event ShortETHPositionOpened(bytes32 indexed positionId, address indexed owner, address indexed adapter);
     event PositionClosed(bytes32 indexed positionId, address indexed owner, address indexed adapter, bool isLong);
+    event CreateIncreasePosition(bytes32 indexed positionId, address indexed owner, address indexed adapter);
+    event CreateDecreasePosition(bytes32 indexed positionId, address indexed owner, address indexed adapter);
 
     struct nftData {
         address[] _pathLong;
@@ -284,6 +286,70 @@ contract GMXFactory is MultiCall3 {
         // Emit the ShortETHPositionOpened event.
         emit ShortPositionOpened(positionId, msg.sender, adapter);
         return positionId;
+    }
+
+    /**
+     * @dev Create a position using tokens as collateral.
+     *
+     * @param _path The token path for the long position.
+     * @param _indexToken The index token for the long position.
+     * @param _amountIn The amount of tokens to invest.
+     * @param _minOut The minimum acceptable amount of output tokens.
+     * @param _sizeDelta The amount of leverage taken from the Exchange for the long position.
+     * @param _isLong Whether the position is a long position (true) or a short position (false).
+     * @param _acceptablePrice The acceptable price for the long position.
+     * @return positionId The ID of the newly created long position.
+     */
+    function createIncreasePosition(
+        bytes32 _positionId,
+        address[] memory _path,
+        address _indexToken,
+        uint256 _amountIn,
+        uint256 _minOut,
+        uint256 _sizeDelta,
+        bool _isLong,
+        uint256 _acceptablePrice
+    ) external returns (bytes32 positionId) {
+        require(msg.sender == positionOwners[_positionId], "GMX FACTORY: Not a position owner");
+        require(positionDetails[_positionId][msg.sender] == PositionStatus.Opened, "GMX FACTORY: Position not open");
+        address adapter = positionAdapters[_positionId];
+        positionId = IGMXAdapter(adapter).createIncreasePosition(
+            _path, _indexToken, _amountIn, _minOut, _sizeDelta, _isLong, _acceptablePrice
+        );
+
+        emit CreateIncreasePosition(positionId, msg.sender, adapter, _amountIn);
+    }
+
+    /**
+     * @dev Decrease a position using tokens as collateral.
+     *
+     * @param _path The token path for the long position.
+     * @param _indexToken The index token for the long position.
+     * @param _amountIn The amount of tokens to invest.
+     * @param _minOut The minimum acceptable amount of output tokens.
+     * @param _sizeDelta The amount of leverage taken from the Exchange for the long position.
+     * @param _isLong Whether the position is a long position (true) or a short position (false).
+     * @param _acceptablePrice The acceptable price for the long position.
+     * @return positionId The ID of the newly created long position.
+     */
+    function createDecreasePosition(
+        bytes32 _positionId,
+        address[] memory _path,
+        address _indexToken,
+        uint256 _amountIn,
+        uint256 _minOut,
+        uint256 _sizeDelta,
+        bool _isLong,
+        uint256 _acceptablePrice
+    ) external returns (bytes32 positionId) {
+        require(msg.sender == positionOwners[_positionId], "GMX FACTORY: Not a position owner");
+        require(positionDetails[_positionId][msg.sender] == PositionStatus.Opened, "GMX FACTORY: Position not open");
+        address adapter = positionAdapters[_positionId];
+        positionId = IGMXAdapter(adapter).createDecreasePosition(
+            _path, _indexToken, _amountIn, _minOut, _sizeDelta, _isLong, _acceptablePrice
+        );
+
+        emit CreateDecreasePosition(positionId, msg.sender, adapter, _amountIn);
     }
 
     /**
