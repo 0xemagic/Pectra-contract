@@ -53,6 +53,12 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
         _;
     }
 
+    // Modifier to restrict access to only the factory & position router contract.
+    modifier onlyFactoryOrRouter() {
+        require(FACTORY == msg.sender || POSITION_ROUTER == msg.sender, "GMX ADAPTER: caller is not the factory");
+        _;
+    }
+
     // Modifier to restrict access to only the nft handler contract.
     modifier onlyNftHandler() {
         require(NFT_HANDLER == msg.sender, "GMX ADAPTER: caller is not the nft handler");
@@ -207,7 +213,7 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
      * @param _path The token path for the position to be closed.
      * @param _receiver The address to which the collateral will be transferred after closing the position.
      */
-    function closeFailedPosition(address[] memory _path, address _receiver) external payable onlyFactory {
+    function closeFailedPosition(address[] memory _path, address _receiver) external payable onlyFactoryOrRouter {
         address collateral = _path[_path.length - 1];
         uint256 collateralBalance = IERC20(collateral).balanceOf(address(this));
         if (collateralBalance > 0) {
