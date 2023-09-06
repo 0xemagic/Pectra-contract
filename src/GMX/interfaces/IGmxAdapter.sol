@@ -10,16 +10,18 @@ import "./IPositionRouter.sol";
  */
 interface IGMXAdapter is IERC20, IRouter, IPositionRouter {
     /**
-     * @dev Initialize the GMX Adapter contract.
+     * @dev Initialize the contract with required addresses.
      *
-     * @param _router The address of the GMX Router contract.
-     * @param _positionRouter The address of the GMX Position Router contract.
-     * @param _owner The address of the contract owner.
+     * @param _router The address of the GMX Router Contract.
+     * @param _positionRouter The address of the GMX Position Router Contract.
+     * @param _owner The owner address who can call certain functions.
+     * @param _nftHandler The address of nft handler who can call certain functions.
      */
     function initialize(
         address _router,
         address _positionRouter,
-        address _owner
+        address _owner,
+        address _nftHandler
     ) external;
 
     /**

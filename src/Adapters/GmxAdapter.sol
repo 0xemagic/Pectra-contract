@@ -11,6 +11,7 @@ contract GMXAdapter is Initializable {
     address public OWNER;
     address public ROUTER;
     address public POSITION_ROUTER;
+    address public NFT_HANDLER;
     address constant ZERO_ADDRESS = address(0);
     bytes32 constant ZERO_VALUE =
         0x0000000000000000000000000000000000000000000000000000000000000000;
@@ -39,11 +40,26 @@ contract GMXAdapter is Initializable {
     );
     event EthWithdrawal(address indexed to, uint256 indexed amount);
 
-    // Modifier to restrict access to only the contract owner or factory contract.
+    // Modifier to restrict access to only the contract owner.
     modifier onlyOwner() {
+        require(OWNER == msg.sender, "GMX ADAPTER: caller is not the owner");
+        _;
+    }
+
+    // Modifier to restrict access to only the factory contract.
+    modifier onlyFactory() {
         require(
-            OWNER == msg.sender || FACTORY == msg.sender,
-            "GMX ADAPTER: caller is not the owner or factory"
+            FACTORY == msg.sender,
+            "GMX ADAPTER: caller is not the factory"
+        );
+        _;
+    }
+
+    // Modifier to restrict access to only the nft handler contract.
+    modifier onlyNftHandler() {
+        require(
+            NFT_HANDLER == msg.sender,
+            "GMX ADAPTER: caller is not the nft handler"
         );
         _;
     }
@@ -62,16 +78,19 @@ contract GMXAdapter is Initializable {
      * @param _router The address of the GMX Router Contract.
      * @param _positionRouter The address of the GMX Position Router Contract.
      * @param _owner The owner address who can call certain functions.
+     * @param _nftHandler The address of nft handler who can call certain functions.
      */
     function initialize(
         address _router,
         address _positionRouter,
-        address _owner
+        address _owner,
+        address _nftHandler
     ) external {
         require(msg.sender == FACTORY, "GMX ADAPTER:  FORBIDDEN"); // Sufficient check for factory contract.
         ROUTER = _router;
         POSITION_ROUTER = _positionRouter;
         OWNER = _owner;
+        NFT_HANDLER = _nftHandler;
     }
 
     // Function to approve an ERC20 token for a spender.
@@ -79,7 +98,7 @@ contract GMXAdapter is Initializable {
         address token,
         address spender,
         uint256 amount
-    ) external onlyOwner returns (bool) {
+    ) external onlyFactory returns (bool) {
         bool success = IERC20(token).approve(spender, amount);
         if (success) {
             emit TokenApproval(token, spender, amount);
@@ -92,7 +111,7 @@ contract GMXAdapter is Initializable {
      *
      * @param _plugin The address of the plugin to be approved.
      */
-    function approvePlugin(address _plugin) external onlyOwner {
+    function approvePlugin(address _plugin) external onlyFactory {
         IRouter(ROUTER).approvePlugin(_plugin);
         emit PluginApproval(_plugin);
     }
@@ -117,7 +136,7 @@ contract GMXAdapter is Initializable {
         uint256 _sizeDelta,
         bool _isLong,
         uint256 _acceptablePrice
-    ) external payable onlyOwner returns (bytes32 positionId) {
+    ) external payable onlyFactory returns (bytes32 positionId) {
         uint256 _executionFee = IPositionRouter(POSITION_ROUTER)
             .minExecutionFee();
         bytes32 result = IPositionRouter(POSITION_ROUTER)
@@ -163,7 +182,7 @@ contract GMXAdapter is Initializable {
         uint256 _sizeDelta,
         bool _isLong,
         uint256 _acceptablePrice
-    ) external payable onlyOwner returns (bytes32 positionId) {
+    ) external payable onlyFactory returns (bytes32 positionId) {
         uint256 _executionFee = IPositionRouter(POSITION_ROUTER)
             .minExecutionFee();
         bytes32 result = IPositionRouter(POSITION_ROUTER)
@@ -204,7 +223,7 @@ contract GMXAdapter is Initializable {
         address _receiver,
         uint256 _acceptablePrice,
         bool _withdrawETH
-    ) external payable onlyOwner returns (bytes32 positionId) {
+    ) external payable onlyFactory returns (bytes32 positionId) {
         uint256 _executionFee = IPositionRouter(POSITION_ROUTER)
             .minExecutionFee();
 
@@ -235,7 +254,7 @@ contract GMXAdapter is Initializable {
     function closeFailedPosition(
         address[] memory _path,
         address _receiver
-    ) external payable onlyOwner {
+    ) external payable onlyFactory {
         address collateral = _path[_path.length - 1];
         uint256 collateralBalance = IERC20(collateral).balanceOf(address(this));
         if (collateralBalance > 0) {
@@ -353,7 +372,7 @@ contract GMXAdapter is Initializable {
      *
      * @param _newowner The address to which the position will be transferred.
      */
-    function changePositonOwner(address _newowner) external onlyOwner {
+    function changePositonOwner(address _newowner) external onlyNftHandler {
         OWNER = _newowner;
     }
 }
