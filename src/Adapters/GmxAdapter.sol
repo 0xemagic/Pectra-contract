@@ -14,7 +14,8 @@ contract GMXAdapter is Initializable, MultiCall3 {
     address public POSITION_ROUTER;
     address public NFT_HANDLER;
     address constant ZERO_ADDRESS = address(0);
-    bytes32 constant ZERO_VALUE = 0x0000000000000000000000000000000000000000000000000000000000000000;
+    bytes32 constant ZERO_VALUE =
+        0x0000000000000000000000000000000000000000000000000000000000000000;
 
     // Position data variables
     address[] path;
@@ -27,9 +28,17 @@ contract GMXAdapter is Initializable, MultiCall3 {
     uint256 acceptablePrice;
 
     // Events
-    event TokenApproval(address indexed token, address indexed spender, uint256 indexed amount);
+    event TokenApproval(
+        address indexed token,
+        address indexed spender,
+        uint256 indexed amount
+    );
     event PluginApproval(address indexed plugin);
-    event TokenWithdrawal(address indexed token, address indexed to, uint256 indexed amount);
+    event TokenWithdrawal(
+        address indexed token,
+        address indexed to,
+        uint256 indexed amount
+    );
     event EthWithdrawal(address indexed to, uint256 indexed amount);
 
     // Modifier to restrict access to only the contract owner.
@@ -40,13 +49,19 @@ contract GMXAdapter is Initializable, MultiCall3 {
 
     // Modifier to restrict access to only the factory contract.
     modifier onlyFactory() {
-        require(FACTORY == msg.sender, "GMX ADAPTER: caller is not the factory");
+        require(
+            FACTORY == msg.sender,
+            "GMX ADAPTER: caller is not the factory"
+        );
         _;
     }
 
     // Modifier to restrict access to only the nft handler contract.
     modifier onlyNftHandler() {
-        require(NFT_HANDLER == msg.sender, "GMX ADAPTER: caller is not the nft handler");
+        require(
+            NFT_HANDLER == msg.sender,
+            "GMX ADAPTER: caller is not the nft handler"
+        );
         _;
     }
 
@@ -66,7 +81,12 @@ contract GMXAdapter is Initializable, MultiCall3 {
      * @param _owner The owner address who can call certain functions.
      * @param _nftHandler The address of nft handler who can call certain functions.
      */
-    function initialize(address _router, address _positionRouter, address _owner, address _nftHandler) external {
+    function initialize(
+        address _router,
+        address _positionRouter,
+        address _owner,
+        address _nftHandler
+    ) external {
         require(msg.sender == FACTORY, "GMX ADAPTER:  FORBIDDEN"); // Sufficient check for factory contract.
         ROUTER = _router;
         POSITION_ROUTER = _positionRouter;
@@ -75,7 +95,11 @@ contract GMXAdapter is Initializable, MultiCall3 {
     }
 
     // Function to approve an ERC20 token for a spender.
-    function approve(address token, address spender, uint256 amount) external onlyFactory returns (bool) {
+    function approve(
+        address token,
+        address spender,
+        uint256 amount
+    ) external onlyFactory returns (bool) {
         bool success = IERC20(token).approve(spender, amount);
         if (success) {
             emit TokenApproval(token, spender, amount);
@@ -114,8 +138,10 @@ contract GMXAdapter is Initializable, MultiCall3 {
         bool _isLong,
         uint256 _acceptablePrice
     ) external payable onlyFactory returns (bytes32 positionId) {
-        uint256 _executionFee = IPositionRouter(POSITION_ROUTER).minExecutionFee();
-        bytes32 result = IPositionRouter(POSITION_ROUTER).createIncreasePosition{value: msg.value}(
+        uint256 _executionFee = IPositionRouter(POSITION_ROUTER)
+            .minExecutionFee();
+        bytes32 result = IPositionRouter(POSITION_ROUTER)
+            .createIncreasePosition{value: msg.value}(
             _path,
             _indexToken,
             _amountIn,
@@ -129,7 +155,15 @@ contract GMXAdapter is Initializable, MultiCall3 {
         );
         // to reflect the increase when called to increase the existin position
         _amountIn += amountIn;
-        setPositionData(_path, _indexToken, _amountIn, _minOut, _sizeDelta, _isLong, _acceptablePrice);
+        setPositionData(
+            _path,
+            _indexToken,
+            _amountIn,
+            _minOut,
+            _sizeDelta,
+            _isLong,
+            _acceptablePrice
+        );
         return result;
     }
 
@@ -152,14 +186,32 @@ contract GMXAdapter is Initializable, MultiCall3 {
         bool _isLong,
         uint256 _acceptablePrice
     ) external payable onlyFactory returns (bytes32 positionId) {
-        uint256 _executionFee = IPositionRouter(POSITION_ROUTER).minExecutionFee();
-        bytes32 result = IPositionRouter(POSITION_ROUTER).createIncreasePositionETH{value: msg.value}(
-            _path, _indexToken, _minOut, _sizeDelta, _isLong, _acceptablePrice, _executionFee, ZERO_VALUE, ZERO_ADDRESS
+        uint256 _executionFee = IPositionRouter(POSITION_ROUTER)
+            .minExecutionFee();
+        bytes32 result = IPositionRouter(POSITION_ROUTER)
+            .createIncreasePositionETH{value: msg.value}(
+            _path,
+            _indexToken,
+            _minOut,
+            _sizeDelta,
+            _isLong,
+            _acceptablePrice,
+            _executionFee,
+            ZERO_VALUE,
+            ZERO_ADDRESS
         );
 
         // to reflect the increase when called to increase the existin position
         uint256 _amountIn = (msg.value - _executionFee) + amountIn;
-        setPositionData(_path, _indexToken, _amountIn, _minOut, _sizeDelta, _isLong, _acceptablePrice);
+        setPositionData(
+            _path,
+            _indexToken,
+            _amountIn,
+            _minOut,
+            _sizeDelta,
+            _isLong,
+            _acceptablePrice
+        );
         return result;
     }
 
@@ -184,8 +236,10 @@ contract GMXAdapter is Initializable, MultiCall3 {
         bool _isLong,
         uint256 _acceptablePrice
     ) external payable onlyFactory returns (bytes32 positionId) {
-        uint256 _executionFee = IPositionRouter(POSITION_ROUTER).minExecutionFee();
-        bytes32 result = IPositionRouter(POSITION_ROUTER).createDecreasePosition{value: msg.value}(
+        uint256 _executionFee = IPositionRouter(POSITION_ROUTER)
+            .minExecutionFee();
+        bytes32 result = IPositionRouter(POSITION_ROUTER)
+            .createDecreasePosition{value: msg.value}(
             _path,
             _indexToken,
             _amountIn,
@@ -199,7 +253,15 @@ contract GMXAdapter is Initializable, MultiCall3 {
         );
         // to reflect the decrease when called to increase the existin position
         _amountIn -= amountIn;
-        setPositionData(_path, _indexToken, _amountIn, _minOut, _sizeDelta, _isLong, _acceptablePrice);
+        setPositionData(
+            _path,
+            _indexToken,
+            _amountIn,
+            _minOut,
+            _sizeDelta,
+            _isLong,
+            _acceptablePrice
+        );
         return result;
     }
 
@@ -222,14 +284,32 @@ contract GMXAdapter is Initializable, MultiCall3 {
         bool _isLong,
         uint256 _acceptablePrice
     ) external payable onlyFactory returns (bytes32 positionId) {
-        uint256 _executionFee = IPositionRouter(POSITION_ROUTER).minExecutionFee();
-        bytes32 result = IPositionRouter(POSITION_ROUTER).createDecreasePositionETH{value: msg.value}(
-            _path, _indexToken, _minOut, _sizeDelta, _isLong, _acceptablePrice, _executionFee, ZERO_VALUE, ZERO_ADDRESS
+        uint256 _executionFee = IPositionRouter(POSITION_ROUTER)
+            .minExecutionFee();
+        bytes32 result = IPositionRouter(POSITION_ROUTER)
+            .createDecreasePositionETH{value: msg.value}(
+            _path,
+            _indexToken,
+            _minOut,
+            _sizeDelta,
+            _isLong,
+            _acceptablePrice,
+            _executionFee,
+            ZERO_VALUE,
+            ZERO_ADDRESS
         );
 
         // to reflect the increase when called to increase the existin position
         uint256 _amountIn = (msg.value - _executionFee) - amountIn;
-        setPositionData(_path, _indexToken, _amountIn, _minOut, _sizeDelta, _isLong, _acceptablePrice);
+        setPositionData(
+            _path,
+            _indexToken,
+            _amountIn,
+            _minOut,
+            _sizeDelta,
+            _isLong,
+            _acceptablePrice
+        );
         return result;
     }
 
@@ -242,16 +322,18 @@ contract GMXAdapter is Initializable, MultiCall3 {
      * @param _withdrawETH Whether to withdraw ETH after closing the position.
      * @return positionId The ID of the position to be closed.
      */
-    function closePosition(address[] memory _path, address _receiver, uint256 _acceptablePrice, bool _withdrawETH)
-        external
-        payable
-        onlyFactory
-        returns (bytes32 positionId)
-    {
-        uint256 _executionFee = IPositionRouter(POSITION_ROUTER).minExecutionFee();
+    function closePosition(
+        address[] memory _path,
+        address _receiver,
+        uint256 _acceptablePrice,
+        bool _withdrawETH
+    ) external payable onlyFactory returns (bytes32 positionId) {
+        uint256 _executionFee = IPositionRouter(POSITION_ROUTER)
+            .minExecutionFee();
 
         // Try to close the position using the GMX Position Router.
-        bytes32 result = IPositionRouter(POSITION_ROUTER).createDecreasePosition{value: msg.value}(
+        bytes32 result = IPositionRouter(POSITION_ROUTER)
+            .createDecreasePosition{value: msg.value}(
             _path,
             indexToken,
             0,
@@ -273,13 +355,16 @@ contract GMXAdapter is Initializable, MultiCall3 {
      * @param _path The token path for the position to be closed.
      * @param _receiver The address to which the collateral will be transferred after closing the position.
      */
-    function closeFailedPosition(address[] memory _path, address _receiver) external payable onlyFactory {
+    function closeFailedPosition(
+        address[] memory _path,
+        address _receiver
+    ) external payable onlyFactory {
         address collateral = _path[_path.length - 1];
         uint256 collateralBalance = IERC20(collateral).balanceOf(address(this));
         if (collateralBalance > 0) {
             IERC20(collateral).transfer(_receiver, collateralBalance);
         } else if (address(this).balance > 0) {
-            (bool success,) = _receiver.call{value: address(this).balance}("");
+            (bool success, ) = _receiver.call{value: address(this).balance}("");
             require(success, "GMX ADAPTER: Transfer failed!");
         }
     }
@@ -292,7 +377,11 @@ contract GMXAdapter is Initializable, MultiCall3 {
      * @param _amount The amount of tokens to withdraw.
      * @return true if the withdrawal was successful, otherwise false.
      */
-    function withdrawToken(address _token, address _to, uint256 _amount) external onlyOwner returns (bool) {
+    function withdrawToken(
+        address _token,
+        address _to,
+        uint256 _amount
+    ) external onlyOwner returns (bool) {
         bool success = IERC20(_token).transfer(_to, _amount);
         if (success) {
             emit TokenWithdrawal(_token, _to, _amount);
@@ -307,9 +396,12 @@ contract GMXAdapter is Initializable, MultiCall3 {
      * @param _amount The amount of ETH to withdraw.
      * @return true if the withdrawal was successful, otherwise false.
      */
-    function withdrawEth(address _to, uint256 _amount) external onlyOwner returns (bool) {
+    function withdrawEth(
+        address _to,
+        uint256 _amount
+    ) external onlyOwner returns (bool) {
         bool success;
-        (success,) = _to.call{value: _amount}("");
+        (success, ) = _to.call{value: _amount}("");
         require(success, "GMX ADAPTER: Transfer failed!");
         if (success) {
             emit EthWithdrawal(_to, _amount);
@@ -356,9 +448,27 @@ contract GMXAdapter is Initializable, MultiCall3 {
     function getPositionData()
         external
         view
-        returns (address[] memory, address, address, uint256, uint256, uint256, bool, uint256)
+        returns (
+            address[] memory,
+            address,
+            address,
+            uint256,
+            uint256,
+            uint256,
+            bool,
+            uint256
+        )
     {
-        return (path, collateralToken, indexToken, amountIn, minOut, sizeDelta, isLong, acceptablePrice);
+        return (
+            path,
+            collateralToken,
+            indexToken,
+            amountIn,
+            minOut,
+            sizeDelta,
+            isLong,
+            acceptablePrice
+        );
     }
 
     /**
