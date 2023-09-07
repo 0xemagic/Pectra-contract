@@ -152,6 +152,7 @@ contract GMXFactoryTest is Test {
 
         // Checking if positions increased by 1 for the user
         assertEq(positions, initialPosition + 1);
+        assertEq(gmxFactory.getTotalTradePairs(), 1);
     }
 
     function testSettingPositionKeeper() public {
@@ -283,6 +284,7 @@ contract GMXFactoryTest is Test {
 
         uint256[] memory data = gmxFactory.getPosition(positionID);
         assert(data[0] == 0);
+        assertEq(gmxFactory.getTotalTradePairs(), 1);
     }
 
     function testOpenAndCloseLongPositionETH() public {
@@ -328,6 +330,7 @@ contract GMXFactoryTest is Test {
 
         uint256[] memory data = gmxFactory.getPosition(positionID);
         assert(data[0] == 0);
+        assertEq(gmxFactory.getTotalTradePairs(), 1);
     }
 
     function testOpenAndCloseShortPositionETH() public {
@@ -374,6 +377,7 @@ contract GMXFactoryTest is Test {
 
         uint256[] memory data = gmxFactory.getPosition(positionID);
         assert(data[0] == 0);
+        assertEq(gmxFactory.getTotalTradePairs(), 1);
     }
 
     function testCreateShortPosition() public {
@@ -405,6 +409,7 @@ contract GMXFactoryTest is Test {
 
         // Checking if positions increased by 1 for the user
         assertEq(positions, initialPosition + 1);
+        assertEq(gmxFactory.getTotalTradePairs(), 1);
     }
 
     function testCloseShortPosition() public {
@@ -450,6 +455,7 @@ contract GMXFactoryTest is Test {
 
         uint256[] memory data = gmxFactory.getPosition(positionID);
         assert(data[0] == 0);
+        assertEq(gmxFactory.getTotalTradePairs(), 1);
     }
 
     function testOpeningTwoPositions() public {
@@ -482,6 +488,7 @@ contract GMXFactoryTest is Test {
 
         // Checking if positions increased by 1 for the user
         assertEq(positions, initialPosition + 2);
+        assertEq(gmxFactory.getTotalTradePairs(), 2);
     }
 
     function testExecutingTwoPositions() public {
@@ -733,6 +740,7 @@ contract GMXFactoryTest is Test {
 
         vm.stopPrank();
         assertEq(user, owmerOfNft);
+        assertEq(nftHandler.getTotalNftsMinted(), 1);
     }
 
     function testBurnNft() public {
@@ -838,5 +846,46 @@ contract GMXFactoryTest is Test {
         assert(gmxFactory.getPositionStatus(positionIDs[0], user) == GMXFactory.PositionStatus.Transferred);
         assert(gmxFactory.getPositionStatus(positionIDs[1], user) == GMXFactory.PositionStatus.Transferred);
         assert(gmxFactory.getPositionStatus(positionIDs[0], user2) == GMXFactory.PositionStatus.Opened);
+        assert(gmxFactory.getPositionStatus(positionIDs[1], user2) == GMXFactory.PositionStatus.Opened);
+    }
+
+    function testFailedPosition() public {
+        // Amount in USDT
+        uint256 amountIn = 5e6; // Assuming 10 USDC
+
+        uint256 value = positionRouter.minExecutionFee(); // Calculate value in wei
+
+        // Approve USDT for gmxFactory
+        vm.startPrank(user);
+        tokenUSDC.approve(address(gmxFactory), amountIn);
+
+        // Open long position
+        bytes32 positionID = gmxFactory.openLongPosition{value: value}(
+            _path,
+            address(tokenWETH),
+            amountIn,
+            0 ether, // minOut
+            _sizeDelta,
+            _acceptablePriceLongETH
+        );
+        vm.stopPrank();
+
+        //Setting the user as position Keeper to execute the position
+        vm.startPrank(admin);
+        positionRouter.setPositionKeeper(user, true);
+        vm.stopPrank();
+
+        vm.startPrank(user);
+        vm.expectRevert("Vault: liquidation fees exceed collateral");
+        positionRouter.executeIncreasePosition(positionID, payable(user));
+        vm.stopPrank();
+
+        IGMXAdapter gmxAdapter = IGMXAdapter(gmxFactory.getPositionAdapter(positionID));
+        uint256 balanceOfAdapter = tokenUSDC.balanceOf(address(gmxAdapter));
+        console.log("Balance of Token in Adapter", balanceOfAdapter);
+
+        uint256[] memory data = gmxFactory.getPosition(positionID);
+        assertEq(balanceOfAdapter, 0);
+        assertEq(data[0], 0);
     }
 }

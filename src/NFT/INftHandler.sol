@@ -42,4 +42,11 @@ interface INFTHandler {
      * @param _uri The new base URI for the NFT contract.
      */
     function setBaseUri(string memory _uri) external returns (bool);
+
+    /**
+     * @dev Function to get total number of NFTs Minted.
+     *
+     * @return Number of total NFTs minted by the NFT Handler.
+     */
+    function getTotalNftsMinted() external view returns (uint256);
 }

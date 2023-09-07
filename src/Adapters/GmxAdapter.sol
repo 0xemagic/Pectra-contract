@@ -157,7 +157,7 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
     }
 
     /**
-     * @dev Create a position using ETH as collateral.
+     * @dev Create a long position using ETH as collateral.
      *
      * @param _path The token path for the long position.
      * @param _indexToken The index token for the long position.
