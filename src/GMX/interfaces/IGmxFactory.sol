@@ -205,4 +205,11 @@ interface IGMXFactory {
         bytes32 _positionId,
         address _address
     ) external view returns (PositionStatus);
+
+    /**
+     * @dev Function to get total number of Trade Pairs created.
+     *
+     * @return Number of total trade pairs created by the GMX Factory contract.
+     */
+    function getTotalTradePairs() external view returns (uint256);
 }

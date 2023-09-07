@@ -12,6 +12,7 @@ contract NFTHandler {
     IGMXFactory public gmxFactoryContract;
     IGMXAdapter public gmxAdapterContract;
     address public owner;
+    uint256 public TotalNftsMinted;
 
     // Mapping to store PositionIds against TokenId
     mapping(uint256 => bytes32[]) public _tokenIds;
@@ -101,6 +102,7 @@ contract NFTHandler {
             _mintedPositionIds[positionIDs[i]] = true;
             _mappedTokenId[positionIDs[i]] = tokenId;
         }
+        TotalNftsMinted++;
 
         return tokenId;
     }
@@ -184,5 +186,14 @@ contract NFTHandler {
     function setBaseUri(string memory _uri) external onlyOwner returns (bool) {
         positionNFTContract.setBaseURI(_uri);
         return true;
+    }
+
+    /**
+     * @dev Function to get total number of NFTs Minted.
+     *
+     * @return Number of total NFTs minted by the NFT Handler.
+     */
+    function getTotalNftsMinted() external view returns (uint256) {
+        return TotalNftsMinted;
     }
 }

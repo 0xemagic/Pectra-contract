@@ -15,6 +15,8 @@ contract GMXFactory {
     address public VAULT;
     address public NFT_HANDLER;
 
+    uint256 public TotalTradePairs;
+
     enum PositionStatus {
         Opened,
         Closed,
@@ -214,6 +216,7 @@ contract GMXFactory {
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
         positionDetails[positionId][msg.sender] = PositionStatus.Opened;
+        TotalTradePairs++;
 
         // Emit the LongPositionOpened event.
         emit LongPositionOpened(positionId, msg.sender, adapter);
@@ -257,6 +260,7 @@ contract GMXFactory {
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
         positionDetails[positionId][msg.sender] = PositionStatus.Opened;
+        TotalTradePairs++;
 
         // Emit the LongETHPositionOpened event.
         emit LongETHPositionOpened(positionId, msg.sender, adapter);
@@ -313,6 +317,7 @@ contract GMXFactory {
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
         positionDetails[positionId][msg.sender] = PositionStatus.Opened;
+        TotalTradePairs++;
 
         // Emit the ShortPositionOpened event.
         emit ShortPositionOpened(positionId, msg.sender, adapter);
@@ -356,6 +361,7 @@ contract GMXFactory {
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
         positionDetails[positionId][msg.sender] = PositionStatus.Opened;
+        TotalTradePairs++;
 
         // Emit the ShortETHPositionOpened event.
         emit ShortPositionOpened(positionId, msg.sender, adapter);
@@ -491,6 +497,7 @@ contract GMXFactory {
                 positions[msg.sender]
             ] = longPositionId;
             positionDetails[longPositionId][msg.sender] = PositionStatus.Opened;
+            TotalTradePairs++;
 
             emit LongPositionOpened(longPositionId, msg.sender, adapter);
         }
@@ -539,6 +546,7 @@ contract GMXFactory {
             ] = shortPositionId;
             positionDetails[shortPositionId][msg.sender] = PositionStatus
                 .Opened;
+            TotalTradePairs++;
 
             emit ShortPositionOpened(shortPositionId, msg.sender, adapter);
         }
@@ -630,5 +638,14 @@ contract GMXFactory {
         positionDetails[_positionId][_newOwner] = PositionStatus.Opened;
 
         return true;
+    }
+
+    /**
+     * @dev Function to get total number of Trade Pairs created.
+     *
+     * @return Number of total trade pairs created by the GMX Factory contract.
+     */
+    function getTotalTradePairs() external view returns (uint256) {
+        return TotalTradePairs;
     }
 }
