@@ -278,7 +278,7 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
     function closeFailedPosition(
         address[] memory _path,
         address _receiver
-    ) external payable onlyFactory {
+    ) public payable onlyFactory {
         address collateral = _path[_path.length - 1];
         uint256 collateralBalance = IERC20(collateral).balanceOf(address(this));
         if (collateralBalance > 0) {
