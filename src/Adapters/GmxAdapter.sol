@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import "../GMX/interfaces/IERC20.sol";
 import "../GMX/interfaces/IGMXAdapter.sol";
+import "../GMX/interfaces/IGMXFactory.sol";
 import "../GMX/interfaces/IPositionRouterCallbackReceiver.sol";
 import "../../lib/openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 
@@ -74,6 +75,15 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
     modifier onlyFactoryOrRouter() {
         require(
             FACTORY == msg.sender || POSITION_ROUTER == msg.sender,
+            "GMX ADAPTER: caller is not the factory"
+        );
+        _;
+    }
+
+    // Modifier to restrict access to only position router contract.
+    modifier onlyPositionRouter() {
+        require(
+            POSITION_ROUTER == msg.sender,
             "GMX ADAPTER: caller is not the factory"
         );
         _;
@@ -449,12 +459,8 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
      *
      * @return The execution state for the position.
      */
-    function getExecutionState()
-        external
-        view
-        returns (ExecutionState, ExecutionState)
-    {
-        return (increaseExecuted, decreaseExecuted);
+    function getExecutionState() external view returns (uint256, uint256) {
+        return (uint256(increaseExecuted), uint256(decreaseExecuted));
     }
 
     /**
@@ -475,7 +481,7 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
         bytes32 positionKey,
         bool isExecuted,
         bool isIncrease
-    ) external {
+    ) external onlyPositionRouter {
         emit Callback(address(this), positionKey, isExecuted, isIncrease);
 
         if (isIncrease && isExecuted) {
@@ -486,6 +492,7 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
             decreaseExecuted = ExecutionState.Failed;
         } else {
             increaseExecuted = ExecutionState.Failed;
+            IGMXFactory(FACTORY).decreaseTotalTradePairs();
             closeFailedPosition(path, OWNER);
         }
     }

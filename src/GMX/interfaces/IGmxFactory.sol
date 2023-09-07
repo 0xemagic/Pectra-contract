@@ -260,4 +260,11 @@ interface IGMXFactory {
      * @return Number of total trade pairs created by the GMX Factory contract.
      */
     function getTotalTradePairs() external view returns (uint256);
+
+    /**
+     * @dev Function to decrease total number of Trade Pairs created.
+     *
+     * @return Number of total trade pairs created by the GMX Factory contract.
+     */
+    function decreaseTotalTradePairs() external returns (uint256);
 }

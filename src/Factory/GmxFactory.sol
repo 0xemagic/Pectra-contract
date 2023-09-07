@@ -15,7 +15,7 @@ contract GMXFactory {
     address public VAULT;
     address public NFT_HANDLER;
 
-    uint256 public TotalTradePairs;
+    uint256 public totalTradePairs;
 
     enum PositionStatus {
         Opened,
@@ -134,6 +134,15 @@ contract GMXFactory {
         _;
     }
 
+    // Modifier to restrict access to only the gmx adaoter contract.
+    modifier onlyAdapter() {
+        require(
+            NFT_HANDLER == msg.sender,
+            "GMX FACTORY: Caller is not NFT Handler"
+        );
+        _;
+    }
+
     /**
      * @dev Setter function for NFT Handler contract.
      *
@@ -230,7 +239,7 @@ contract GMXFactory {
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
         positionDetails[positionId][msg.sender] = PositionStatus.Opened;
-        TotalTradePairs++;
+        totalTradePairs++;
 
         // Emit the LongPositionOpened event.
         emit LongPositionOpened(positionId, msg.sender, adapter);
@@ -275,7 +284,7 @@ contract GMXFactory {
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
         positionDetails[positionId][msg.sender] = PositionStatus.Opened;
-        TotalTradePairs++;
+        totalTradePairs++;
 
         // Emit the LongETHPositionOpened event.
         emit LongETHPositionOpened(positionId, msg.sender, adapter);
@@ -333,7 +342,7 @@ contract GMXFactory {
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
         positionDetails[positionId][msg.sender] = PositionStatus.Opened;
-        TotalTradePairs++;
+        totalTradePairs++;
 
         // Emit the ShortPositionOpened event.
         emit ShortPositionOpened(positionId, msg.sender, adapter);
@@ -378,7 +387,7 @@ contract GMXFactory {
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
         positionDetails[positionId][msg.sender] = PositionStatus.Opened;
-        TotalTradePairs++;
+        totalTradePairs++;
 
         // Emit the ShortETHPositionOpened event.
         emit ShortPositionOpened(positionId, msg.sender, adapter);
@@ -596,7 +605,7 @@ contract GMXFactory {
                 positions[msg.sender]
             ] = longPositionId;
             positionDetails[longPositionId][msg.sender] = PositionStatus.Opened;
-            TotalTradePairs++;
+            totalTradePairs++;
 
             emit LongPositionOpened(longPositionId, msg.sender, adapter);
         }
@@ -645,7 +654,7 @@ contract GMXFactory {
             ] = shortPositionId;
             positionDetails[shortPositionId][msg.sender] = PositionStatus
                 .Opened;
-            TotalTradePairs++;
+            totalTradePairs++;
 
             emit ShortPositionOpened(shortPositionId, msg.sender, adapter);
         }
@@ -745,6 +754,15 @@ contract GMXFactory {
      * @return Number of total trade pairs created by the GMX Factory contract.
      */
     function getTotalTradePairs() external view returns (uint256) {
-        return TotalTradePairs;
+        return totalTradePairs;
+    }
+
+    /**
+     * @dev Function to decrease total number of Trade Pairs created.
+     *
+     * @return Number of total trade pairs created by the GMX Factory contract.
+     */
+    function decreaseTotalTradePairs() external onlyAdapter returns (uint256) {
+        return totalTradePairs--;
     }
 }
