@@ -431,7 +431,7 @@ contract PlatformLogic is ReentrancyGuard {
     function applyPlatformFeeEth(
         address _referee,
         uint256 _grossAmount
-    ) external payable nonReentrant {
+    ) external payable onlyFactory nonReentrant {
         _applyPlatformFeeEth(_referee, _grossAmount);
     }
 
@@ -440,7 +440,7 @@ contract PlatformLogic is ReentrancyGuard {
         address _referee,
         uint256 _grossAmount,
         IERC20 _tokenAddress
-    ) external nonReentrant {
+    ) external onlyFactory nonReentrant {
         // _tokenAddress.
         _applyPlatformFeeErc20(_referee, _grossAmount, _tokenAddress);
     }
