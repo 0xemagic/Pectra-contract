@@ -51,10 +51,11 @@ contract PlatformLogic is ReentrancyGuard {
     /// @notice store the Factory Addresses
     mapping(address => bool) private factories;
 
-    /// @notice storing the referral codes
+    /// @notice storing the referral codes and referral code owners
     mapping(bytes32 => address) public referralCodes;
 
     /// @notice mapping to store the Refferal codes to user's addresses(creator of referral codes)
+    /// @notice address = referrer, bytes32 = referral code
     mapping(address => bytes32) public referrers;
 
     /// @notice mapping to store the Reffered users to referral codes(users being referred)
@@ -327,7 +328,7 @@ contract PlatformLogic is ReentrancyGuard {
         uint256 _feeAmount = calculateFees(_grossAmount, platformFee);
 
         if (msg.value != _feeAmount) revert WrongValueSent();
-        // check referree (if user is referred) -> if true add 10% discount -> continue to the next check, if not skip to the end
+        // check referee (if user is referred) -> if true add 10% discount -> continue to the next check, if not skip to the end
         if (referredUsers[_referee] != ZERO_VALUE) {
             // calculate the referree discount %
             // for testing the refereeDiscount is set to 10 bps
@@ -498,13 +499,13 @@ contract PlatformLogic is ReentrancyGuard {
     /// @dev function that allows factories to to edit the referees
     // remember to implement admin rights on the factory side as well, should not be accesible by everyone
     function editReferredUsers(
-        address _referrer,
+        address _referee,
         bytes32 _referralCode
     ) external onlyFactory {
         // write the address's referral code
-        referredUsers[_referrer] = _referralCode;
+        referredUsers[_referee] = _referralCode;
         // emit event for indexing
-        emit RefereeAdded(_referrer, _referralCode);
+        emit RefereeAdded(_referee, _referralCode);
     }
 
     /// @notice function to add or remove factories
