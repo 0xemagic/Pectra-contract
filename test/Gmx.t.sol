@@ -621,6 +621,16 @@ contract GMXFactoryTest is Test {
 
         uint256 totalSupply = positionNft.totalSupply();
         assert(totalSupply == 0);
+
+        assert(
+            gmxFactory.getPositionStatus(positionId1, user) ==
+                GMXFactory.PositionStatus.Closed
+        );
+
+        assert(
+            gmxFactory.getPositionStatus(positionId2, user) ==
+                GMXFactory.PositionStatus.Closed
+        );
     }
 
     function testTransferNft() public {
