@@ -6,9 +6,8 @@ import "../GMX/interfaces/IRouter.sol";
 import "../GMX/interfaces/IReader.sol";
 import "../GMX/interfaces/IGMXAdapter.sol";
 import "../Adapters/GMXAdapter.sol";
-import "../utils/MultiCall3.sol";
 
-contract GMXFactory is MultiCall3 {
+contract GMXFactory {
     address public OWNER;
     address public ROUTER;
     address public POSITION_ROUTER;
@@ -35,53 +34,21 @@ contract GMXFactory is MultiCall3 {
     mapping(address => mapping(uint256 => bytes32)) public indexedPositions;
 
     //Mapping to store the status of the PositonId
-    mapping(bytes32 => mapping(address => PositionStatus))
-        public positionDetails;
+    mapping(bytes32 => mapping(address => PositionStatus)) public positionDetails;
 
     // Events
-    event TokensWithdrawn(
-        address indexed token,
-        address indexed to,
-        uint256 indexed amount
-    );
+    event TokensWithdrawn(address indexed token, address indexed to, uint256 indexed amount);
     event EthWithdrawn(address indexed to, uint256 indexed amount);
-    event LongPositionOpened(
-        bytes32 indexed positionId,
-        address indexed owner,
-        address indexed adapter
-    );
-    event ShortPositionOpened(
-        bytes32 indexed positionId,
-        address indexed owner,
-        address indexed adapter
-    );
-    event LongETHPositionOpened(
-        bytes32 indexed positionId,
-        address indexed owner,
-        address indexed adapter
-    );
-    event ShortETHPositionOpened(
-        bytes32 indexed positionId,
-        address indexed owner,
-        address indexed adapter
-    );
-    event PositionClosed(
-        bytes32 indexed positionId,
-        address indexed owner,
-        address indexed adapter,
-        bool isLong
-    );
+    event LongPositionOpened(bytes32 indexed positionId, address indexed owner, address indexed adapter);
+    event ShortPositionOpened(bytes32 indexed positionId, address indexed owner, address indexed adapter);
+    event LongETHPositionOpened(bytes32 indexed positionId, address indexed owner, address indexed adapter);
+    event ShortETHPositionOpened(bytes32 indexed positionId, address indexed owner, address indexed adapter);
+    event PositionClosed(bytes32 indexed positionId, address indexed owner, address indexed adapter, bool isLong);
     event CreateIncreasePosition(
-        bytes32 indexed positionId,
-        address indexed owner,
-        address indexed adapter,
-        uint256 amountIn
+        bytes32 indexed positionId, address indexed owner, address indexed adapter, uint256 amountIn
     );
     event CreateDecreasePosition(
-        bytes32 indexed positionId,
-        address indexed owner,
-        address indexed adapter,
-        uint256 amountIn
+        bytes32 indexed positionId, address indexed owner, address indexed adapter, uint256 amountIn
     );
 
     struct nftData {
@@ -105,12 +72,7 @@ contract GMXFactory is MultiCall3 {
      * @param _reader The address of the GMX reader contract.
      * @param _vault The address of the GMX vault contract.
      */
-    constructor(
-        address _router,
-        address _positionRouter,
-        address _reader,
-        address _vault
-    ) {
+    constructor(address _router, address _positionRouter, address _reader, address _vault) {
         OWNER = msg.sender;
         ROUTER = _router;
         POSITION_ROUTER = _positionRouter;
@@ -126,10 +88,7 @@ contract GMXFactory is MultiCall3 {
 
     // Modifier to restrict access to only the contract owner.
     modifier onlyNftHandler() {
-        require(
-            NFT_HANDLER == msg.sender,
-            "GMX FACTORY: Caller is not NFT Handler"
-        );
+        require(NFT_HANDLER == msg.sender, "GMX FACTORY: Caller is not NFT Handler");
         _;
     }
 
@@ -150,11 +109,7 @@ contract GMXFactory is MultiCall3 {
      * @param _amount The amount of tokens to withdraw.
      * @return success Whether the token transfer was successful or not.
      */
-    function withdrawToken(
-        address _token,
-        address _to,
-        uint256 _amount
-    ) external onlyOwner returns (bool success) {
+    function withdrawToken(address _token, address _to, uint256 _amount) external onlyOwner returns (bool success) {
         success = IERC20(_token).transfer(_to, _amount);
         if (success) {
             emit TokensWithdrawn(_token, _to, _amount);
@@ -168,11 +123,8 @@ contract GMXFactory is MultiCall3 {
      * @param _amount The amount of ETH to withdraw.
      * @return success Whether the ETH transfer was successful or not.
      */
-    function withdrawEth(
-        address _to,
-        uint256 _amount
-    ) external onlyOwner returns (bool success) {
-        (success, ) = _to.call{value: _amount}("");
+    function withdrawEth(address _to, uint256 _amount) external onlyOwner returns (bool success) {
+        (success,) = _to.call{value: _amount}("");
         require(success, "GMX FACTORY: Transfer failed!");
         emit EthWithdrawn(_to, _amount);
     }
@@ -201,27 +153,16 @@ contract GMXFactory is MultiCall3 {
         assembly {
             adapter := create(0, add(bytecode, 32), mload(bytecode))
         }
-        IGMXAdapter(adapter).initialize(
-            ROUTER,
-            POSITION_ROUTER,
-            msg.sender,
-            NFT_HANDLER
-        );
+        IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender, NFT_HANDLER);
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
         address collateral = _path[0];
         IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
         IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
-        positionId = IGMXAdapter(adapter).createIncreasePosition{
-            value: msg.value
-        }(
-            _path,
-            _indexToken,
-            _amountIn,
-            _minOut,
-            _sizeDelta,
-            true,
-            _acceptablePrice
+
+        positionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value}(
+            _path, _indexToken, _amountIn, _minOut, _sizeDelta, true, _acceptablePrice
         );
+
         positionAdapters[positionId] = adapter;
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
@@ -230,7 +171,6 @@ contract GMXFactory is MultiCall3 {
 
         // Emit the LongPositionOpened event.
         emit LongPositionOpened(positionId, msg.sender, adapter);
-        return positionId;
     }
 
     /**
@@ -255,16 +195,13 @@ contract GMXFactory is MultiCall3 {
         assembly {
             adapter := create(0, add(bytecode, 32), mload(bytecode))
         }
-        IGMXAdapter(adapter).initialize(
-            ROUTER,
-            POSITION_ROUTER,
-            msg.sender,
-            NFT_HANDLER
-        );
+        IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender, NFT_HANDLER);
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
-        positionId = IGMXAdapter(adapter).createIncreasePositionETH{
-            value: msg.value
-        }(_path, _indexToken, _minOut, _sizeDelta, true, _acceptablePrice);
+
+        positionId = IGMXAdapter(adapter).createIncreasePositionETH{value: msg.value}(
+            _path, _indexToken, _minOut, _sizeDelta, true, _acceptablePrice
+        );
+
         positionAdapters[positionId] = adapter;
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
@@ -273,7 +210,6 @@ contract GMXFactory is MultiCall3 {
 
         // Emit the LongETHPositionOpened event.
         emit LongETHPositionOpened(positionId, msg.sender, adapter);
-        return positionId;
     }
 
     /**
@@ -300,27 +236,16 @@ contract GMXFactory is MultiCall3 {
         assembly {
             adapter := create(0, add(bytecode, 32), mload(bytecode))
         }
-        IGMXAdapter(adapter).initialize(
-            ROUTER,
-            POSITION_ROUTER,
-            msg.sender,
-            NFT_HANDLER
-        );
+        IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender, NFT_HANDLER);
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
         address collateral = _path[0];
         IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
         IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
-        positionId = IGMXAdapter(adapter).createIncreasePosition{
-            value: msg.value
-        }(
-            _path,
-            _indexToken,
-            _amountIn,
-            _minOut,
-            _sizeDelta,
-            false,
-            _acceptablePrice
+
+        positionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value}(
+            _path, _indexToken, _amountIn, _minOut, _sizeDelta, false, _acceptablePrice
         );
+
         positionAdapters[positionId] = adapter;
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
@@ -329,7 +254,6 @@ contract GMXFactory is MultiCall3 {
 
         // Emit the ShortPositionOpened event.
         emit ShortPositionOpened(positionId, msg.sender, adapter);
-        return positionId;
     }
 
     /**
@@ -354,16 +278,13 @@ contract GMXFactory is MultiCall3 {
         assembly {
             adapter := create(0, add(bytecode, 32), mload(bytecode))
         }
-        IGMXAdapter(adapter).initialize(
-            ROUTER,
-            POSITION_ROUTER,
-            msg.sender,
-            NFT_HANDLER
-        );
+        IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender, NFT_HANDLER);
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
-        positionId = IGMXAdapter(adapter).createIncreasePositionETH{
-            value: msg.value
-        }(_path, _indexToken, _minOut, _sizeDelta, false, _acceptablePrice);
+
+        positionId = IGMXAdapter(adapter).createIncreasePositionETH{value: msg.value}(
+            _path, _indexToken, _minOut, _sizeDelta, false, _acceptablePrice
+        );
+
         positionAdapters[positionId] = adapter;
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
@@ -372,7 +293,6 @@ contract GMXFactory is MultiCall3 {
 
         // Emit the ShortETHPositionOpened event.
         emit ShortPositionOpened(positionId, msg.sender, adapter);
-        return positionId;
     }
 
     /**
@@ -397,24 +317,15 @@ contract GMXFactory is MultiCall3 {
         uint256 _sizeDelta,
         bool _isLong,
         uint256 _acceptablePrice
-    ) external returns (bytes32 positionId) {
-        require(
-            msg.sender == positionOwners[_positionId],
-            "GMX FACTORY: Not a position owner"
-        );
-        require(
-            positionDetails[_positionId][msg.sender] == PositionStatus.Opened,
-            "GMX FACTORY: Position not open"
-        );
+    ) external payable returns (bytes32 positionId) {
+        require(msg.sender == positionOwners[_positionId], "GMX FACTORY: Not a position owner");
+        require(positionDetails[_positionId][msg.sender] == PositionStatus.Opened, "GMX FACTORY: Position not open");
         address adapter = positionAdapters[_positionId];
-        positionId = IGMXAdapter(adapter).createIncreasePosition(
-            _path,
-            _indexToken,
-            _amountIn,
-            _minOut,
-            _sizeDelta,
-            _isLong,
-            _acceptablePrice
+        address collateral = _path[0];
+        IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
+        IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
+        positionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value}(
+            _path, _indexToken, _amountIn, _minOut, _sizeDelta, _isLong, _acceptablePrice
         );
 
         emit CreateIncreasePosition(positionId, msg.sender, adapter, _amountIn);
@@ -436,22 +347,12 @@ contract GMXFactory is MultiCall3 {
         uint256 _amountIn,
         uint256 _acceptablePrice,
         bool _withdrawETH
-    ) external returns (bytes32 positionId) {
-        require(
-            msg.sender == positionOwners[_positionId],
-            "GMX FACTORY: Not a position owner"
-        );
-        require(
-            positionDetails[_positionId][msg.sender] == PositionStatus.Opened,
-            "GMX FACTORY: Position not open"
-        );
+    ) external payable returns (bytes32 positionId) {
+        require(msg.sender == positionOwners[_positionId], "GMX FACTORY: Not a position owner");
+        require(positionDetails[_positionId][msg.sender] == PositionStatus.Opened, "GMX FACTORY: Position not open");
         address adapter = positionAdapters[_positionId];
-        positionId = IGMXAdapter(adapter).createDecreasePosition(
-            _path,
-            _amountIn,
-            msg.sender,
-            _withdrawETH,
-            _acceptablePrice
+        positionId = IGMXAdapter(adapter).createDecreasePosition{value: msg.value}(
+            _path, _amountIn, msg.sender, _withdrawETH, _acceptablePrice
         );
 
         emit CreateDecreasePosition(positionId, msg.sender, adapter, _amountIn);
@@ -465,30 +366,20 @@ contract GMXFactory is MultiCall3 {
      * @param _acceptablePrice The acceptable price for closing the position.
      * @param _withdrawETH Whether to withdraw ETH after closing the position.
      */
-    function closePosition(
-        bytes32 _positionId,
-        address[] memory _path,
-        uint256 _acceptablePrice,
-        bool _withdrawETH
-    ) external payable {
-        require(
-            msg.sender == positionOwners[_positionId],
-            "GMX FACTORY: Not a position owner"
-        );
+    function closePosition(bytes32 _positionId, address[] memory _path, uint256 _acceptablePrice, bool _withdrawETH)
+        external
+        payable
+    {
+        require(msg.sender == positionOwners[_positionId], "GMX FACTORY: Not a position owner");
         uint256[] memory data = getPosition(_positionId);
         address adapter = positionAdapters[_positionId];
         if (data[0] != 0) {
-            IGMXAdapter(adapter).closePosition{value: msg.value}(
-                _path,
-                msg.sender,
-                _acceptablePrice,
-                _withdrawETH
-            );
+            IGMXAdapter(adapter).closePosition{value: msg.value}(_path, msg.sender, _acceptablePrice, _withdrawETH);
         } else {
             IGMXAdapter(adapter).closeFailedPosition(_path, msg.sender);
         }
 
-        (, , , , , , bool isLong, ) = IGMXAdapter(adapter).getPositionData();
+        (,,,,,, bool isLong,) = IGMXAdapter(adapter).getPositionData();
 
         positionDetails[_positionId][msg.sender] = PositionStatus.Closed;
 
@@ -502,34 +393,16 @@ contract GMXFactory is MultiCall3 {
      * @param _positionId The ID of the position to query.
      * @return An array containing the all the details associated with the position ID.
      */
-    function getPosition(
-        bytes32 _positionId
-    ) public view returns (uint256[] memory) {
+    function getPosition(bytes32 _positionId) public view returns (uint256[] memory) {
         address account = positionAdapters[_positionId];
-        (
-            ,
-            address collateralToken,
-            address indexToken,
-            ,
-            ,
-            ,
-            bool isLong,
-
-        ) = IGMXAdapter(account).getPositionData();
+        (, address collateralToken, address indexToken,,,, bool isLong,) = IGMXAdapter(account).getPositionData();
         address[] memory collateralTokens = new address[](1);
         collateralTokens[0] = collateralToken;
         address[] memory indexTokens = new address[](1);
         indexTokens[0] = indexToken;
         bool[] memory isLongs = new bool[](1);
         isLongs[0] = isLong;
-        return
-            IReader(READER).getPositions(
-                VAULT,
-                account,
-                collateralTokens,
-                indexTokens,
-                isLongs
-            );
+        return IReader(READER).getPositions(VAULT, account, collateralTokens, indexTokens, isLongs);
     }
 
     /**
@@ -537,9 +410,7 @@ contract GMXFactory is MultiCall3 {
      *
      * @param _nftData The token data for the position.
      */
-    function openPositions(
-        nftData memory _nftData
-    ) external payable returns (bytes32, bytes32) {
+    function openPositions(nftData memory _nftData) external payable returns (bytes32, bytes32) {
         bytes32 longPositionId;
         bytes32 shortPositionId;
 
@@ -550,27 +421,12 @@ contract GMXFactory is MultiCall3 {
             assembly {
                 adapter := create(0, add(bytecode, 32), mload(bytecode))
             }
-            IGMXAdapter(adapter).initialize(
-                ROUTER,
-                POSITION_ROUTER,
-                msg.sender,
-                NFT_HANDLER
-            );
+            IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender, NFT_HANDLER);
             IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
             address collateral = _nftData._pathLong[0];
-            IERC20(collateral).transferFrom(
-                msg.sender,
-                adapter,
-                _nftData._amountIn
-            );
-            IGMXAdapter(adapter).approve(
-                collateral,
-                ROUTER,
-                _nftData._amountIn
-            );
-            longPositionId = IGMXAdapter(adapter).createIncreasePosition{
-                value: msg.value / 2
-            }(
+            IERC20(collateral).transferFrom(msg.sender, adapter, _nftData._amountIn);
+            IGMXAdapter(adapter).approve(collateral, ROUTER, _nftData._amountIn);
+            longPositionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value / 2}(
                 _nftData._pathLong,
                 _nftData._indexTokenLong,
                 _nftData._amountIn,
@@ -582,9 +438,7 @@ contract GMXFactory is MultiCall3 {
             positionAdapters[longPositionId] = adapter;
             positionOwners[longPositionId] = msg.sender;
             positions[msg.sender] += 1;
-            indexedPositions[msg.sender][
-                positions[msg.sender]
-            ] = longPositionId;
+            indexedPositions[msg.sender][positions[msg.sender]] = longPositionId;
             positionDetails[longPositionId][msg.sender] = PositionStatus.Opened;
 
             emit LongPositionOpened(longPositionId, msg.sender, adapter);
@@ -597,27 +451,12 @@ contract GMXFactory is MultiCall3 {
             assembly {
                 adapter := create(0, add(bytecode, 32), mload(bytecode))
             }
-            IGMXAdapter(adapter).initialize(
-                ROUTER,
-                POSITION_ROUTER,
-                msg.sender,
-                NFT_HANDLER
-            );
+            IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender, NFT_HANDLER);
             IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
             address collateral = _nftData._pathShort[0];
-            IERC20(collateral).transferFrom(
-                msg.sender,
-                adapter,
-                _nftData._amountIn
-            );
-            IGMXAdapter(adapter).approve(
-                collateral,
-                ROUTER,
-                _nftData._amountIn
-            );
-            shortPositionId = IGMXAdapter(adapter).createIncreasePosition{
-                value: msg.value / 2
-            }(
+            IERC20(collateral).transferFrom(msg.sender, adapter, _nftData._amountIn);
+            IGMXAdapter(adapter).approve(collateral, ROUTER, _nftData._amountIn);
+            shortPositionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value / 2}(
                 _nftData._pathShort,
                 _nftData._indexTokenShort,
                 _nftData._amountIn,
@@ -629,11 +468,8 @@ contract GMXFactory is MultiCall3 {
             positionAdapters[shortPositionId] = adapter;
             positionOwners[shortPositionId] = msg.sender;
             positions[msg.sender] += 1;
-            indexedPositions[msg.sender][
-                positions[msg.sender]
-            ] = shortPositionId;
-            positionDetails[shortPositionId][msg.sender] = PositionStatus
-                .Opened;
+            indexedPositions[msg.sender][positions[msg.sender]] = shortPositionId;
+            positionDetails[shortPositionId][msg.sender] = PositionStatus.Opened;
 
             emit ShortPositionOpened(shortPositionId, msg.sender, adapter);
         }
@@ -647,9 +483,7 @@ contract GMXFactory is MultiCall3 {
      * @param _positionId The ID of the position to query.
      * @return An onwer associated with the position ID.
      */
-    function getPositionOwner(
-        bytes32 _positionId
-    ) external view returns (address) {
+    function getPositionOwner(bytes32 _positionId) external view returns (address) {
         return positionOwners[_positionId];
     }
 
@@ -660,10 +494,7 @@ contract GMXFactory is MultiCall3 {
      * @param _address The address whose status to query.
      * @return An status of that specific position ID for the user.
      */
-    function getPositionStatus(
-        bytes32 _positionId,
-        address _address
-    ) external view returns (PositionStatus) {
+    function getPositionStatus(bytes32 _positionId, address _address) external view returns (PositionStatus) {
         return positionDetails[_positionId][_address];
     }
 
@@ -673,9 +504,7 @@ contract GMXFactory is MultiCall3 {
      * @param _positionId The ID of the position to query.
      * @return An adapter associated with the position ID.
      */
-    function getPositionAdapter(
-        bytes32 _positionId
-    ) external view returns (address) {
+    function getPositionAdapter(bytes32 _positionId) external view returns (address) {
         return positionAdapters[_positionId];
     }
 
@@ -685,9 +514,7 @@ contract GMXFactory is MultiCall3 {
      * @param _address The address of the user to query.
      * @return Number of IDs associated with the address.
      */
-    function getTotalPositions(
-        address _address
-    ) external view returns (uint256) {
+    function getTotalPositions(address _address) external view returns (uint256) {
         return positions[_address];
     }
 
@@ -698,10 +525,7 @@ contract GMXFactory is MultiCall3 {
      * @param _index The index of the position to query.
      * @return Position ID associated with the address on that index.
      */
-    function getPositionId(
-        address _address,
-        uint256 _index
-    ) external view returns (bytes32) {
+    function getPositionId(address _address, uint256 _index) external view returns (bytes32) {
         return indexedPositions[_address][_index];
     }
 
@@ -713,11 +537,11 @@ contract GMXFactory is MultiCall3 {
      * @param _positionId The positionId whose ownership is to be transferred.
      * @return true if the transfer of the ownership is successful.
      */
-    function updateOwner(
-        address _oldOwner,
-        address _newOwner,
-        bytes32 _positionId
-    ) external onlyNftHandler returns (bool) {
+    function updateOwner(address _oldOwner, address _newOwner, bytes32 _positionId)
+        external
+        onlyNftHandler
+        returns (bool)
+    {
         positionOwners[_positionId] = _newOwner;
         positions[_newOwner] += 1;
         indexedPositions[_newOwner][positions[_newOwner]] = _positionId;

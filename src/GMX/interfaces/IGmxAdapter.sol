@@ -17,12 +17,7 @@ interface IGMXAdapter is IERC20, IRouter, IPositionRouter {
      * @param _owner The owner address who can call certain functions.
      * @param _nftHandler The address of nft handler who can call certain functions.
      */
-    function initialize(
-        address _router,
-        address _positionRouter,
-        address _owner,
-        address _nftHandler
-    ) external;
+    function initialize(address _router, address _positionRouter, address _owner, address _nftHandler) external;
 
     /**
      * @dev Approve the specified spender to spend a certain amount of tokens on behalf of the caller.
@@ -102,12 +97,10 @@ interface IGMXAdapter is IERC20, IRouter, IPositionRouter {
      * @param _withdrawETH A boolean indicating whether to withdraw ETH collateral (true) or not (false).
      * @return positionId The ID of the closed position.
      */
-    function closePosition(
-        address[] memory _path,
-        address _receiver,
-        uint256 _acceptablePrice,
-        bool _withdrawETH
-    ) external payable returns (bytes32);
+    function closePosition(address[] memory _path, address _receiver, uint256 _acceptablePrice, bool _withdrawETH)
+        external
+        payable
+        returns (bytes32);
 
     /**
      * @dev Close a failed position in the GMX Position Router.
@@ -115,10 +108,7 @@ interface IGMXAdapter is IERC20, IRouter, IPositionRouter {
      * @param _path The token path for the position.
      * @param _receiver The address that will receive the remaining collateral from the failed position.
      */
-    function closeFailedPosition(
-        address[] memory _path,
-        address _receiver
-    ) external payable;
+    function closeFailedPosition(address[] memory _path, address _receiver) external payable;
 
     /**
      * @dev Withdraw an amount of tokens from the contract to a specified recipient.
@@ -128,11 +118,7 @@ interface IGMXAdapter is IERC20, IRouter, IPositionRouter {
      * @param amount The amount of tokens to withdraw.
      * @return A boolean value indicating if the withdrawal was successful or not.
      */
-    function withdrawToken(
-        address token,
-        address to,
-        uint256 amount
-    ) external returns (bool);
+    function withdrawToken(address token, address to, uint256 amount) external returns (bool);
 
     /**
      * @dev Withdraw an amount of ETH from the contract to a specified recipient.
@@ -168,6 +154,13 @@ interface IGMXAdapter is IERC20, IRouter, IPositionRouter {
             bool isLong,
             uint256 acceptablePrice
         );
+
+    /**
+     * @dev Get the execution state for the long/short position.
+     *
+     * @return The execution state for the position.
+     */
+    function getExecutionState() external view returns (uint256, uint256);
 
     /**
      * @dev To change the owner of the position in case of NFT is transfereed.
