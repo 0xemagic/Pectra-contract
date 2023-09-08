@@ -13,6 +13,7 @@ error TransactionFailed();
 error ExceedsAllowance();
 error WrongValueSent();
 error NotEnoughBalance();
+error CannotChangeYourFactoryState();
 /// @dev is this event necessary?
 error ReferrerAmountExceedsFeeAmount();
 
@@ -94,8 +95,19 @@ contract PlatformLogic is ReentrancyGuard {
 
     event FactorySet(address factory);
 
-    event PendingWithdrawal(uint256 amount);
+    event PendingWithdrawal(address referrer, uint256 amount);
     event Withdraw(address withdrawer, uint256 amount);
+
+    event FeesPaid(address indexed user, uint256 indexed feeAmount);
+
+    event FeesPaidToStakingContract(
+        address indexed stakingContract,
+        uint256 indexed feeAmount
+    );
+    event FeesPaidToPectraTreasury(
+        address indexed spectraTreasury,
+        uint256 indexed feeAmount
+    );
 
     modifier onlyFactory() {
         if (factories[msg.sender] != true) revert NotAdmin();
@@ -205,7 +217,7 @@ contract PlatformLogic is ReentrancyGuard {
         // add  fees to pendingWithdrawal mapping referrer address to uint256 amount
         pendingEthWithdrawals[_referrer] += _amount;
         // emit event
-        emit PendingWithdrawal(_amount);
+        emit PendingWithdrawal(_referrer, _amount);
     }
 
     /// @dev funciton that adds the Token fees available for withdrawal from the referrer
@@ -217,7 +229,7 @@ contract PlatformLogic is ReentrancyGuard {
     ) internal notZeroAddress(_referrer) {
         // add a withdrawTokenFee function
         pendingTokenWithdrawals[_referrer][_token] += _amount;
-        emit PendingWithdrawal(_amount);
+        emit PendingWithdrawal(_referrer, _amount);
     }
 
     /// @notice lets user withdraw all the Eth fees that have been collected from refering
@@ -276,6 +288,15 @@ contract PlatformLogic is ReentrancyGuard {
         }("");
 
         if (!_successStakers) revert TransactionFailed();
+
+        emit FeesPaidToStakingContract(
+            PectraStakingContract,
+            _amountToBeSendToStakers
+        );
+        emit FeesPaidToPectraTreasury(
+            PectraStakingContract,
+            _amountToBeSendToStakers
+        );
     }
 
     /// @dev splits amount between stakers and treasury, and make calls to stakers contract and spectra treasury with the amount given
@@ -316,6 +337,15 @@ contract PlatformLogic is ReentrancyGuard {
         );
 
         if (!_successStakers) revert TransactionFailed();
+
+        emit FeesPaidToStakingContract(
+            PectraStakingContract,
+            _amountToBeSendToStakers
+        );
+        emit FeesPaidToPectraTreasury(
+            PectraStakingContract,
+            _amountToBeSendToStakers
+        );
     }
 
     /// @dev use the _erc20Payment to determite erc20 values and convert them if needed?
@@ -364,6 +394,8 @@ contract PlatformLogic is ReentrancyGuard {
 
         // the remaining amount is split 80/20 between stakers and spectra treasury
         _splitBetweenStakersAndTreasuryEth(_feeAmount);
+
+        emit FeesPaid(_referee, _feeAmount);
     }
 
     /**
@@ -425,6 +457,8 @@ contract PlatformLogic is ReentrancyGuard {
             _feeAmount,
             _tokenAddress
         );
+
+        emit FeesPaid(_referee, _feeAmount);
     }
 
     /// @dev add access control only from factory?
@@ -511,7 +545,7 @@ contract PlatformLogic is ReentrancyGuard {
     /// @notice function to add or remove factories
     /// @dev this is implemented because we can have more than 1 factory (ex. GMXFactory, VertexFactory..)
     function setFactory(address _factory, bool _state) external onlyFactory {
-        // consider adding a check that a factory cannot remove itself
+        if (_factory == msg.sender) revert CannotChangeYourFactoryState();
         factories[_factory] = _state;
         emit FactorySet(_factory);
     }
