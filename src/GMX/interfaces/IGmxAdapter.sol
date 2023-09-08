@@ -76,6 +76,24 @@ interface IGMXAdapter is IERC20, IRouter, IPositionRouter {
     ) external payable returns (bytes32);
 
     /**
+     * @dev Decrease a position using tokens as collateral.
+     *
+     * @param _path The token path for the long position.
+     * @param _amountIn The amount of tokens to invest.
+     * @param _receiver The address to which the collateral will be transferred after closing the position.
+     * @param _acceptablePrice The acceptable price for the long position.
+     * @param _withdrawETH Whether to withdraw ETH after closing the position.
+     * @return positionId The ID of the newly created long position.
+     */
+    function createDecreasePosition(
+        address[] memory _path,
+        uint256 _amountIn,
+        address _receiver,
+        bool _withdrawETH,
+        uint256 _acceptablePrice
+    ) external payable returns (bytes32);
+
+    /**
      * @dev Close an open position in the GMX Position Router.
      *
      * @param _path The token path for the position.
@@ -150,6 +168,13 @@ interface IGMXAdapter is IERC20, IRouter, IPositionRouter {
             bool isLong,
             uint256 acceptablePrice
         );
+
+    /**
+     * @dev Get the execution state for the long/short position.
+     *
+     * @return The execution state for the position.
+     */
+    function getExecutionState() external view returns (uint256, uint256);
 
     /**
      * @dev To change the owner of the position in case of NFT is transfereed.

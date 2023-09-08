@@ -154,6 +154,7 @@ contract GMXFactoryTest is Test {
 
         // Checking if positions increased by 1 for the user
         assertEq(positions, initialPosition + 1);
+        assertEq(gmxFactory.getTotalTradePairs(), 1);
     }
 
     function testSettingPositionKeeper() public {
@@ -194,6 +195,10 @@ contract GMXFactoryTest is Test {
         positionRouter.executeIncreasePosition(positionID, payable(user));
         vm.stopPrank();
 
+        address adapter = gmxFactory.positionAdapters(positionID);
+        (uint256 increaseExecuted, ) = IGMXAdapter(adapter).getExecutionState();
+        assert(increaseExecuted != 0);
+
         uint256[] memory data = gmxFactory.getPosition(positionID);
         assert(data[0] != 0);
     }
@@ -228,6 +233,10 @@ contract GMXFactoryTest is Test {
         positionRouter.executeIncreasePosition(positionID, payable(user));
         vm.stopPrank();
 
+        address adapter = gmxFactory.positionAdapters(positionID);
+        (uint256 increaseExecuted, ) = IGMXAdapter(adapter).getExecutionState();
+        assert(increaseExecuted != 0);
+
         uint256[] memory data = gmxFactory.getPosition(positionID);
         assert(data[0] != 0);
     }
@@ -261,6 +270,10 @@ contract GMXFactoryTest is Test {
         vm.startPrank(user);
         positionRouter.executeIncreasePosition(positionID, payable(user));
 
+        address adapter = gmxFactory.positionAdapters(positionID);
+        (uint256 increaseExecuted, ) = IGMXAdapter(adapter).getExecutionState();
+        assert(increaseExecuted != 0);
+
         gmxFactory.closePosition{value: value}(
             positionID,
             _closingPath,
@@ -273,8 +286,12 @@ contract GMXFactoryTest is Test {
         positionRouter.executeDecreasePosition(positionID, payable(user));
         vm.stopPrank();
 
+        (, uint256 decreaseExecuted) = IGMXAdapter(adapter).getExecutionState();
+        assert(decreaseExecuted != 0);
+
         uint256[] memory data = gmxFactory.getPosition(positionID);
         assert(data[0] == 0);
+        assertEq(gmxFactory.getTotalTradePairs(), 1);
     }
 
     function testOpenAndCloseLongPositionETH() public {
@@ -306,6 +323,10 @@ contract GMXFactoryTest is Test {
         vm.startPrank(user);
         positionRouter.executeIncreasePosition(positionID, payable(user));
 
+        address adapter = gmxFactory.positionAdapters(positionID);
+        (uint256 increaseExecuted, ) = IGMXAdapter(adapter).getExecutionState();
+        assert(increaseExecuted != 0);
+
         gmxFactory.closePosition{value: value}(
             positionID,
             _pathEthClosing,
@@ -318,8 +339,12 @@ contract GMXFactoryTest is Test {
         positionRouter.executeDecreasePosition(positionID, payable(user));
         vm.stopPrank();
 
+        (, uint256 decreaseExecuted) = IGMXAdapter(adapter).getExecutionState();
+        assert(decreaseExecuted != 0);
+
         uint256[] memory data = gmxFactory.getPosition(positionID);
         assert(data[0] == 0);
+        assertEq(gmxFactory.getTotalTradePairs(), 1);
     }
 
     function testOpenAndCloseShortPositionETH() public {
@@ -351,6 +376,11 @@ contract GMXFactoryTest is Test {
         vm.startPrank(user);
         positionRouter.executeIncreasePosition(positionID, payable(user));
 
+        address adapter = gmxFactory.positionAdapters(positionID);
+
+        (uint256 increaseExecuted, ) = IGMXAdapter(adapter).getExecutionState();
+        assert(increaseExecuted != 0);
+
         gmxFactory.closePosition{value: value}(
             positionID,
             _pathEthClosingShort,
@@ -363,8 +393,12 @@ contract GMXFactoryTest is Test {
         positionRouter.executeDecreasePosition(positionID, payable(user));
         vm.stopPrank();
 
+        (, uint256 decreaseExecuted) = IGMXAdapter(adapter).getExecutionState();
+        assert(decreaseExecuted != 0);
+
         uint256[] memory data = gmxFactory.getPosition(positionID);
         assert(data[0] == 0);
+        assertEq(gmxFactory.getTotalTradePairs(), 1);
     }
 
     function testCreateShortPosition() public {
@@ -396,6 +430,7 @@ contract GMXFactoryTest is Test {
 
         // Checking if positions increased by 1 for the user
         assertEq(positions, initialPosition + 1);
+        assertEq(gmxFactory.getTotalTradePairs(), 1);
     }
 
     function testCloseShortPosition() public {
@@ -427,6 +462,10 @@ contract GMXFactoryTest is Test {
         vm.startPrank(user);
         positionRouter.executeIncreasePosition(positionID, payable(user));
 
+        address adapter = gmxFactory.positionAdapters(positionID);
+        (uint256 increaseExecuted, ) = IGMXAdapter(adapter).getExecutionState();
+        assert(increaseExecuted != 0);
+
         gmxFactory.closePosition{value: value}(
             positionID,
             _path,
@@ -437,8 +476,12 @@ contract GMXFactoryTest is Test {
         positionRouter.executeDecreasePosition(positionID, payable(user));
         vm.stopPrank();
 
+        (, uint256 decreaseExecuted) = IGMXAdapter(adapter).getExecutionState();
+        assert(decreaseExecuted != 0);
+
         uint256[] memory data = gmxFactory.getPosition(positionID);
         assert(data[0] == 0);
+        assertEq(gmxFactory.getTotalTradePairs(), 1);
     }
 
     function testOpeningTwoPositions() public {
@@ -471,6 +514,7 @@ contract GMXFactoryTest is Test {
 
         // Checking if positions increased by 1 for the user
         assertEq(positions, initialPosition + 2);
+        assertEq(gmxFactory.getTotalTradePairs(), 2);
     }
 
     function testExecutingTwoPositions() public {
@@ -508,10 +552,197 @@ contract GMXFactoryTest is Test {
         positionRouter.executeIncreasePosition(positionId2, payable(user));
         vm.stopPrank();
 
+        address adapter = gmxFactory.positionAdapters(positionId1);
+        address adapter2 = gmxFactory.positionAdapters(positionId2);
+        (uint256 increaseExecuted, ) = IGMXAdapter(adapter).getExecutionState();
+        assert(increaseExecuted != 0);
+        (uint256 increaseExecuted2, ) = IGMXAdapter(adapter2)
+            .getExecutionState();
+        assert(increaseExecuted2 != 0);
+
         uint256[] memory data = gmxFactory.getPosition(positionId1);
         assert(data[0] != 0);
         uint256[] memory data2 = gmxFactory.getPosition(positionId2);
         assert(data2[0] != 0);
+    }
+
+    function testCreateIncreasePosition() public {
+        // Amount in USDT
+        uint256 _amountIn = 10000000; // Assuming 10 USDC
+
+        uint256 value = (180000000000000 * 2); // Calculate value in wei
+
+        GMXFactory.nftData memory _nftData = GMXFactory.nftData({
+            _pathLong: _path,
+            _pathShort: _pathShort,
+            _indexTokenLong: address(tokenWETH),
+            _indexTokenShort: address(tokenWETH),
+            _amountIn: _amountIn,
+            _minOut: 0,
+            _sizeDeltaLong: _sizeDelta,
+            _sizeDeltaShort: _sizeDelta,
+            _acceptablePriceLong: _acceptablePriceLongETH,
+            _acceptablePriceShort: _acceptablePriceShortETH
+        });
+
+        vm.startPrank(user);
+        tokenUSDC.approve(address(gmxFactory), (_amountIn * 2));
+        (bytes32 positionId1, bytes32 positionId2) = gmxFactory.openPositions{
+            value: value
+        }(_nftData);
+        vm.stopPrank();
+
+        vm.startPrank(admin);
+        positionRouter.setPositionKeeper(user, true);
+        vm.stopPrank();
+
+        vm.startPrank(user);
+        uint256 fee = 180000000000000;
+        positionRouter.executeIncreasePosition(positionId1, payable(user));
+        positionRouter.executeIncreasePosition(positionId2, payable(user));
+
+        address adapter = gmxFactory.positionAdapters(positionId1);
+        address adapter2 = gmxFactory.positionAdapters(positionId2);
+        (uint256 increaseExecuted, ) = IGMXAdapter(adapter).getExecutionState();
+        assert(increaseExecuted != 0);
+        (uint256 increaseExecuted2, ) = IGMXAdapter(adapter2)
+            .getExecutionState();
+        assert(increaseExecuted2 != 0);
+
+        uint256[] memory data = gmxFactory.getPosition(positionId1);
+        uint256[] memory data2 = gmxFactory.getPosition(positionId2);
+
+        tokenUSDC.approve(address(gmxFactory), _amountIn * 2);
+        gmxFactory.createIncreasePosition{value: fee}(
+            positionId1,
+            _nftData._pathLong,
+            _nftData._indexTokenLong,
+            _amountIn,
+            0,
+            0,
+            true,
+            _nftData._acceptablePriceLong
+        );
+        gmxFactory.createIncreasePosition{value: fee}(
+            positionId2,
+            _nftData._pathShort,
+            _nftData._indexTokenShort,
+            _amountIn,
+            0,
+            0,
+            false,
+            _nftData._acceptablePriceShort
+        );
+        vm.stopPrank();
+
+        vm.startPrank(admin);
+        positionRouter.setPositionKeeper(user, true);
+        vm.stopPrank();
+
+        vm.startPrank(user);
+        positionRouter.executeIncreasePosition(positionId1, payable(user));
+        positionRouter.executeIncreasePosition(positionId2, payable(user));
+        vm.stopPrank();
+
+        (uint256 increaseExecuted3, ) = IGMXAdapter(adapter)
+            .getExecutionState();
+        assert(increaseExecuted3 != 0);
+        (uint256 increaseExecuted4, ) = IGMXAdapter(adapter2)
+            .getExecutionState();
+        assert(increaseExecuted4 != 0);
+
+        uint256[] memory dataAfter = gmxFactory.getPosition(positionId1);
+        assertGe(dataAfter[1], data[1]);
+
+        uint256[] memory data2After = gmxFactory.getPosition(positionId2);
+        assertGe(data2After[1], data2[1]);
+    }
+
+    function testCreateDecreasePosition() public {
+        // Amount in USDT
+        uint256 _amountIn = 10000000; // Assuming 10 USDC
+
+        uint256 value = (180000000000000 * 2); // Calculate value in wei
+
+        GMXFactory.nftData memory _nftData = GMXFactory.nftData({
+            _pathLong: _path,
+            _pathShort: _pathShort,
+            _indexTokenLong: address(tokenWETH),
+            _indexTokenShort: address(tokenWETH),
+            _amountIn: _amountIn,
+            _minOut: 0,
+            _sizeDeltaLong: _sizeDelta,
+            _sizeDeltaShort: _sizeDelta,
+            _acceptablePriceLong: _acceptablePriceLongETH,
+            _acceptablePriceShort: _acceptablePriceShortETH
+        });
+
+        vm.startPrank(user);
+        tokenUSDC.approve(address(gmxFactory), (_amountIn * 2));
+        (bytes32 positionId1, bytes32 positionId2) = gmxFactory.openPositions{
+            value: value
+        }(_nftData);
+        vm.stopPrank();
+
+        vm.startPrank(admin);
+        positionRouter.setPositionKeeper(user, true);
+        vm.stopPrank();
+
+        vm.startPrank(user);
+        uint256 fee = 180000000000000;
+        positionRouter.executeIncreasePosition(positionId1, payable(user));
+        positionRouter.executeIncreasePosition(positionId2, payable(user));
+
+        address adapter = gmxFactory.positionAdapters(positionId1);
+        address adapter2 = gmxFactory.positionAdapters(positionId2);
+
+        (uint256 increaseExecuted, ) = IGMXAdapter(adapter).getExecutionState();
+        assert(increaseExecuted != 0);
+        (uint256 increaseExecuted2, ) = IGMXAdapter(adapter2)
+            .getExecutionState();
+        assert(increaseExecuted2 != 0);
+
+        uint256[] memory data1 = gmxFactory.getPosition(positionId1);
+        uint256[] memory data2 = gmxFactory.getPosition(positionId2);
+
+        _amountIn = 5000000;
+        tokenUSDC.approve(address(gmxFactory), _amountIn * 2);
+        gmxFactory.createDecreasePosition{value: fee}(
+            positionId1,
+            _closingPath,
+            _amountIn,
+            _nftData._acceptablePriceShort,
+            false
+        );
+        gmxFactory.createDecreasePosition{value: fee}(
+            positionId2,
+            _nftData._pathShort,
+            _amountIn,
+            _nftData._acceptablePriceLong,
+            false
+        );
+        vm.stopPrank();
+
+        vm.startPrank(admin);
+        positionRouter.setPositionKeeper(user, true);
+        vm.stopPrank();
+
+        vm.startPrank(user);
+        positionRouter.executeDecreasePosition(positionId1, payable(user));
+        positionRouter.executeDecreasePosition(positionId2, payable(user));
+        vm.stopPrank();
+
+        (, uint256 decreaseExecuted) = IGMXAdapter(adapter).getExecutionState();
+        assert(decreaseExecuted != 0);
+        (, uint256 decreaseExecuted2) = IGMXAdapter(adapter2)
+            .getExecutionState();
+        assert(decreaseExecuted2 != 0);
+
+        uint256[] memory data1After = gmxFactory.getPosition(positionId1);
+        assertLe(data1After[1], data1[1]);
+
+        uint256[] memory data2After = gmxFactory.getPosition(positionId2);
+        assertLe(data2After[1], data2[1]);
     }
 
     function testMintNft() public {
@@ -557,6 +788,7 @@ contract GMXFactoryTest is Test {
 
         vm.stopPrank();
         assertEq(user, owmerOfNft);
+        assertEq(nftHandler.getTotalNftsMinted(), 1);
     }
 
     function testBurnNft() public {
@@ -691,5 +923,51 @@ contract GMXFactoryTest is Test {
             gmxFactory.getPositionStatus(positionIDs[0], user2) ==
                 GMXFactory.PositionStatus.Opened
         );
+        assert(
+            gmxFactory.getPositionStatus(positionIDs[1], user2) ==
+                GMXFactory.PositionStatus.Opened
+        );
+    }
+
+    function testFailedPosition() public {
+        // Amount in USDT
+        uint256 amountIn = 5e6; // Assuming 10 USDC
+
+        uint256 value = positionRouter.minExecutionFee(); // Calculate value in wei
+
+        // Approve USDT for gmxFactory
+        vm.startPrank(user);
+        tokenUSDC.approve(address(gmxFactory), amountIn);
+
+        // Open long position
+        bytes32 positionID = gmxFactory.openLongPosition{value: value}(
+            _path,
+            address(tokenWETH),
+            amountIn,
+            0 ether, // minOut
+            _sizeDelta,
+            _acceptablePriceLongETH
+        );
+        vm.stopPrank();
+
+        //Setting the user as position Keeper to execute the position
+        vm.startPrank(admin);
+        positionRouter.setPositionKeeper(user, true);
+        vm.stopPrank();
+
+        vm.startPrank(user);
+        vm.expectRevert("Vault: liquidation fees exceed collateral");
+        positionRouter.executeIncreasePosition(positionID, payable(user));
+        vm.stopPrank();
+
+        IGMXAdapter gmxAdapter = IGMXAdapter(
+            gmxFactory.getPositionAdapter(positionID)
+        );
+        uint256 balanceOfAdapter = tokenUSDC.balanceOf(address(gmxAdapter));
+        console.log("Balance of Token in Adapter", balanceOfAdapter);
+
+        uint256[] memory data = gmxFactory.getPosition(positionID);
+        assertEq(balanceOfAdapter, 0);
+        assertEq(data[0], 0);
     }
 }

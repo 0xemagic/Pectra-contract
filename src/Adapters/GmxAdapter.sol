@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import "../GMX/interfaces/IERC20.sol";
 import "../GMX/interfaces/IGMXAdapter.sol";
+import "../GMX/interfaces/IGMXFactory.sol";
 import "../GMX/interfaces/IPositionRouterCallbackReceiver.sol";
 import "../../lib/openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 
@@ -74,6 +75,15 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
     modifier onlyFactoryOrRouter() {
         require(
             FACTORY == msg.sender || POSITION_ROUTER == msg.sender,
+            "GMX ADAPTER: caller is not the factory"
+        );
+        _;
+    }
+
+    // Modifier to restrict access to only position router contract.
+    modifier onlyPositionRouter() {
+        require(
+            POSITION_ROUTER == msg.sender,
             "GMX ADAPTER: caller is not the factory"
         );
         _;
@@ -163,8 +173,21 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
     ) external payable onlyFactory returns (bytes32 positionId) {
         uint256 _executionFee = IPositionRouter(POSITION_ROUTER)
             .minExecutionFee();
-        bytes32 result = IPositionRouter(POSITION_ROUTER)
-            .createIncreasePosition{value: msg.value}(
+
+        // to reflect the increase when called to increase the existin position
+        setPositionData(
+            _path,
+            _indexToken,
+            _amountIn + amountIn,
+            _minOut + minOut,
+            _sizeDelta + sizeDelta,
+            _isLong,
+            _acceptablePrice
+        );
+
+        positionId = IPositionRouter(POSITION_ROUTER).createIncreasePosition{
+            value: msg.value
+        }(
             _path,
             _indexToken,
             _amountIn,
@@ -176,16 +199,6 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
             ZERO_VALUE,
             address(this)
         );
-        setPositionData(
-            _path,
-            _indexToken,
-            _amountIn,
-            _minOut,
-            _sizeDelta,
-            _isLong,
-            _acceptablePrice
-        );
-        return result;
     }
 
     /**
@@ -209,8 +222,20 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
     ) external payable onlyFactory returns (bytes32 positionId) {
         uint256 _executionFee = IPositionRouter(POSITION_ROUTER)
             .minExecutionFee();
-        bytes32 result = IPositionRouter(POSITION_ROUTER)
-            .createIncreasePositionETH{value: msg.value}(
+
+        setPositionData(
+            _path,
+            _indexToken,
+            (msg.value - _executionFee) + amountIn,
+            _minOut + minOut,
+            _sizeDelta + sizeDelta,
+            _isLong,
+            _acceptablePrice
+        );
+
+        positionId = IPositionRouter(POSITION_ROUTER).createIncreasePositionETH{
+            value: msg.value
+        }(
             _path,
             _indexToken,
             _minOut,
@@ -219,18 +244,56 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
             _acceptablePrice,
             _executionFee,
             ZERO_VALUE,
-            ZERO_ADDRESS
+            address(this)
         );
+    }
+
+    /**
+     * @dev Decrease a position using tokens as collateral.
+     *
+     * @param _path The token path for the long position.
+     * @param _amountIn The amount of tokens to invest.
+     * @param _receiver The address to which the collateral will be transferred after closing the position.
+     * @param _acceptablePrice The acceptable price for the long position.
+     * @param _withdrawETH Whether to withdraw ETH after closing the position.
+     * @return positionId The ID of the newly created long position.
+     */
+    function createDecreasePosition(
+        address[] memory _path,
+        uint256 _amountIn,
+        address _receiver,
+        bool _withdrawETH,
+        uint256 _acceptablePrice
+    ) external payable onlyFactory returns (bytes32 positionId) {
+        uint256 _executionFee = IPositionRouter(POSITION_ROUTER)
+            .minExecutionFee();
+
+        // to reflect the decrease when called to increase the existin position
         setPositionData(
             _path,
-            _indexToken,
-            msg.value - _executionFee,
-            _minOut,
-            _sizeDelta,
-            _isLong,
+            indexToken,
+            amountIn - _amountIn,
+            minOut,
+            sizeDelta,
+            isLong,
             _acceptablePrice
         );
-        return result;
+
+        positionId = IPositionRouter(POSITION_ROUTER).createDecreasePosition{
+            value: msg.value
+        }(
+            _path,
+            indexToken,
+            _amountIn,
+            0,
+            isLong,
+            _receiver,
+            _acceptablePrice,
+            0,
+            _executionFee,
+            _withdrawETH,
+            address(this)
+        );
     }
 
     /**
@@ -252,8 +315,9 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
             .minExecutionFee();
 
         // Try to close the position using the GMX Position Router.
-        bytes32 result = IPositionRouter(POSITION_ROUTER)
-            .createDecreasePosition{value: msg.value}(
+        positionId = IPositionRouter(POSITION_ROUTER).createDecreasePosition{
+            value: msg.value
+        }(
             _path,
             indexToken,
             0,
@@ -266,7 +330,6 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
             _withdrawETH,
             address(this)
         );
-        return result;
     }
 
     /**
@@ -278,7 +341,7 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
     function closeFailedPosition(
         address[] memory _path,
         address _receiver
-    ) external payable onlyFactoryOrRouter {
+    ) public payable onlyFactoryOrRouter {
         address collateral = _path[_path.length - 1];
         uint256 collateralBalance = IERC20(collateral).balanceOf(address(this));
         if (collateralBalance > 0) {
@@ -392,6 +455,15 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
     }
 
     /**
+     * @dev Get the execution state for the long/short position.
+     *
+     * @return The execution state for the position.
+     */
+    function getExecutionState() external view returns (uint256, uint256) {
+        return (uint256(increaseExecuted), uint256(decreaseExecuted));
+    }
+
+    /**
      * @dev To change the owner of the position in case of NFT is transfereed.
      *
      * @param _newowner The address to which the position will be transferred.
@@ -401,7 +473,7 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
     }
 
     /// @notice IPositionRouterCallbackReceiver callback function
-    /// @dev updates whether position execution state
+    /// @dev updates the position's execution state when a position is opened & closed.
     /// @param positionKey position key
     /// @param isExecuted whether position increase/decrease was executed
     /// @param isIncrease whether positon action was increase/decrease
@@ -409,17 +481,18 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
         bytes32 positionKey,
         bool isExecuted,
         bool isIncrease
-    ) external {
+    ) external onlyPositionRouter {
         emit Callback(address(this), positionKey, isExecuted, isIncrease);
 
-        if (isExecuted && isIncrease) {
+        if (isIncrease && isExecuted) {
             increaseExecuted = ExecutionState.Success;
-        } else if (isExecuted && !isIncrease) {
+        } else if (!isIncrease && isExecuted) {
             decreaseExecuted = ExecutionState.Success;
-        } else if (!isExecuted && !isIncrease) {
+        } else if (!isIncrease && !isExecuted) {
             decreaseExecuted = ExecutionState.Failed;
         } else {
             increaseExecuted = ExecutionState.Failed;
+            IGMXFactory(FACTORY).decreaseTotalTradePairs();
             closeFailedPosition(path, OWNER);
         }
     }
