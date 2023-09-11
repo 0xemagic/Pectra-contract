@@ -10,6 +10,7 @@ import "../src/GMX/interfaces/IERC20.sol";
 import "../src/NFT/INftHandler.sol";
 import "../src/NFT/IPositionNFT.sol";
 import "../src/Vault/core/interfaces/IVault.sol";
+import "../src/PlatformLogic/IPlatformLogic.sol";
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
 
@@ -61,7 +62,8 @@ contract GMXFactoryTest is Test {
             0xaBBc5F99639c9B6bCb58544ddf04EFA6802F4064,
             0xb87a436B93fFE9D75c5cFA7bAcFff96430b09868,
             0x22199a49A999c351eF7927602CFB187ec3cae489,
-            0x489ee077994B6658eAfA855C308275EAd8097C4A
+            0x489ee077994B6658eAfA855C308275EAd8097C4A,
+            IPlatformLogic(address(0x0))
         );
         nftHandler = new NFTHandler(address(gmxFactory));
         positionNft = new PositionNFT(

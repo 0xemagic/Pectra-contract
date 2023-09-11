@@ -420,7 +420,7 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
             decreaseExecuted = ExecutionState.Failed;
         } else {
             increaseExecuted = ExecutionState.Failed;
-            closeFailedPosition(path, OWNER);
+            // closeFailedPosition(path, OWNER);
         }
     }
 }
