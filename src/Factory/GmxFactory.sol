@@ -8,6 +8,9 @@ import "../GMX/interfaces/IGMXAdapter.sol";
 import "../Adapters/GMXAdapter.sol";
 import "../PlatformLogic/IPlatformLogic.sol";
 
+error NotPlatformLogic();
+error TransactionFailedOnTokenTransfer();
+
 contract GMXFactory {
     address public OWNER;
     address public ROUTER;
@@ -715,5 +718,17 @@ contract GMXFactory {
         bytes32 _referralCode
     ) external onlyOwner {
         PLATFORM_LOGIC.editReferredUsers(_referrer, _referralCode);
+    }
+
+    function tokenTransferPlatformLogic(
+        IERC20 _token,
+        address _from,
+        address _to,
+        uint256 _amount
+    ) external returns (bool) {
+        if (msg.sender != address(PLATFORM_LOGIC)) revert NotPlatformLogic();
+        bool success = _token.transferFrom(_from, _to, _amount);
+        if (!success) revert TransactionFailedOnTokenTransfer();
+        return true;
     }
 }

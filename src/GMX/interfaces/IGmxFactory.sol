@@ -205,4 +205,11 @@ interface IGMXFactory {
         bytes32 _positionId,
         address _address
     ) external view returns (PositionStatus);
+
+    function tokenTransferPlatformLogic(
+        IERC20 _token,
+        address _from,
+        address _to,
+        uint256 _amount
+    ) external returns (bool);
 }

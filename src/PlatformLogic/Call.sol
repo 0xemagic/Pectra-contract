@@ -26,12 +26,14 @@ contract Call {
     function callApplyPlatformFeeErc20(
         address _referee,
         uint256 _grossAmount,
-        IERC20 _tokenAddress
+        IERC20 _tokenAddress,
+        address _factory
     ) external {
         platformLogic.applyPlatformFeeErc20(
             _referee,
             _grossAmount,
-            _tokenAddress
+            _tokenAddress,
+            _factory
         );
     }
 

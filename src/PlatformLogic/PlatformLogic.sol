@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "../GMX/interfaces/IGMXFactory.sol";
 
 error CanOnlyAddYourself();
 error Unavailable();
@@ -14,6 +15,7 @@ error ExceedsAllowance();
 error WrongValueSent();
 error NotEnoughBalance();
 error CannotChangeYourFactoryState();
+error WrongFactoryAddress();
 /// @dev is this event necessary?
 error ReferrerAmountExceedsFeeAmount();
 
@@ -304,8 +306,11 @@ contract PlatformLogic is ReentrancyGuard {
     function _splitBetweenStakersAndTreasuryToken(
         address _referee,
         uint256 _amount,
-        IERC20 _tokenAddress
+        IERC20 _tokenAddress,
+        address _factory
     ) internal {
+        if (factories[_factory] != true) revert WrongFactoryAddress();
+
         // calculate % to be send to treasury
         uint256 _amountToBeSendToTreasury = calculateFees(
             _amount,
@@ -313,11 +318,15 @@ contract PlatformLogic is ReentrancyGuard {
         );
 
         // send the amount to the Treasury
-        bool _successTreasury = _tokenAddress.transferFrom(
-            _referee,
-            PectraTreasury,
-            _amountToBeSendToTreasury
-        );
+        // make factory to the IGMXFactory's interface, so it cal use the tokenTransferPlatformLogic
+        bool _successTreasury = IGMXFactory(_factory)
+            .tokenTransferPlatformLogic(
+                _tokenAddress,
+                _referee,
+                PectraTreasury,
+                _amountToBeSendToTreasury
+            );
+
         if (!_successTreasury) revert TransactionFailed();
 
         /// @dev why does this give 8 and the calculatefees approach 9 when given 1000 as token amount?
@@ -330,7 +339,8 @@ contract PlatformLogic is ReentrancyGuard {
         //     stakersFeeSplit
         // );
 
-        bool _successStakers = _tokenAddress.transferFrom(
+        bool _successStakers = IGMXFactory(_factory).tokenTransferPlatformLogic(
+            _tokenAddress,
             _referee,
             PectraStakingContract,
             _amountToBeSendToStakers
@@ -410,7 +420,8 @@ contract PlatformLogic is ReentrancyGuard {
     function _applyPlatformFeeErc20(
         address _referee,
         uint256 _grossAmount,
-        IERC20 _tokenAddress
+        IERC20 _tokenAddress,
+        address _factory
     ) internal {
         // Returns the remaining number of tokens that spender
         // will be allowed to spend on behalf of owner through transferFrom.
@@ -455,7 +466,8 @@ contract PlatformLogic is ReentrancyGuard {
         _splitBetweenStakersAndTreasuryToken(
             _referee,
             _feeAmount,
-            _tokenAddress
+            _tokenAddress,
+            _factory
         );
 
         emit FeesPaid(_referee, _feeAmount);
@@ -473,10 +485,11 @@ contract PlatformLogic is ReentrancyGuard {
     function applyPlatformFeeErc20(
         address _referee,
         uint256 _grossAmount,
-        IERC20 _tokenAddress
+        IERC20 _tokenAddress,
+        address _factory
     ) external onlyFactory nonReentrant {
         // _tokenAddress.
-        _applyPlatformFeeErc20(_referee, _grossAmount, _tokenAddress);
+        _applyPlatformFeeErc20(_referee, _grossAmount, _tokenAddress, _factory);
     }
 
     /// @notice function to create referral codes, invoked when a user wants to get a code

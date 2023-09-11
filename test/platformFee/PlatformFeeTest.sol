@@ -282,7 +282,7 @@ contract PlatformFeeTest is Test {
         vm.prank(_referee, _referee);
 
         // send the tokens
-        call.callApplyPlatformFeeErc20(_referee, grossAmount, erc20);
+        call.callApplyPlatformFeeErc20(_referee, grossAmount, erc20, factory);
 
         uint256 _refereeDiscount = platformLogic.calculateFees(
             feeAmount,
@@ -346,7 +346,7 @@ contract PlatformFeeTest is Test {
 
         vm.prank(addr, addr);
 
-        call.callApplyPlatformFeeErc20(addr, grossAmount, erc20);
+        call.callApplyPlatformFeeErc20(addr, grossAmount, erc20, factory);
 
         uint256 _amountToBeSendToTreasury = platformLogic.calculateFees(
             feeAmount,
@@ -370,7 +370,7 @@ contract PlatformFeeTest is Test {
     function test_RevertWhen_ValueExceedsAllowanceErc20() public {
         vm.expectRevert(ExceedsAllowance.selector);
 
-        call.callApplyPlatformFeeErc20(referee, 10, erc20);
+        call.callApplyPlatformFeeErc20(referee, 10, erc20, factory);
     }
 
     function test_WithdrawTokenFees() public {
