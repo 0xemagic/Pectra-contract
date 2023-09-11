@@ -6,7 +6,6 @@ import "../src/Factory/GMXFactory.sol";
 import "../src/NFT/NftHandler.sol";
 import "../src/NFT/PositionNFT.sol";
 import "../src/GMX/interfaces/IGMXAdapter.sol";
-import "../src/GMX/interfaces/IERC20.sol";
 import "../src/NFT/INftHandler.sol";
 import "../src/NFT/IPositionNFT.sol";
 import "../src/Vault/core/interfaces/IVault.sol";

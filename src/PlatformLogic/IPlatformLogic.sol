@@ -1,17 +1,4 @@
 // SPDX-License-Identifier: MIT
-error CanOnlyAddYourself();
-error Unavailable();
-error NotAdmin();
-error WrongFeeAmount();
-error GivenZeroAddress();
-error TransactionFailed();
-error ExceedsAllowance();
-error WrongValueSent();
-error NotEnoughBalance();
-error CannotChangeYourFactoryState();
-/// @dev is this event necessary?
-error ReferrerAmountExceedsFeeAmount();
-error WrongFactoryAddress();
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
