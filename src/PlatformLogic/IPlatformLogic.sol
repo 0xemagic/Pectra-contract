@@ -1,4 +1,19 @@
 // SPDX-License-Identifier: MIT
+error CanOnlyAddYourself();
+error Unavailable();
+error NotAdmin();
+error WrongFeeAmount();
+error GivenZeroAddress();
+error TransactionFailed();
+error ExceedsAllowance();
+error WrongValueSent();
+error NotEnoughBalance();
+error CannotChangeYourFactoryState();
+/// @dev is this event necessary?
+error ReferrerAmountExceedsFeeAmount();
+error WrongFactoryAddress();
+
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 pragma solidity ^0.8.13;
 
@@ -27,6 +42,35 @@ interface IPlatformLogic {
     function viewReferredUser(
         address _referredUser
     ) external view returns (bytes32 code);
+
+    function applyPlatformFeeEth(
+        address _referee,
+        uint256 _grossAmount
+    ) external payable;
+
+    function applyPlatformFeeErc20(
+        address _referee,
+        uint256 _grossAmount,
+        IERC20 _tokenAddress
+    ) external;
+
+    function checkPendingTokenWithdrawals(
+        address _referrer,
+        IERC20 _token
+    ) external view returns (uint256);
+
+    function withdrawTokenFees(IERC20 _token) external;
+
+    function withdrawEthFees() external;
+
+    function viewPlatformFee() external view returns (uint256);
+
+    function viewRefereeDiscount() external view returns (uint256);
+
+    function calculateFees(
+        uint256 _amount,
+        uint256 _bps
+    ) external pure returns (uint256);
 
     function checkReferredUser(
         address _referredUser
