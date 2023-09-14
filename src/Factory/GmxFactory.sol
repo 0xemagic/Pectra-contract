@@ -20,6 +20,8 @@ contract GMXFactory {
     address public NFT_HANDLER;
     IPlatformLogic public PLATFORM_LOGIC;
 
+    uint256 public totalTradePairs;
+
     enum PositionStatus {
         Opened,
         Closed,
@@ -82,16 +84,6 @@ contract GMXFactory {
         bool isLong
     );
 
-    event PlatformLogicsFactoryChanged(
-        address indexed factory,
-        bool indexed state
-    );
-
-    event PlatformLogicChanged(
-        IPlatformLogic indexed oldPlatformLogic,
-        IPlatformLogic indexed newPlatformLogic
-    );
-
     struct nftData {
         address[] _pathLong;
         address[] _pathShort;
@@ -137,6 +129,15 @@ contract GMXFactory {
 
     // Modifier to restrict access to only the contract owner.
     modifier onlyNftHandler() {
+        require(
+            NFT_HANDLER == msg.sender,
+            "GMX FACTORY: Caller is not NFT Handler"
+        );
+        _;
+    }
+
+    // Modifier to restrict access to only the gmx adaoter contract.
+    modifier onlyAdapter() {
         require(
             NFT_HANDLER == msg.sender,
             "GMX FACTORY: Caller is not NFT Handler"
@@ -222,6 +223,7 @@ contract GMXFactory {
         address collateral = _path[0];
         IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
         IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
+
         positionId = IGMXAdapter(adapter).createIncreasePosition{
             value: msg.value
         }(
@@ -233,15 +235,16 @@ contract GMXFactory {
             true,
             _acceptablePrice
         );
+
         positionAdapters[positionId] = adapter;
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
         positionDetails[positionId][msg.sender] = PositionStatus.Opened;
+        totalTradePairs++;
 
         // Emit the LongPositionOpened event.
         emit LongPositionOpened(positionId, msg.sender, adapter);
-        return positionId;
     }
 
     /**
@@ -273,18 +276,20 @@ contract GMXFactory {
             NFT_HANDLER
         );
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
+
         positionId = IGMXAdapter(adapter).createIncreasePositionETH{
             value: msg.value
         }(_path, _indexToken, _minOut, _sizeDelta, true, _acceptablePrice);
+
         positionAdapters[positionId] = adapter;
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
         positionDetails[positionId][msg.sender] = PositionStatus.Opened;
+        totalTradePairs++;
 
         // Emit the LongETHPositionOpened event.
         emit LongETHPositionOpened(positionId, msg.sender, adapter);
-        return positionId;
     }
 
     /**
@@ -321,6 +326,7 @@ contract GMXFactory {
         address collateral = _path[0];
         IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
         IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
+
         positionId = IGMXAdapter(adapter).createIncreasePosition{
             value: msg.value
         }(
@@ -332,15 +338,16 @@ contract GMXFactory {
             false,
             _acceptablePrice
         );
+
         positionAdapters[positionId] = adapter;
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
         positionDetails[positionId][msg.sender] = PositionStatus.Opened;
+        totalTradePairs++;
 
         // Emit the ShortPositionOpened event.
         emit ShortPositionOpened(positionId, msg.sender, adapter);
-        return positionId;
     }
 
     /**
@@ -372,18 +379,103 @@ contract GMXFactory {
             NFT_HANDLER
         );
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
+
         positionId = IGMXAdapter(adapter).createIncreasePositionETH{
             value: msg.value
         }(_path, _indexToken, _minOut, _sizeDelta, false, _acceptablePrice);
+
         positionAdapters[positionId] = adapter;
         positionOwners[positionId] = msg.sender;
         positions[msg.sender] += 1;
         indexedPositions[msg.sender][positions[msg.sender]] = positionId;
         positionDetails[positionId][msg.sender] = PositionStatus.Opened;
+        totalTradePairs++;
 
         // Emit the ShortETHPositionOpened event.
         emit ShortPositionOpened(positionId, msg.sender, adapter);
-        return positionId;
+    }
+
+    /**
+     * @dev Create a position using tokens as collateral.
+     *
+     * @param _positionId The id of the position
+     * @param _path The token path for the position.
+     * @param _indexToken The index token for the position.
+     * @param _amountIn The amount of tokens to invest.
+     * @param _minOut The minimum acceptable amount of output tokens.
+     * @param _sizeDelta The amount of leverage taken from the Exchange for the position.
+     * @param _isLong Whether the position is a position (true) or a short position (false).
+     * @param _acceptablePrice The acceptable price for the position.
+     * @return positionId The ID of the newly created position.
+     */
+    function createIncreasePosition(
+        bytes32 _positionId,
+        address[] memory _path,
+        address _indexToken,
+        uint256 _amountIn,
+        uint256 _minOut,
+        uint256 _sizeDelta,
+        bool _isLong,
+        uint256 _acceptablePrice
+    ) external payable returns (bytes32 positionId) {
+        require(
+            msg.sender == positionOwners[_positionId],
+            "GMX FACTORY: Not a position owner"
+        );
+        require(
+            positionDetails[_positionId][msg.sender] == PositionStatus.Opened,
+            "GMX FACTORY: Position not open"
+        );
+        address adapter = positionAdapters[_positionId];
+        address collateral = _path[0];
+        IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
+        IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
+        positionId = IGMXAdapter(adapter).createIncreasePosition{
+            value: msg.value
+        }(
+            _path,
+            _indexToken,
+            _amountIn,
+            _minOut,
+            _sizeDelta,
+            _isLong,
+            _acceptablePrice
+        );
+
+        emit CreateIncreasePosition(positionId, msg.sender, adapter, _amountIn);
+    }
+
+    /**
+     * @dev Decrease a position using tokens as collateral.
+     *
+     * @param _positionId The id of the position
+     * @param _path The token path for the position.
+     * @param _amountIn The amount of tokens to invest.
+     * @param _acceptablePrice The acceptable price for the position.
+     * @param _withdrawETH Whether to withdraw ETH after closing the position.
+     * @return positionId The ID of the newly created position.
+     */
+    function createDecreasePosition(
+        bytes32 _positionId,
+        address[] memory _path,
+        uint256 _amountIn,
+        uint256 _acceptablePrice,
+        bool _withdrawETH
+    ) external payable returns (bytes32 positionId) {
+        require(
+            msg.sender == positionOwners[_positionId],
+            "GMX FACTORY: Not a position owner"
+        );
+        require(
+            positionDetails[_positionId][msg.sender] == PositionStatus.Opened,
+            "GMX FACTORY: Position not open"
+        );
+        address adapter = positionAdapters[_positionId];
+        positionId = IGMXAdapter(adapter).createDecreasePosition{
+            value: msg.value
+        }(_path, _amountIn, msg.sender, _withdrawETH, _acceptablePrice);
+
+        emit CreateDecreasePosition(positionId, msg.sender, adapter, _amountIn);
     }
 
     /**
@@ -515,6 +607,7 @@ contract GMXFactory {
                 positions[msg.sender]
             ] = longPositionId;
             positionDetails[longPositionId][msg.sender] = PositionStatus.Opened;
+            totalTradePairs++;
 
             emit LongPositionOpened(longPositionId, msg.sender, adapter);
         }
@@ -563,6 +656,7 @@ contract GMXFactory {
             ] = shortPositionId;
             positionDetails[shortPositionId][msg.sender] = PositionStatus
                 .Opened;
+            totalTradePairs++;
 
             emit ShortPositionOpened(shortPositionId, msg.sender, adapter);
         }
@@ -654,6 +748,24 @@ contract GMXFactory {
         positionDetails[_positionId][_newOwner] = PositionStatus.Opened;
 
         return true;
+    }
+
+    /**
+     * @dev Function to get total number of Trade Pairs created.
+     *
+     * @return Number of total trade pairs created by the GMX Factory contract.
+     */
+    function getTotalTradePairs() external view returns (uint256) {
+        return totalTradePairs;
+    }
+
+    /**
+     * @dev Function to decrease total number of Trade Pairs created.
+     *
+     * @return Number of total trade pairs created by the GMX Factory contract.
+     */
+    function decreaseTotalTradePairs() external onlyAdapter returns (uint256) {
+        return totalTradePairs--;
     }
 
     /**
