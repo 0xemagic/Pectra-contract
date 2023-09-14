@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "../GMX/interfaces/IGMXFactory.sol";
 
 error CanOnlyAddYourself();
 error Unavailable();
@@ -13,6 +14,9 @@ error TransactionFailed();
 error ExceedsAllowance();
 error WrongValueSent();
 error NotEnoughBalance();
+error CannotChangeYourFactoryState();
+error WrongFactoryAddress();
+error FactoryPlatformLogicAddressIsNotThisOne();
 /// @dev is this event necessary?
 error ReferrerAmountExceedsFeeAmount();
 
@@ -51,10 +55,11 @@ contract PlatformLogic is ReentrancyGuard {
     /// @notice store the Factory Addresses
     mapping(address => bool) private factories;
 
-    /// @notice storing the referral codes
+    /// @notice storing the referral codes and referral code owners
     mapping(bytes32 => address) public referralCodes;
 
     /// @notice mapping to store the Refferal codes to user's addresses(creator of referral codes)
+    /// @notice address = referrer, bytes32 = referral code
     mapping(address => bytes32) public referrers;
 
     /// @notice mapping to store the Reffered users to referral codes(users being referred)
@@ -93,8 +98,19 @@ contract PlatformLogic is ReentrancyGuard {
 
     event FactorySet(address factory);
 
-    event PendingWithdrawal(uint256 amount);
+    event PendingWithdrawal(address referrer, uint256 amount);
     event Withdraw(address withdrawer, uint256 amount);
+
+    event FeesPaid(address indexed user, uint256 indexed feeAmount);
+
+    event FeesPaidToStakingContract(
+        address indexed stakingContract,
+        uint256 indexed feeAmount
+    );
+    event FeesPaidToPectraTreasury(
+        address indexed spectraTreasury,
+        uint256 indexed feeAmount
+    );
 
     modifier onlyFactory() {
         if (factories[msg.sender] != true) revert NotAdmin();
@@ -204,7 +220,7 @@ contract PlatformLogic is ReentrancyGuard {
         // add  fees to pendingWithdrawal mapping referrer address to uint256 amount
         pendingEthWithdrawals[_referrer] += _amount;
         // emit event
-        emit PendingWithdrawal(_amount);
+        emit PendingWithdrawal(_referrer, _amount);
     }
 
     /// @dev funciton that adds the Token fees available for withdrawal from the referrer
@@ -216,7 +232,7 @@ contract PlatformLogic is ReentrancyGuard {
     ) internal notZeroAddress(_referrer) {
         // add a withdrawTokenFee function
         pendingTokenWithdrawals[_referrer][_token] += _amount;
-        emit PendingWithdrawal(_amount);
+        emit PendingWithdrawal(_referrer, _amount);
     }
 
     /// @notice lets user withdraw all the Eth fees that have been collected from refering
@@ -275,6 +291,15 @@ contract PlatformLogic is ReentrancyGuard {
         }("");
 
         if (!_successStakers) revert TransactionFailed();
+
+        emit FeesPaidToStakingContract(
+            PectraStakingContract,
+            _amountToBeSendToStakers
+        );
+        emit FeesPaidToPectraTreasury(
+            PectraStakingContract,
+            _amountToBeSendToStakers
+        );
     }
 
     /// @dev splits amount between stakers and treasury, and make calls to stakers contract and spectra treasury with the amount given
@@ -282,8 +307,11 @@ contract PlatformLogic is ReentrancyGuard {
     function _splitBetweenStakersAndTreasuryToken(
         address _referee,
         uint256 _amount,
-        IERC20 _tokenAddress
+        IERC20 _tokenAddress,
+        address _factory
     ) internal {
+        if (factories[_factory] != true) revert WrongFactoryAddress();
+
         // calculate % to be send to treasury
         uint256 _amountToBeSendToTreasury = calculateFees(
             _amount,
@@ -291,11 +319,15 @@ contract PlatformLogic is ReentrancyGuard {
         );
 
         // send the amount to the Treasury
-        bool _successTreasury = _tokenAddress.transferFrom(
-            _referee,
-            PectraTreasury,
-            _amountToBeSendToTreasury
-        );
+        // make factory to the IGMXFactory's interface, so it cal use the tokenTransferPlatformLogic
+        bool _successTreasury = IGMXFactory(_factory)
+            .tokenTransferPlatformLogic(
+                _tokenAddress,
+                _referee,
+                PectraTreasury,
+                _amountToBeSendToTreasury
+            );
+
         if (!_successTreasury) revert TransactionFailed();
 
         /// @dev why does this give 8 and the calculatefees approach 9 when given 1000 as token amount?
@@ -308,13 +340,23 @@ contract PlatformLogic is ReentrancyGuard {
         //     stakersFeeSplit
         // );
 
-        bool _successStakers = _tokenAddress.transferFrom(
+        bool _successStakers = IGMXFactory(_factory).tokenTransferPlatformLogic(
+            _tokenAddress,
             _referee,
             PectraStakingContract,
             _amountToBeSendToStakers
         );
 
         if (!_successStakers) revert TransactionFailed();
+
+        emit FeesPaidToStakingContract(
+            PectraStakingContract,
+            _amountToBeSendToStakers
+        );
+        emit FeesPaidToPectraTreasury(
+            PectraStakingContract,
+            _amountToBeSendToStakers
+        );
     }
 
     /// @dev use the _erc20Payment to determite erc20 values and convert them if needed?
@@ -327,7 +369,7 @@ contract PlatformLogic is ReentrancyGuard {
         uint256 _feeAmount = calculateFees(_grossAmount, platformFee);
 
         if (msg.value != _feeAmount) revert WrongValueSent();
-        // check referree (if user is referred) -> if true add 10% discount -> continue to the next check, if not skip to the end
+        // check referee (if user is referred) -> if true add 10% discount -> continue to the next check, if not skip to the end
         if (referredUsers[_referee] != ZERO_VALUE) {
             // calculate the referree discount %
             // for testing the refereeDiscount is set to 10 bps
@@ -363,6 +405,8 @@ contract PlatformLogic is ReentrancyGuard {
 
         // the remaining amount is split 80/20 between stakers and spectra treasury
         _splitBetweenStakersAndTreasuryEth(_feeAmount);
+
+        emit FeesPaid(_referee, _feeAmount);
     }
 
     /**
@@ -377,13 +421,18 @@ contract PlatformLogic is ReentrancyGuard {
     function _applyPlatformFeeErc20(
         address _referee,
         uint256 _grossAmount,
-        IERC20 _tokenAddress
+        IERC20 _tokenAddress,
+        address _factory
     ) internal {
         // Returns the remaining number of tokens that spender
         // will be allowed to spend on behalf of owner through transferFrom.
         // This is zero by default.
-        if (_tokenAddress.allowance(_referee, address(this)) < _grossAmount)
+        if (_tokenAddress.allowance(_referee, _factory) < _grossAmount)
             revert ExceedsAllowance();
+
+        /// @dev used to prevent going into the function further and spending more gas on calculations
+        if (IGMXFactory(_factory).PLATFORM_LOGIC() != address(this))
+            revert FactoryPlatformLogicAddressIsNotThisOne();
 
         // calculates the fees with the given gross amount
         uint256 _feeAmount = calculateFees(_grossAmount, platformFee);
@@ -422,15 +471,18 @@ contract PlatformLogic is ReentrancyGuard {
         _splitBetweenStakersAndTreasuryToken(
             _referee,
             _feeAmount,
-            _tokenAddress
+            _tokenAddress,
+            _factory
         );
+
+        emit FeesPaid(_referee, _feeAmount);
     }
 
     /// @dev add access control only from factory?
     function applyPlatformFeeEth(
         address _referee,
         uint256 _grossAmount
-    ) external payable nonReentrant {
+    ) external payable onlyFactory nonReentrant {
         _applyPlatformFeeEth(_referee, _grossAmount);
     }
 
@@ -438,10 +490,11 @@ contract PlatformLogic is ReentrancyGuard {
     function applyPlatformFeeErc20(
         address _referee,
         uint256 _grossAmount,
-        IERC20 _tokenAddress
-    ) external nonReentrant {
+        IERC20 _tokenAddress,
+        address _factory
+    ) external onlyFactory nonReentrant {
         // _tokenAddress.
-        _applyPlatformFeeErc20(_referee, _grossAmount, _tokenAddress);
+        _applyPlatformFeeErc20(_referee, _grossAmount, _tokenAddress, _factory);
     }
 
     /// @notice function to create referral codes, invoked when a user wants to get a code
@@ -498,19 +551,19 @@ contract PlatformLogic is ReentrancyGuard {
     /// @dev function that allows factories to to edit the referees
     // remember to implement admin rights on the factory side as well, should not be accesible by everyone
     function editReferredUsers(
-        address _referrer,
+        address _referee,
         bytes32 _referralCode
     ) external onlyFactory {
         // write the address's referral code
-        referredUsers[_referrer] = _referralCode;
+        referredUsers[_referee] = _referralCode;
         // emit event for indexing
-        emit RefereeAdded(_referrer, _referralCode);
+        emit RefereeAdded(_referee, _referralCode);
     }
 
     /// @notice function to add or remove factories
     /// @dev this is implemented because we can have more than 1 factory (ex. GMXFactory, VertexFactory..)
     function setFactory(address _factory, bool _state) external onlyFactory {
-        // consider adding a check that a factory cannot remove itself
+        if (_factory == msg.sender) revert CannotChangeYourFactoryState();
         factories[_factory] = _state;
         emit FactorySet(_factory);
     }

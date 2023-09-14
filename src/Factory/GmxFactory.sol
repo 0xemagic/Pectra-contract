@@ -1,11 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import "../GMX/interfaces/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../GMX/interfaces/IRouter.sol";
 import "../GMX/interfaces/IReader.sol";
 import "../GMX/interfaces/IGMXAdapter.sol";
 import "../Adapters/GMXAdapter.sol";
+import "../PlatformLogic/IPlatformLogic.sol";
+
+error NotPlatformLogic();
+error TransactionFailedOnTokenTransfer();
 
 contract GMXFactory {
     address public OWNER;
@@ -14,6 +18,7 @@ contract GMXFactory {
     address public READER;
     address public VAULT;
     address public NFT_HANDLER;
+    IPlatformLogic public PLATFORM_LOGIC;
 
     uint256 public totalTradePairs;
 
@@ -38,6 +43,12 @@ contract GMXFactory {
     //Mapping to store the status of the PositonId
     mapping(bytes32 => mapping(address => PositionStatus))
         public positionDetails;
+
+    /// @notice Mapping to store the allowed tokens
+    /// @dev Can be used to stop exploits with a curcuit brake
+    /// @dev add a way to add to the mapping
+    /// @dev should store the allowed tokens for payment of the fee?
+    // mapping(address => bool) allowedTokens;
 
     // Events
     event TokensWithdrawn(
@@ -72,6 +83,7 @@ contract GMXFactory {
         address indexed adapter,
         bool isLong
     );
+
     event CreateIncreasePosition(
         bytes32 indexed positionId,
         address indexed owner,
@@ -105,18 +117,21 @@ contract GMXFactory {
      * @param _positionRouter The address of the GMX position router contract.
      * @param _reader The address of the GMX reader contract.
      * @param _vault The address of the GMX vault contract.
+     * @param _platformLogic the address of the platformlogic contract, which handles the fees
      */
     constructor(
         address _router,
         address _positionRouter,
         address _reader,
-        address _vault
+        address _vault,
+        IPlatformLogic _platformLogic
     ) {
         OWNER = msg.sender;
         ROUTER = _router;
         POSITION_ROUTER = _positionRouter;
         READER = _reader;
         VAULT = _vault;
+        PLATFORM_LOGIC = _platformLogic;
     }
 
     // Modifier to restrict access to only the contract owner.
@@ -782,5 +797,93 @@ contract GMXFactory {
      */
     function decreaseTotalTradePairs() external onlyAdapter returns (uint256) {
         return totalTradePairs--;
+    }
+
+    /**
+     *  @dev Platform Logic Admin Acess Control functions
+     */
+
+    /// @notice calls platform logic and changes factories's access permissions
+    /// @dev used when updating to a new factory or adding an existing one to the platform logic contract
+    /// @param _factory the factory address to be added/removed
+    /// @param _state boolean value that determines if certain address has factory access control permissions
+    function setFactory(address _factory, bool _state) external onlyOwner {
+        PLATFORM_LOGIC.setFactory(_factory, _state);
+
+        emit PlatformLogicsFactoryChanged(_factory, _state);
+    }
+
+    function setPlatformLogic(
+        IPlatformLogic _platformLogic
+    ) external onlyOwner {
+        emit PlatformLogicChanged(PLATFORM_LOGIC, _platformLogic);
+        PLATFORM_LOGIC = _platformLogic;
+    }
+
+    /// @notice sets the referee discount amount
+    function setRefereeDiscount(uint256 _refereeDiscount) external onlyOwner {
+        PLATFORM_LOGIC.setRefereeDiscount(_refereeDiscount);
+    }
+
+    /// @notice sets the referrer fee
+    function setReferrerFee(uint256 _referrerFee) external onlyOwner {
+        PLATFORM_LOGIC.setReferrerFee(_referrerFee);
+    }
+
+    /// @notice sets the platform fee %
+    function setPlatformFee(uint256 _platformFee) external onlyOwner {
+        PLATFORM_LOGIC.setPlatformFee(_platformFee);
+    }
+
+    /// @notice sets the treasury fee split %
+    function setTreasuryFeeSplit(uint256 _treasuryFeeSplit) external onlyOwner {
+        PLATFORM_LOGIC.setTreasuryFeeSplit(_treasuryFeeSplit);
+    }
+
+    /// @notice sets the stakers fee split %
+    function setStakersFeeSplit(uint256 _stakersFeeSplit) external onlyOwner {
+        PLATFORM_LOGIC.setStakersFeeSplit(_stakersFeeSplit);
+    }
+
+    /// @notice changes the spectra treasury address
+    function changePectraTreasury(
+        address payable _newTreasury
+    ) external onlyOwner {
+        PLATFORM_LOGIC.changePectraTreasury(_newTreasury);
+    }
+
+    /// @notice changes the spectra staking contract address
+    function changePectraStakingContract(
+        address payable _newStakingContract
+    ) external onlyOwner {
+        PLATFORM_LOGIC.changePectraStakingContract(_newStakingContract);
+    }
+
+    /// @notice used so admins can edit a users referral code or set custom ones
+    function editReferralCode(
+        address _referee,
+        bytes32 _referralCode
+    ) external onlyOwner {
+        PLATFORM_LOGIC.editReferralCode(_referee, _referralCode);
+    }
+
+    /// @notice used so admins can edit users who are referred
+    function editReferredUsers(
+        address _referrer,
+        bytes32 _referralCode
+    ) external onlyOwner {
+        PLATFORM_LOGIC.editReferredUsers(_referrer, _referralCode);
+    }
+
+    function tokenTransferPlatformLogic(
+        IERC20 _token,
+        address _from,
+        address _to,
+        uint256 _amount
+    ) external returns (bool) {
+        if (msg.sender != address(PLATFORM_LOGIC)) revert NotPlatformLogic();
+        bool success = _token.transferFrom(_from, _to, _amount);
+        if (!success) revert TransactionFailedOnTokenTransfer();
+        return true;
     }
 }
