@@ -204,7 +204,8 @@ contract GMXFactory {
         uint256 _amountIn,
         uint256 _minOut,
         uint256 _sizeDelta,
-        uint256 _acceptablePrice
+        uint256 _acceptablePrice,
+        address _tokenFeeAddress
     ) external payable returns (bytes32 positionId) {
         bytes memory bytecode = type(GMXAdapter).creationCode;
         address adapter;
@@ -219,6 +220,14 @@ contract GMXFactory {
         );
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
         address collateral = _path[0];
+        // apply platform fees
+        PLATFORM_LOGIC.applyPlatformFeeErc20(
+            msg.sender,
+            _amountIn,
+            _tokenFeeAddress,
+            address(this)
+        );
+
         IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
         IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
 
@@ -307,7 +316,8 @@ contract GMXFactory {
         uint256 _amountIn,
         uint256 _minOut,
         uint256 _sizeDelta,
-        uint256 _acceptablePrice
+        uint256 _acceptablePrice,
+        address _tokenFeeAddress
     ) public payable returns (bytes32 positionId) {
         bytes memory bytecode = type(GMXAdapter).creationCode;
         address adapter;
@@ -322,6 +332,14 @@ contract GMXFactory {
         );
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
         address collateral = _path[0];
+        // apply platform fees
+        PLATFORM_LOGIC.applyPlatformFeeErc20(
+            msg.sender,
+            _amountIn,
+            _tokenFeeAddress,
+            address(this)
+        );
+
         IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
         IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
 
