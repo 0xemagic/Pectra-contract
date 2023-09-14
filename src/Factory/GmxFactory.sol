@@ -87,6 +87,11 @@ contract GMXFactory {
         bool indexed state
     );
 
+    event PlatformLogicChanged(
+        IPlatformLogic indexed oldPlatformLogic,
+        IPlatformLogic indexed newPlatformLogic
+    );
+
     struct nftData {
         address[] _pathLong;
         address[] _pathShort;
@@ -663,6 +668,13 @@ contract GMXFactory {
         PLATFORM_LOGIC.setFactory(_factory, _state);
 
         emit PlatformLogicsFactoryChanged(_factory, _state);
+    }
+
+    function setPlatformLogic(
+        IPlatformLogic _platformLogic
+    ) external onlyOwner {
+        emit PlatformLogicChanged(PLATFORM_LOGIC, _platformLogic);
+        PLATFORM_LOGIC = _platformLogic;
     }
 
     /// @notice sets the referee discount amount

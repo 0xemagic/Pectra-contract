@@ -16,6 +16,7 @@ error WrongValueSent();
 error NotEnoughBalance();
 error CannotChangeYourFactoryState();
 error WrongFactoryAddress();
+error FactoryPlatformLogicAddressIsNotThisOne();
 /// @dev is this event necessary?
 error ReferrerAmountExceedsFeeAmount();
 
@@ -426,8 +427,12 @@ contract PlatformLogic is ReentrancyGuard {
         // Returns the remaining number of tokens that spender
         // will be allowed to spend on behalf of owner through transferFrom.
         // This is zero by default.
-        if (_tokenAddress.allowance(_referee, address(this)) < _grossAmount)
+        if (_tokenAddress.allowance(_referee, _factory) < _grossAmount)
             revert ExceedsAllowance();
+
+        /// @dev used to prevent going into the function further and spending more gas on calculations
+        if (IGMXFactory(_factory).PLATFORM_LOGIC() != address(this))
+            revert FactoryPlatformLogicAddressIsNotThisOne();
 
         // calculates the fees with the given gross amount
         uint256 _feeAmount = calculateFees(_grossAmount, platformFee);

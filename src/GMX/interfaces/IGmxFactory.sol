@@ -29,6 +29,12 @@ struct nftData {
  */
 interface IGMXFactory {
     /**
+     * @dev a sample function that returns the address of PlatformLogic contract
+     * set in GMXFactory
+     */
+    function PLATFORM_LOGIC() external view returns (address);
+
+    /**
      * @dev Open a long position in the GMX Factory.
      *
      * @param _path The token path for the long position.

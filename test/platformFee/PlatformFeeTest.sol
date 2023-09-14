@@ -8,6 +8,7 @@ import "../../src/Mock/MockErc20.sol";
 import "../../src/Mock/RefuseEther.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "forge-std/console.sol";
+import "../../src/Factory/GMXFactory.sol";
 
 contract PlatformFeeTest is Test {
     PlatformLogic platformLogic;
@@ -31,9 +32,35 @@ contract PlatformFeeTest is Test {
 
     // referee
     address referee = vm.addr(2);
-    address factory = vm.addr(3);
+
+    address factoryOwner = vm.addr(3);
+    address factory;
+
     address payable treasury = payable(vm.addr(4));
     address payable staking = payable(vm.addr(5));
+
+    /// @dev sets up GMXFactory and saves it as address
+    function FactorySetup(address _platformLogic) public returns (address) {
+        address router = vm.addr(99);
+        address positionRouter = vm.addr(98);
+        address reader = vm.addr(97);
+        address vault = vm.addr(96);
+
+        GMXFactory _factory = new GMXFactory(
+            router,
+            positionRouter,
+            reader,
+            vault,
+            IPlatformLogic(_platformLogic)
+        );
+        address _factoryOwner = _factory.OWNER();
+        vm.prank(_factoryOwner, _factoryOwner);
+        assertEq(_factoryOwner, factoryOwner);
+
+        _factory.setPlatformLogic(IPlatformLogic(_platformLogic));
+
+        return address(_factory);
+    }
 
     function ReferralSetup(
         address _referrer,
@@ -54,11 +81,21 @@ contract PlatformFeeTest is Test {
     function setUp() public {
         erc20 = new MockErc20(name, symbol);
 
+        address temporaryFactoryAddr = vm.addr(95);
+
         platformLogic = new PlatformLogic(
-            factory,
+            temporaryFactoryAddr,
             payable(treasury),
             payable(staking)
         );
+
+        vm.prank(factoryOwner, factoryOwner);
+        factory = FactorySetup(address(platformLogic));
+
+        vm.prank(temporaryFactoryAddr, temporaryFactoryAddr);
+
+        platformLogic.setFactory(factory, true);
+
         refuseEther = new RefuseEther(address(platformLogic));
 
         call = new Call(address(platformLogic));
@@ -200,9 +237,13 @@ contract PlatformFeeTest is Test {
 
         uint256 referrerFee = platformLogic.pendingEthWithdrawals(referrer);
 
+        assertEq(referrerFee, _referrerWithdrawal);
+
         vm.prank(referrer, referrer);
 
         platformLogic.withdrawEthFees();
+
+        assertEq(referrer.balance, referrerBalanceBefore + referrerFee);
     }
 
     function test_RevertWhenBalanceIsNotEnough_WithdrawEthFees() public {
@@ -241,12 +282,9 @@ contract PlatformFeeTest is Test {
         vm.prank(allowerAddress, allowerAddress);
 
         // make sure contract is approved to spend
-        erc20.approve(address(platformLogic), _tokenAmount);
+        erc20.approve(factory, _tokenAmount);
 
-        uint256 allowanceAmount = erc20.allowance(
-            allowerAddress,
-            address(platformLogic)
-        );
+        uint256 allowanceAmount = erc20.allowance(allowerAddress, factory);
 
         assertEq(allowanceAmount, _tokenAmount);
     }
@@ -269,12 +307,9 @@ contract PlatformFeeTest is Test {
         assertEq(platformLogic.viewReferredUser(_referee), _code);
         assertEq(platformLogic.checkReferredUser(_referee), _referrer);
 
-        uint256 allowanceAmount = erc20.allowance(
-            _referee,
-            address(platformLogic)
-        );
+        uint256 allowanceAmount = erc20.allowance(_referee, address(factory));
 
-        assertEq(allowanceAmount, 1000);
+        assertEq(allowanceAmount, _grossAmount);
 
         // transaction money
         vm.deal(_referee, 1 ether);
@@ -337,9 +372,9 @@ contract PlatformFeeTest is Test {
         // ensure logic does not enter referral discounts
         assertEq(platformLogic.viewReferredUser(addr), ZERO_VALUE);
 
-        uint256 allowanceAmount = erc20.allowance(addr, address(platformLogic));
+        uint256 allowanceAmount = erc20.allowance(addr, address(factory));
 
-        assertEq(allowanceAmount, 1000);
+        assertEq(allowanceAmount, grossAmount);
 
         // transaction money
         vm.deal(addr, 1 ether);
@@ -366,6 +401,24 @@ contract PlatformFeeTest is Test {
         ApplyPlatformFeeErc20(referee, referrer, referralCode1, 1000);
         assertEq(platformLogic.checkReferredUser(referee), referrer);
     }
+
+    /// @dev fix this test to increase branch coverage
+    // function test_RevertWhen_PlatformLogicAddressIsNotTheSameOnFactory()
+    //     public
+    // {
+    //     uint256 grossAmount = 1000;
+
+    //     vm.prank(factoryOwner, factoryOwner);
+
+    //     // set platformlogic as a random address
+    //     GMXFactory(factory).setPlatformLogic(IPlatformLogic(vm.addr(101)));
+
+    //     // console.log(GMXFactory(factory).PLATFORM_LOGIC(), vm.addr(101));
+
+    //     vm.expectRevert(FactoryPlatformLogicAddressIsNotThisOne.selector);
+
+    //     ApplyPlatformFeeErc20(referee, referrer, referralCode1, grossAmount);
+    // }
 
     function test_RevertWhen_ValueExceedsAllowanceErc20() public {
         vm.expectRevert(ExceedsAllowance.selector);
@@ -406,7 +459,6 @@ contract PlatformFeeTest is Test {
         test_ApplyPlatformFeeEthWithSmallValue();
         test_ApplyPlatformFeeErc20();
         vm.prank(factory, factory);
-        bool statement = platformLogic.checkFactory(factory);
 
         uint256 viewPlatformFee = platformLogic.viewPlatformFee();
         assertEq(platformLogic.platformFee(), viewPlatformFee);
