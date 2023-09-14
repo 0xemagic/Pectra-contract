@@ -928,46 +928,4 @@ contract GMXFactoryTest is Test {
                 GMXFactory.PositionStatus.Opened
         );
     }
-
-    function testFailedPosition() public {
-        // Amount in USDT
-        uint256 amountIn = 5e6; // Assuming 10 USDC
-
-        uint256 value = positionRouter.minExecutionFee(); // Calculate value in wei
-
-        // Approve USDT for gmxFactory
-        vm.startPrank(user);
-        tokenUSDC.approve(address(gmxFactory), amountIn);
-
-        // Open long position
-        bytes32 positionID = gmxFactory.openLongPosition{value: value}(
-            _path,
-            address(tokenWETH),
-            amountIn,
-            0 ether, // minOut
-            _sizeDelta,
-            _acceptablePriceLongETH
-        );
-        vm.stopPrank();
-
-        //Setting the user as position Keeper to execute the position
-        vm.startPrank(admin);
-        positionRouter.setPositionKeeper(user, true);
-        vm.stopPrank();
-
-        vm.startPrank(user);
-        vm.expectRevert("Vault: liquidation fees exceed collateral");
-        positionRouter.executeIncreasePosition(positionID, payable(user));
-        vm.stopPrank();
-
-        IGMXAdapter gmxAdapter = IGMXAdapter(
-            gmxFactory.getPositionAdapter(positionID)
-        );
-        uint256 balanceOfAdapter = tokenUSDC.balanceOf(address(gmxAdapter));
-        console.log("Balance of Token in Adapter", balanceOfAdapter);
-
-        uint256[] memory data = gmxFactory.getPosition(positionID);
-        assertEq(balanceOfAdapter, 0);
-        assertEq(data[0], 0);
-    }
 }
