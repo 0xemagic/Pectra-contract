@@ -102,16 +102,21 @@ contract PositionNFT is ERC721, ERC721Enumerable, ERC721Burnable {
     ) public view override(ERC721, ERC721Enumerable) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
-    
-    function tokenURI(
-        uint256 tokenId
-    ) public view override(ERC721) returns (string memory) {
-        _requireMinted(tokenId);
 
-        string memory baseURI = _baseURI();
-        return
-            bytes(baseURI).length > 0
-                ? string(abi.encodePacked(baseURI, Strings.toString(tokenId)))
-                : "";
-    }
+     /**
+      * @dev Returns the URI for a given NFT token ID.
+      *
+      * @param tokenId The token ID for which to return the URI.
+      * @return The URI for the specified token ID.
+      */
+     function tokenURI(
+         uint256 tokenId
+     ) public view override(ERC721) returns (string memory) {
+         _requireMinted(tokenId);
+
+         return
+             bytes(baseURI).length > 0
+                 ? string(abi.encodePacked(baseURI, Strings.toString(tokenId)))
+                 : "";
+     }
 }
