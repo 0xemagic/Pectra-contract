@@ -49,7 +49,7 @@ contract GMXFactory {
     /// @dev Can be used to stop exploits with a curcuit brake
     /// @dev add a way to add to the mapping
     /// @dev should store the allowed tokens for payment of the fee?
-    mapping(IERC20 => bool) allowedTokens;
+    mapping(IERC20 => bool) public allowedTokens;
 
     // Events
     event TokensWithdrawn(

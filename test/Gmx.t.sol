@@ -26,13 +26,12 @@ contract GMXFactoryTest is Test {
     NFTHandler public nftHandler;
     PositionNFT public positionNft;
 
-    /// @dev needs to be changed to actual USDC address before testing with
-    // mainnet values
+    /// @dev add this token for allowance when doing tests with PlatformFeeTest.sol
     MockErc20 public erc20;
 
-    /// @dev values for usdc
-    string name = "USDC";
-    string symbol = "USDC";
+    /// @dev values for MockToken
+    string name = "mock";
+    string symbol = "MOCK";
 
     IPositionRouter public positionRouter;
     IVault public vault;
@@ -62,8 +61,7 @@ contract GMXFactoryTest is Test {
      * @dev Setup function to initialize contract instances and test parameters
      */
     function setUp() public {
-        /// @dev needs to be changed to actual USDC address before testing with
-        // mainnet values
+        /// @dev add these token's allowance so for future tests
         erc20 = new MockErc20(name, symbol);
 
         //Initializing all the contracts
@@ -76,8 +74,9 @@ contract GMXFactoryTest is Test {
             0x22199a49A999c351eF7927602CFB187ec3cae489,
             0x489ee077994B6658eAfA855C308275EAd8097C4A,
             IPlatformLogic(address(0x0)),
-            IERC20(erc20)
+            tokenUSDC
         );
+
         nftHandler = new NFTHandler(address(gmxFactory));
         positionNft = new PositionNFT(
             address(nftHandler),
@@ -146,6 +145,11 @@ contract GMXFactoryTest is Test {
 
         uint256 value = positionRouter.minExecutionFee(); // Calculate value in wei
 
+        // adding the approve of the token
+        address gmxFactoryOwner = gmxFactory.OWNER();
+        vm.prank(gmxFactoryOwner, gmxFactoryOwner);
+        gmxFactory.setAllowedToken(tokenUSDC, true);
+
         // Approve USDT for gmxFactory
         vm.startPrank(user);
         tokenUSDC.approve(address(gmxFactory), amountIn);
@@ -186,6 +190,11 @@ contract GMXFactoryTest is Test {
 
         uint256 value = positionRouter.minExecutionFee(); // Calculate value in wei
 
+        // adding the approve of the token
+        address gmxFactoryOwner = gmxFactory.OWNER();
+        vm.prank(gmxFactoryOwner, gmxFactoryOwner);
+        gmxFactory.setAllowedToken(tokenUSDC, true);
+
         // Approve USDT for gmxFactory
         vm.startPrank(user);
         tokenUSDC.approve(address(gmxFactory), amountIn);
@@ -224,6 +233,11 @@ contract GMXFactoryTest is Test {
 
         uint256 value = positionRouter.minExecutionFee(); // Calculate value in wei
 
+        // adding the approve of the token
+        address gmxFactoryOwner = gmxFactory.OWNER();
+        vm.prank(gmxFactoryOwner, gmxFactoryOwner);
+        gmxFactory.setAllowedToken(tokenUSDC, true);
+
         // Approve USDT for gmxFactory
         vm.startPrank(user);
         tokenUSDC.approve(address(gmxFactory), amountIn);
@@ -259,6 +273,10 @@ contract GMXFactoryTest is Test {
     function testCloseLongPosition() public {
         // Amount in USDT
         uint256 amountIn = 10000000; // Assuming 10 USDC
+
+        address gmxFactoryOwner = gmxFactory.OWNER();
+        vm.prank(gmxFactoryOwner, gmxFactoryOwner);
+        gmxFactory.setAllowedToken(tokenUSDC, true);
 
         // Calculate value for ETH based on acceptablePriceLongETH
         uint256 value = positionRouter.minExecutionFee(); // Calculate value in wei
@@ -422,6 +440,11 @@ contract GMXFactoryTest is Test {
 
         uint256 value = positionRouter.minExecutionFee(); // Calculate value in wei
 
+        // adding the approve of the token
+        address gmxFactoryOwner = gmxFactory.OWNER();
+        vm.prank(gmxFactoryOwner, gmxFactoryOwner);
+        gmxFactory.setAllowedToken(tokenUSDC, true);
+
         // Approve USDT for gmxFactory
         vm.startPrank(user);
         tokenUSDC.approve(address(gmxFactory), amountIn);
@@ -454,6 +477,10 @@ contract GMXFactoryTest is Test {
 
         // Calculate value for ETH based on acceptablePriceLongETH
         uint256 value = positionRouter.minExecutionFee(); // Calculate value in wei
+
+        address gmxFactoryOwner = gmxFactory.OWNER();
+        vm.prank(gmxFactoryOwner, gmxFactoryOwner);
+        gmxFactory.setAllowedToken(tokenUSDC, true);
 
         // Approve USDT for gmxFactory
         vm.startPrank(user);
