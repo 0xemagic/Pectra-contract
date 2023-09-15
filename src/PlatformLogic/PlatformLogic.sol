@@ -493,7 +493,6 @@ contract PlatformLogic is ReentrancyGuard {
         IERC20 _tokenAddress,
         address _factory
     ) external onlyFactory nonReentrant {
-        // _tokenAddress.
         _applyPlatformFeeErc20(_referee, _grossAmount, _tokenAddress, _factory);
     }
 

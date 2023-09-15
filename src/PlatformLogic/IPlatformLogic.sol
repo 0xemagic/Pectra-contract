@@ -38,7 +38,8 @@ interface IPlatformLogic {
     function applyPlatformFeeErc20(
         address _referee,
         uint256 _grossAmount,
-        IERC20 _tokenAddress
+        IERC20 _tokenAddress,
+        address _factory
     ) external;
 
     function checkPendingTokenWithdrawals(

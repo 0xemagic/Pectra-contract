@@ -10,6 +10,7 @@ import "../src/NFT/INftHandler.sol";
 import "../src/NFT/IPositionNFT.sol";
 import "../src/Vault/core/interfaces/IVault.sol";
 import "../src/PlatformLogic/IPlatformLogic.sol";
+import "../src/Mock/MockErc20.sol";
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
 
@@ -24,6 +25,14 @@ contract GMXFactoryTest is Test {
     GMXFactory public gmxFactory;
     NFTHandler public nftHandler;
     PositionNFT public positionNft;
+
+    /// @dev needs to be changed to actual USDC address before testing with
+    // mainnet values
+    MockErc20 public erc20;
+
+    /// @dev values for usdc
+    string name = "USDC";
+    string symbol = "USDC";
 
     IPositionRouter public positionRouter;
     IVault public vault;
@@ -53,6 +62,10 @@ contract GMXFactoryTest is Test {
      * @dev Setup function to initialize contract instances and test parameters
      */
     function setUp() public {
+        /// @dev needs to be changed to actual USDC address before testing with
+        // mainnet values
+        erc20 = new MockErc20(name, symbol);
+
         //Initializing all the contracts
         // gmxFactory = IGMXFactory(0x75f688604a58c720E7e4496139765498A2563C78);
         // nftHandler = INFTHandler(0x15aF6099951BF6E21C4B234392D59C1930531DE0);
@@ -62,7 +75,8 @@ contract GMXFactoryTest is Test {
             0xb87a436B93fFE9D75c5cFA7bAcFff96430b09868,
             0x22199a49A999c351eF7927602CFB187ec3cae489,
             0x489ee077994B6658eAfA855C308275EAd8097C4A,
-            IPlatformLogic(address(0x0))
+            IPlatformLogic(address(0x0)),
+            IERC20(erc20)
         );
         nftHandler = new NFTHandler(address(gmxFactory));
         positionNft = new PositionNFT(

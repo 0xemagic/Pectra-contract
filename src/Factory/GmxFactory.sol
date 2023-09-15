@@ -10,6 +10,7 @@ import "../PlatformLogic/IPlatformLogic.sol";
 
 error NotPlatformLogic();
 error TransactionFailedOnTokenTransfer();
+error TokenNotAllowed();
 
 contract GMXFactory {
     address public OWNER;
@@ -48,7 +49,7 @@ contract GMXFactory {
     /// @dev Can be used to stop exploits with a curcuit brake
     /// @dev add a way to add to the mapping
     /// @dev should store the allowed tokens for payment of the fee?
-    // mapping(address => bool) allowedTokens;
+    mapping(IERC20 => bool) allowedTokens;
 
     // Events
     event TokensWithdrawn(
@@ -97,6 +98,18 @@ contract GMXFactory {
         uint256 amountIn
     );
 
+    event PlatformLogicsFactoryChanged(
+        address indexed factory,
+        bool indexed newState
+    );
+
+    event PlatformLogicChanged(
+        IPlatformLogic oldAddress,
+        IPlatformLogic newAddress
+    );
+
+    event AllowedTokenSet(IERC20 token, bool allowed);
+
     struct nftData {
         address[] _pathLong;
         address[] _pathShort;
@@ -124,7 +137,8 @@ contract GMXFactory {
         address _positionRouter,
         address _reader,
         address _vault,
-        IPlatformLogic _platformLogic
+        IPlatformLogic _platformLogic,
+        IERC20 _tokenFeePaymentAddress
     ) {
         OWNER = msg.sender;
         ROUTER = _router;
@@ -132,6 +146,16 @@ contract GMXFactory {
         READER = _reader;
         VAULT = _vault;
         PLATFORM_LOGIC = _platformLogic;
+        allowedTokens[_tokenFeePaymentAddress] = true;
+        emit AllowedTokenSet(_tokenFeePaymentAddress, true);
+    }
+
+    function setAllowedToken(
+        IERC20 _tokenFeePaymentAddress,
+        bool _allowed
+    ) external onlyOwner {
+        allowedTokens[_tokenFeePaymentAddress] = _allowed;
+        emit AllowedTokenSet(_tokenFeePaymentAddress, _allowed);
     }
 
     // Modifier to restrict access to only the contract owner.
@@ -155,6 +179,11 @@ contract GMXFactory {
             NFT_HANDLER == msg.sender,
             "GMX FACTORY: Caller is not NFT Handler"
         );
+        _;
+    }
+
+    modifier onlyAllowedTokens(IERC20 _token) {
+        if (allowedTokens[_token] != true) revert TokenNotAllowed();
         _;
     }
 
@@ -219,9 +248,13 @@ contract GMXFactory {
         uint256 _amountIn,
         uint256 _minOut,
         uint256 _sizeDelta,
-        uint256 _acceptablePrice,
-        address _tokenFeeAddress
-    ) external payable returns (bytes32 positionId) {
+        uint256 _acceptablePrice
+    )
+        external
+        payable
+        onlyAllowedTokens(IERC20(_path[0]))
+        returns (bytes32 positionId)
+    {
         bytes memory bytecode = type(GMXAdapter).creationCode;
         address adapter;
         assembly {
@@ -239,7 +272,7 @@ contract GMXFactory {
         PLATFORM_LOGIC.applyPlatformFeeErc20(
             msg.sender,
             _amountIn,
-            _tokenFeeAddress,
+            IERC20(collateral),
             address(this)
         );
 
@@ -331,9 +364,13 @@ contract GMXFactory {
         uint256 _amountIn,
         uint256 _minOut,
         uint256 _sizeDelta,
-        uint256 _acceptablePrice,
-        address _tokenFeeAddress
-    ) public payable returns (bytes32 positionId) {
+        uint256 _acceptablePrice
+    )
+        public
+        payable
+        onlyAllowedTokens(IERC20(_path[0]))
+        returns (bytes32 positionId)
+    {
         bytes memory bytecode = type(GMXAdapter).creationCode;
         address adapter;
         assembly {
@@ -351,7 +388,7 @@ contract GMXFactory {
         PLATFORM_LOGIC.applyPlatformFeeErc20(
             msg.sender,
             _amountIn,
-            _tokenFeeAddress,
+            IERC20(collateral),
             address(this)
         );
 

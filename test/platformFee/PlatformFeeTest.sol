@@ -51,7 +51,8 @@ contract PlatformFeeTest is Test {
             positionRouter,
             reader,
             vault,
-            IPlatformLogic(_platformLogic)
+            IPlatformLogic(_platformLogic),
+            erc20
         );
         address _factoryOwner = _factory.OWNER();
         vm.prank(_factoryOwner, _factoryOwner);
