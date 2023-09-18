@@ -101,7 +101,11 @@ contract PlatformLogic is ReentrancyGuard {
     event PendingWithdrawal(address referrer, uint256 amount);
     event Withdraw(address withdrawer, uint256 amount);
 
-    event FeesPaid(address indexed user, uint256 indexed feeAmount);
+    event FeesPaid(
+        address indexed user,
+        uint256 indexed feeAmount,
+        uint256 indexed grossAmountAfterFee
+    );
 
     event FeesPaidToStakingContract(
         address indexed stakingContract,
@@ -364,7 +368,7 @@ contract PlatformLogic is ReentrancyGuard {
     function _applyPlatformFeeEth(
         address _referee,
         uint256 _grossAmount
-    ) internal {
+    ) internal returns (uint256) {
         // now we have the fee amount
         uint256 _feeAmount = calculateFees(_grossAmount, platformFee);
 
@@ -406,7 +410,12 @@ contract PlatformLogic is ReentrancyGuard {
         // the remaining amount is split 80/20 between stakers and spectra treasury
         _splitBetweenStakersAndTreasuryEth(_feeAmount);
 
-        emit FeesPaid(_referee, _feeAmount);
+        uint256 _grossAmountAfterFee = _grossAmount - _feeAmount;
+
+        emit FeesPaid(_referee, _feeAmount, _grossAmountAfterFee);
+
+        /// @dev returns the gross amount after fees for easy calculation of transferers and allowance
+        return _grossAmountAfterFee;
     }
 
     /**
@@ -423,7 +432,7 @@ contract PlatformLogic is ReentrancyGuard {
         uint256 _grossAmount,
         IERC20 _tokenAddress,
         address _factory
-    ) internal {
+    ) internal returns (uint256) {
         // Returns the remaining number of tokens that spender
         // will be allowed to spend on behalf of owner through transferFrom.
         // This is zero by default.
@@ -475,15 +484,26 @@ contract PlatformLogic is ReentrancyGuard {
             _factory
         );
 
-        emit FeesPaid(_referee, _feeAmount);
+        uint256 _grossAmountAfterFee = _grossAmount - _feeAmount;
+
+        emit FeesPaid(_referee, _feeAmount, _grossAmountAfterFee);
+
+        /// @dev returns the gross amount after fees for easy calculation of transferers and allowance
+        return _grossAmountAfterFee;
     }
 
     /// @dev add access control only from factory?
     function applyPlatformFeeEth(
         address _referee,
         uint256 _grossAmount
-    ) external payable onlyFactory nonReentrant {
-        _applyPlatformFeeEth(_referee, _grossAmount);
+    )
+        external
+        payable
+        onlyFactory
+        nonReentrant
+        returns (uint256 grossAmountAfterFee)
+    {
+        return _applyPlatformFeeEth(_referee, _grossAmount);
     }
 
     /// @dev add access control only from factory?
@@ -492,8 +512,14 @@ contract PlatformLogic is ReentrancyGuard {
         uint256 _grossAmount,
         IERC20 _tokenAddress,
         address _factory
-    ) external onlyFactory nonReentrant {
-        _applyPlatformFeeErc20(_referee, _grossAmount, _tokenAddress, _factory);
+    ) external onlyFactory nonReentrant returns (uint256 grossAmountAfterFee) {
+        return
+            _applyPlatformFeeErc20(
+                _referee,
+                _grossAmount,
+                _tokenAddress,
+                _factory
+            );
     }
 
     /// @notice function to create referral codes, invoked when a user wants to get a code

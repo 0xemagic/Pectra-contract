@@ -273,23 +273,25 @@ contract GMXFactory {
         );
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
         address collateral = _path[0];
-        // apply platform fees
-        PLATFORM_LOGIC.applyPlatformFeeErc20(
+        /// @dev apply platform fees
+        // _amount is the gross amount left after fees
+        uint256 _amount = PLATFORM_LOGIC.applyPlatformFeeErc20(
             msg.sender,
             _amountIn,
             IERC20(collateral),
             address(this)
         );
 
-        IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
-        IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
+        IERC20(collateral).transferFrom(msg.sender, adapter, _amount);
+
+        IGMXAdapter(adapter).approve(collateral, ROUTER, _amount);
 
         positionId = IGMXAdapter(adapter).createIncreasePosition{
             value: msg.value
         }(
             _path,
             _indexToken,
-            _amountIn,
+            _amount,
             _minOut,
             _sizeDelta,
             true,
@@ -337,8 +339,22 @@ contract GMXFactory {
         );
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
 
+        /// @dev the amount sent is also calculated in the external call to applyPlatformFeeEth function
+        // calculates the platformFees and sends the _value as msg.value
+        uint256 _value = PLATFORM_LOGIC.calculateFees(
+            msg.value,
+            PLATFORM_LOGIC.viewPlatformFee()
+        );
+
+        /// @dev apply platform fees with eth
+        /// @notice _amount = the amount left after the apply of platformFees
+        uint256 _amount = PLATFORM_LOGIC.applyPlatformFeeEth{value: _value}(
+            msg.sender,
+            msg.value
+        );
+
         positionId = IGMXAdapter(adapter).createIncreasePositionETH{
-            value: msg.value
+            value: _amount
         }(_path, _indexToken, _minOut, _sizeDelta, true, _acceptablePrice);
 
         positionAdapters[positionId] = adapter;
@@ -389,23 +405,24 @@ contract GMXFactory {
         );
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
         address collateral = _path[0];
-        // apply platform fees
-        PLATFORM_LOGIC.applyPlatformFeeErc20(
+        /// @dev apply platform fees
+        // _amount is the gross amount left after fees
+        uint256 _amount = PLATFORM_LOGIC.applyPlatformFeeErc20(
             msg.sender,
             _amountIn,
             IERC20(collateral),
             address(this)
         );
 
-        IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
-        IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
+        IERC20(collateral).transferFrom(msg.sender, adapter, _amount);
+        IGMXAdapter(adapter).approve(collateral, ROUTER, _amount);
 
         positionId = IGMXAdapter(adapter).createIncreasePosition{
             value: msg.value
         }(
             _path,
             _indexToken,
-            _amountIn,
+            _amount,
             _minOut,
             _sizeDelta,
             false,
@@ -452,9 +469,23 @@ contract GMXFactory {
             NFT_HANDLER
         );
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
+        /// @dev the amount sent is also calculated in the external call to applyPlatformFeeEth function
+        // calculates the platformFees and sends the _value as msg.value
+        uint256 _value = PLATFORM_LOGIC.calculateFees(
+            msg.value,
+            PLATFORM_LOGIC.viewPlatformFee()
+        );
+
+        /// @dev apply platform fees with eth
+        /// @notice _amount = the amount left after the apply of platformFees
+        // passes in gross amount for calculations on the platformLogic's side
+        uint256 _amount = PLATFORM_LOGIC.applyPlatformFeeEth{value: _value}(
+            msg.sender,
+            msg.value
+        );
 
         positionId = IGMXAdapter(adapter).createIncreasePositionETH{
-            value: msg.value
+            value: _amount
         }(_path, _indexToken, _minOut, _sizeDelta, false, _acceptablePrice);
 
         positionAdapters[positionId] = adapter;

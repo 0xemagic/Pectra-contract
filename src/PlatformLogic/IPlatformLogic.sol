@@ -33,14 +33,14 @@ interface IPlatformLogic {
     function applyPlatformFeeEth(
         address _referee,
         uint256 _grossAmount
-    ) external payable;
+    ) external payable returns (uint256 grossAmountAfterFee);
 
     function applyPlatformFeeErc20(
         address _referee,
         uint256 _grossAmount,
         IERC20 _tokenAddress,
         address _factory
-    ) external;
+    ) external returns (uint256 grossAmountAfterFee);
 
     function checkPendingTokenWithdrawals(
         address _referrer,
