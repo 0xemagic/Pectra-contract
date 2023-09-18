@@ -187,6 +187,11 @@ contract GMXFactory {
         _;
     }
 
+    modifier onlyPlatformLogic() {
+        if (msg.sender != address(PLATFORM_LOGIC)) revert NotPlatformLogic();
+        _;
+    }
+
     /**
      * @dev Setter function for NFT Handler contract.
      *
@@ -917,8 +922,7 @@ contract GMXFactory {
         address _from,
         address _to,
         uint256 _amount
-    ) external returns (bool) {
-        if (msg.sender != address(PLATFORM_LOGIC)) revert NotPlatformLogic();
+    ) external onlyAllowedTokens(_token) onlyPlatformLogic returns (bool) {
         bool success = _token.transferFrom(_from, _to, _amount);
         if (!success) revert TransactionFailedOnTokenTransfer();
         return true;
