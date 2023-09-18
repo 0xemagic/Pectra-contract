@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import "../GMX/interfaces/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../GMX/interfaces/IRouter.sol";
 import "../GMX/interfaces/IReader.sol";
 import "../GMX/interfaces/IGMXAdapter.sol";
 import "../Adapters/GMXAdapter.sol";
+import "../PlatformLogic/IPlatformLogic.sol";
+
+error NotPlatformLogic();
+error TransactionFailedOnTokenTransfer();
+error TokenNotAllowed();
 
 contract GMXFactory {
     address public OWNER;
@@ -14,6 +19,7 @@ contract GMXFactory {
     address public READER;
     address public VAULT;
     address public NFT_HANDLER;
+    IPlatformLogic public PLATFORM_LOGIC;
 
     uint256 public totalTradePairs;
 
@@ -38,6 +44,12 @@ contract GMXFactory {
     //Mapping to store the status of the PositonId
     mapping(bytes32 => mapping(address => PositionStatus))
         public positionDetails;
+
+    /// @notice Mapping to store the allowed tokens
+    /// @dev Can be used to stop exploits with a curcuit brake
+    /// @dev add a way to add to the mapping
+    /// @dev should store the allowed tokens for payment of the fee?
+    mapping(IERC20 => bool) public allowedTokens;
 
     // Events
     event TokensWithdrawn(
@@ -72,6 +84,7 @@ contract GMXFactory {
         address indexed adapter,
         bool isLong
     );
+
     event CreateIncreasePosition(
         bytes32 indexed positionId,
         address indexed owner,
@@ -84,6 +97,18 @@ contract GMXFactory {
         address indexed adapter,
         uint256 amountIn
     );
+
+    event PlatformLogicsFactoryChanged(
+        address indexed factory,
+        bool indexed newState
+    );
+
+    event PlatformLogicChanged(
+        IPlatformLogic oldAddress,
+        IPlatformLogic newAddress
+    );
+
+    event AllowedTokenSet(IERC20 token, bool allowed);
 
     struct nftData {
         address[] _pathLong;
@@ -105,18 +130,32 @@ contract GMXFactory {
      * @param _positionRouter The address of the GMX position router contract.
      * @param _reader The address of the GMX reader contract.
      * @param _vault The address of the GMX vault contract.
+     * @param _platformLogic the address of the platformlogic contract, which handles the fees
      */
     constructor(
         address _router,
         address _positionRouter,
         address _reader,
-        address _vault
+        address _vault,
+        IPlatformLogic _platformLogic,
+        IERC20 _tokenFeePaymentAddress
     ) {
         OWNER = msg.sender;
         ROUTER = _router;
         POSITION_ROUTER = _positionRouter;
         READER = _reader;
         VAULT = _vault;
+        PLATFORM_LOGIC = _platformLogic;
+        allowedTokens[_tokenFeePaymentAddress] = true;
+        emit AllowedTokenSet(_tokenFeePaymentAddress, true);
+    }
+
+    function setAllowedToken(
+        IERC20 _tokenFeePaymentAddress,
+        bool _allowed
+    ) external onlyOwner {
+        allowedTokens[_tokenFeePaymentAddress] = _allowed;
+        emit AllowedTokenSet(_tokenFeePaymentAddress, _allowed);
     }
 
     // Modifier to restrict access to only the contract owner.
@@ -140,6 +179,16 @@ contract GMXFactory {
             NFT_HANDLER == msg.sender,
             "GMX FACTORY: Caller is not NFT Handler"
         );
+        _;
+    }
+
+    modifier onlyAllowedTokens(IERC20 _token) {
+        if (allowedTokens[_token] != true) revert TokenNotAllowed();
+        _;
+    }
+
+    modifier onlyPlatformLogic() {
+        if (msg.sender != address(PLATFORM_LOGIC)) revert NotPlatformLogic();
         _;
     }
 
@@ -205,7 +254,12 @@ contract GMXFactory {
         uint256 _minOut,
         uint256 _sizeDelta,
         uint256 _acceptablePrice
-    ) external payable returns (bytes32 positionId) {
+    )
+        external
+        payable
+        onlyAllowedTokens(IERC20(_path[0]))
+        returns (bytes32 positionId)
+    {
         bytes memory bytecode = type(GMXAdapter).creationCode;
         address adapter;
         assembly {
@@ -219,15 +273,25 @@ contract GMXFactory {
         );
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
         address collateral = _path[0];
-        IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
-        IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
+        /// @dev apply platform fees
+        // _amount is the gross amount left after fees
+        uint256 _amount = PLATFORM_LOGIC.applyPlatformFeeErc20(
+            msg.sender,
+            _amountIn,
+            IERC20(collateral),
+            address(this)
+        );
+
+        IERC20(collateral).transferFrom(msg.sender, adapter, _amount);
+
+        IGMXAdapter(adapter).approve(collateral, ROUTER, _amount);
 
         positionId = IGMXAdapter(adapter).createIncreasePosition{
             value: msg.value
         }(
             _path,
             _indexToken,
-            _amountIn,
+            _amount,
             _minOut,
             _sizeDelta,
             true,
@@ -275,8 +339,22 @@ contract GMXFactory {
         );
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
 
+        /// @dev the amount sent is also calculated in the external call to applyPlatformFeeEth function
+        // calculates the platformFees and sends the _value as msg.value
+        uint256 _value = PLATFORM_LOGIC.calculateFees(
+            msg.value,
+            PLATFORM_LOGIC.viewPlatformFee()
+        );
+
+        /// @dev apply platform fees with eth
+        /// @notice _amount = the amount left after the apply of platformFees
+        uint256 _amount = PLATFORM_LOGIC.applyPlatformFeeEth{value: _value}(
+            msg.sender,
+            msg.value
+        );
+
         positionId = IGMXAdapter(adapter).createIncreasePositionETH{
-            value: msg.value
+            value: _amount
         }(_path, _indexToken, _minOut, _sizeDelta, true, _acceptablePrice);
 
         positionAdapters[positionId] = adapter;
@@ -308,7 +386,12 @@ contract GMXFactory {
         uint256 _minOut,
         uint256 _sizeDelta,
         uint256 _acceptablePrice
-    ) public payable returns (bytes32 positionId) {
+    )
+        public
+        payable
+        onlyAllowedTokens(IERC20(_path[0]))
+        returns (bytes32 positionId)
+    {
         bytes memory bytecode = type(GMXAdapter).creationCode;
         address adapter;
         assembly {
@@ -322,15 +405,24 @@ contract GMXFactory {
         );
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
         address collateral = _path[0];
-        IERC20(collateral).transferFrom(msg.sender, adapter, _amountIn);
-        IGMXAdapter(adapter).approve(collateral, ROUTER, _amountIn);
+        /// @dev apply platform fees
+        // _amount is the gross amount left after fees
+        uint256 _amount = PLATFORM_LOGIC.applyPlatformFeeErc20(
+            msg.sender,
+            _amountIn,
+            IERC20(collateral),
+            address(this)
+        );
+
+        IERC20(collateral).transferFrom(msg.sender, adapter, _amount);
+        IGMXAdapter(adapter).approve(collateral, ROUTER, _amount);
 
         positionId = IGMXAdapter(adapter).createIncreasePosition{
             value: msg.value
         }(
             _path,
             _indexToken,
-            _amountIn,
+            _amount,
             _minOut,
             _sizeDelta,
             false,
@@ -377,9 +469,23 @@ contract GMXFactory {
             NFT_HANDLER
         );
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
+        /// @dev the amount sent is also calculated in the external call to applyPlatformFeeEth function
+        // calculates the platformFees and sends the _value as msg.value
+        uint256 _value = PLATFORM_LOGIC.calculateFees(
+            msg.value,
+            PLATFORM_LOGIC.viewPlatformFee()
+        );
+
+        /// @dev apply platform fees with eth
+        /// @notice _amount = the amount left after the apply of platformFees
+        // passes in gross amount for calculations on the platformLogic's side
+        uint256 _amount = PLATFORM_LOGIC.applyPlatformFeeEth{value: _value}(
+            msg.sender,
+            msg.value
+        );
 
         positionId = IGMXAdapter(adapter).createIncreasePositionETH{
-            value: msg.value
+            value: _amount
         }(_path, _indexToken, _minOut, _sizeDelta, false, _acceptablePrice);
 
         positionAdapters[positionId] = adapter;
@@ -764,5 +870,92 @@ contract GMXFactory {
      */
     function decreaseTotalTradePairs() external onlyAdapter returns (uint256) {
         return totalTradePairs--;
+    }
+
+    /**
+     *  @dev Platform Logic Admin Acess Control functions
+     */
+
+    /// @notice calls platform logic and changes factories's access permissions
+    /// @dev used when updating to a new factory or adding an existing one to the platform logic contract
+    /// @param _factory the factory address to be added/removed
+    /// @param _state boolean value that determines if certain address has factory access control permissions
+    function setFactory(address _factory, bool _state) external onlyOwner {
+        PLATFORM_LOGIC.setFactory(_factory, _state);
+
+        emit PlatformLogicsFactoryChanged(_factory, _state);
+    }
+
+    function setPlatformLogic(
+        IPlatformLogic _platformLogic
+    ) external onlyOwner {
+        emit PlatformLogicChanged(PLATFORM_LOGIC, _platformLogic);
+        PLATFORM_LOGIC = _platformLogic;
+    }
+
+    /// @notice sets the referee discount amount
+    function setRefereeDiscount(uint256 _refereeDiscount) external onlyOwner {
+        PLATFORM_LOGIC.setRefereeDiscount(_refereeDiscount);
+    }
+
+    /// @notice sets the referrer fee
+    function setReferrerFee(uint256 _referrerFee) external onlyOwner {
+        PLATFORM_LOGIC.setReferrerFee(_referrerFee);
+    }
+
+    /// @notice sets the platform fee %
+    function setPlatformFee(uint256 _platformFee) external onlyOwner {
+        PLATFORM_LOGIC.setPlatformFee(_platformFee);
+    }
+
+    /// @notice sets the treasury fee split %
+    function setTreasuryFeeSplit(uint256 _treasuryFeeSplit) external onlyOwner {
+        PLATFORM_LOGIC.setTreasuryFeeSplit(_treasuryFeeSplit);
+    }
+
+    /// @notice sets the stakers fee split %
+    function setStakersFeeSplit(uint256 _stakersFeeSplit) external onlyOwner {
+        PLATFORM_LOGIC.setStakersFeeSplit(_stakersFeeSplit);
+    }
+
+    /// @notice changes the spectra treasury address
+    function changePectraTreasury(
+        address payable _newTreasury
+    ) external onlyOwner {
+        PLATFORM_LOGIC.changePectraTreasury(_newTreasury);
+    }
+
+    /// @notice changes the spectra staking contract address
+    function changePectraStakingContract(
+        address payable _newStakingContract
+    ) external onlyOwner {
+        PLATFORM_LOGIC.changePectraStakingContract(_newStakingContract);
+    }
+
+    /// @notice used so admins can edit a users referral code or set custom ones
+    function editReferralCode(
+        address _referee,
+        bytes32 _referralCode
+    ) external onlyOwner {
+        PLATFORM_LOGIC.editReferralCode(_referee, _referralCode);
+    }
+
+    /// @notice used so admins can edit users who are referred
+    function editReferredUsers(
+        address _referrer,
+        bytes32 _referralCode
+    ) external onlyOwner {
+        PLATFORM_LOGIC.editReferredUsers(_referrer, _referralCode);
+    }
+
+    function tokenTransferPlatformLogic(
+        IERC20 _token,
+        address _from,
+        address _to,
+        uint256 _amount
+    ) external onlyAllowedTokens(_token) onlyPlatformLogic returns (bool) {
+        bool success = _token.transferFrom(_from, _to, _amount);
+        if (!success) revert TransactionFailedOnTokenTransfer();
+        return true;
     }
 }

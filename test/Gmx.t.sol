@@ -6,10 +6,12 @@ import "../src/Factory/GMXFactory.sol";
 import "../src/NFT/NftHandler.sol";
 import "../src/NFT/PositionNFT.sol";
 import "../src/GMX/interfaces/IGMXAdapter.sol";
-import "../src/GMX/interfaces/IERC20.sol";
 import "../src/NFT/INftHandler.sol";
 import "../src/NFT/IPositionNFT.sol";
 import "../src/Vault/core/interfaces/IVault.sol";
+import "../src/PlatformLogic/IPlatformLogic.sol";
+import "../src/PlatformLogic/PlatformLogic.sol";
+import "../src/Mock/MockErc20.sol";
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
 
@@ -24,6 +26,16 @@ contract GMXFactoryTest is Test {
     GMXFactory public gmxFactory;
     NFTHandler public nftHandler;
     PositionNFT public positionNft;
+
+    /// @dev add this token for allowance when doing tests with PlatformFeeTest.sol
+    MockErc20 public erc20;
+
+    /// @dev setup PlatformLogic
+    PlatformLogic platformLogic;
+
+    /// @dev values for MockToken
+    string name = "mock";
+    string symbol = "MOCK";
 
     IPositionRouter public positionRouter;
     IVault public vault;
@@ -49,10 +61,26 @@ contract GMXFactoryTest is Test {
     uint256 tokenId;
     address admin;
 
+    /// @dev treasury and staking contracts used for fee
+    address payable treasury = payable(vm.addr(4));
+    address payable staking = payable(vm.addr(5));
+
     /**
      * @dev Setup function to initialize contract instances and test parameters
      */
     function setUp() public {
+        /// @dev add these token's allowance so for future tests
+        erc20 = new MockErc20(name, symbol);
+
+        // setup PlatformLogic
+        address temporaryFactoryAddr = vm.addr(95);
+
+        platformLogic = new PlatformLogic(
+            temporaryFactoryAddr,
+            payable(treasury),
+            payable(staking)
+        );
+
         //Initializing all the contracts
         // gmxFactory = IGMXFactory(0x75f688604a58c720E7e4496139765498A2563C78);
         // nftHandler = INFTHandler(0x15aF6099951BF6E21C4B234392D59C1930531DE0);
@@ -61,8 +89,18 @@ contract GMXFactoryTest is Test {
             0xaBBc5F99639c9B6bCb58544ddf04EFA6802F4064,
             0xb87a436B93fFE9D75c5cFA7bAcFff96430b09868,
             0x22199a49A999c351eF7927602CFB187ec3cae489,
-            0x489ee077994B6658eAfA855C308275EAd8097C4A
+            0x489ee077994B6658eAfA855C308275EAd8097C4A,
+            IPlatformLogic(address(platformLogic)),
+            tokenUSDC
         );
+
+        /// @dev set the platformLogic in Factory
+        gmxFactory.setPlatformLogic(IPlatformLogic(address(platformLogic)));
+
+        /// @dev set the factory in platformLogic
+        vm.prank(temporaryFactoryAddr, temporaryFactoryAddr);
+        platformLogic.setFactory(address(gmxFactory), true);
+
         nftHandler = new NFTHandler(address(gmxFactory));
         positionNft = new PositionNFT(
             address(nftHandler),
@@ -131,6 +169,11 @@ contract GMXFactoryTest is Test {
 
         uint256 value = positionRouter.minExecutionFee(); // Calculate value in wei
 
+        // adding the approve of the token
+        address gmxFactoryOwner = gmxFactory.OWNER();
+        vm.prank(gmxFactoryOwner, gmxFactoryOwner);
+        gmxFactory.setAllowedToken(tokenUSDC, true);
+
         // Approve USDT for gmxFactory
         vm.startPrank(user);
         tokenUSDC.approve(address(gmxFactory), amountIn);
@@ -171,6 +214,11 @@ contract GMXFactoryTest is Test {
 
         uint256 value = positionRouter.minExecutionFee(); // Calculate value in wei
 
+        // adding the approve of the token
+        address gmxFactoryOwner = gmxFactory.OWNER();
+        vm.prank(gmxFactoryOwner, gmxFactoryOwner);
+        gmxFactory.setAllowedToken(tokenUSDC, true);
+
         // Approve USDT for gmxFactory
         vm.startPrank(user);
         tokenUSDC.approve(address(gmxFactory), amountIn);
@@ -209,6 +257,11 @@ contract GMXFactoryTest is Test {
 
         uint256 value = positionRouter.minExecutionFee(); // Calculate value in wei
 
+        // adding the approve of the token
+        address gmxFactoryOwner = gmxFactory.OWNER();
+        vm.prank(gmxFactoryOwner, gmxFactoryOwner);
+        gmxFactory.setAllowedToken(tokenUSDC, true);
+
         // Approve USDT for gmxFactory
         vm.startPrank(user);
         tokenUSDC.approve(address(gmxFactory), amountIn);
@@ -244,6 +297,10 @@ contract GMXFactoryTest is Test {
     function testCloseLongPosition() public {
         // Amount in USDT
         uint256 amountIn = 10000000; // Assuming 10 USDC
+
+        address gmxFactoryOwner = gmxFactory.OWNER();
+        vm.prank(gmxFactoryOwner, gmxFactoryOwner);
+        gmxFactory.setAllowedToken(tokenUSDC, true);
 
         // Calculate value for ETH based on acceptablePriceLongETH
         uint256 value = positionRouter.minExecutionFee(); // Calculate value in wei
@@ -407,6 +464,11 @@ contract GMXFactoryTest is Test {
 
         uint256 value = positionRouter.minExecutionFee(); // Calculate value in wei
 
+        // adding the approve of the token
+        address gmxFactoryOwner = gmxFactory.OWNER();
+        vm.prank(gmxFactoryOwner, gmxFactoryOwner);
+        gmxFactory.setAllowedToken(tokenUSDC, true);
+
         // Approve USDT for gmxFactory
         vm.startPrank(user);
         tokenUSDC.approve(address(gmxFactory), amountIn);
@@ -415,7 +477,7 @@ contract GMXFactoryTest is Test {
         uint256 initialPosition = gmxFactory.getTotalPositions(user);
 
         // Open long position
-        gmxFactory.openLongPosition{value: value}(
+        gmxFactory.openShortPosition{value: value}(
             _path,
             address(tokenWETH),
             amountIn,
@@ -439,6 +501,10 @@ contract GMXFactoryTest is Test {
 
         // Calculate value for ETH based on acceptablePriceLongETH
         uint256 value = positionRouter.minExecutionFee(); // Calculate value in wei
+
+        address gmxFactoryOwner = gmxFactory.OWNER();
+        vm.prank(gmxFactoryOwner, gmxFactoryOwner);
+        gmxFactory.setAllowedToken(tokenUSDC, true);
 
         // Approve USDT for gmxFactory
         vm.startPrank(user);

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import "./IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./IRouter.sol";
 import "./IPositionRouter.sol";
 
@@ -28,6 +28,12 @@ struct nftData {
  * @dev Interface of the GMX Factory contract.
  */
 interface IGMXFactory {
+    /**
+     * @dev a sample function that returns the address of PlatformLogic contract
+     * set in GMXFactory
+     */
+    function PLATFORM_LOGIC() external view returns (address);
+
     /**
      * @dev Open a long position in the GMX Factory.
      *
@@ -267,4 +273,11 @@ interface IGMXFactory {
      * @return Number of total trade pairs created by the GMX Factory contract.
      */
     function decreaseTotalTradePairs() external returns (uint256);
+
+    function tokenTransferPlatformLogic(
+        IERC20 _token,
+        address _from,
+        address _to,
+        uint256 _amount
+    ) external returns (bool);
 }
