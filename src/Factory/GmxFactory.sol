@@ -62,6 +62,9 @@ contract GMXFactory {
     event CreateIncreasePosition(
         bytes32 indexed positionId, address indexed owner, address indexed adapter, uint256 amountIn
     );
+    event CreateIncreasePositionETH(
+        bytes32 indexed positionId, address indexed owner, address indexed adapter, uint256 amountIn
+    );
     event CreateDecreasePosition(
         bytes32 indexed positionId, address indexed owner, address indexed adapter, uint256 amountIn
     );
@@ -208,6 +211,7 @@ contract GMXFactory {
         }
         IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender, NFT_HANDLER);
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
+        uint256 _executionFee = IPositionRouter(POSITION_ROUTER).minExecutionFee();
         address collateral = _path[0];
         /// @dev apply platform fees
         // _amount is the gross amount left after fees
@@ -217,7 +221,7 @@ contract GMXFactory {
 
         IGMXAdapter(adapter).approve(collateral, ROUTER, _amount);
 
-        positionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value}(
+        positionId = IGMXAdapter(adapter).createIncreasePosition{value: _executionFee}(
             _path, _indexToken, _amount, _minOut, _sizeDelta, true, _acceptablePrice
         );
 
@@ -256,6 +260,7 @@ contract GMXFactory {
         }
         IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender, NFT_HANDLER);
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
+        uint256 _executionFee = IPositionRouter(POSITION_ROUTER).minExecutionFee();
 
         /// @dev the amount sent is also calculated in the external call to applyPlatformFeeEth function
         // calculates the platformFees and sends the _value as msg.value
@@ -306,6 +311,7 @@ contract GMXFactory {
         }
         IGMXAdapter(adapter).initialize(ROUTER, POSITION_ROUTER, msg.sender, NFT_HANDLER);
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
+        uint256 _executionFee = IPositionRouter(POSITION_ROUTER).minExecutionFee();
         address collateral = _path[0];
         /// @dev apply platform fees
         // _amount is the gross amount left after fees
@@ -314,7 +320,7 @@ contract GMXFactory {
         IERC20(collateral).transferFrom(msg.sender, adapter, _amount);
         IGMXAdapter(adapter).approve(collateral, ROUTER, _amount);
 
-        positionId = IGMXAdapter(adapter).createIncreasePosition{value: msg.value}(
+        positionId = IGMXAdapter(adapter).createIncreasePosition{value: _executionFee}(
             _path, _indexToken, _amount, _minOut, _sizeDelta, false, _acceptablePrice
         );
 
@@ -437,6 +443,37 @@ contract GMXFactory {
         );
 
         emit CreateIncreasePosition(positionId, msg.sender, adapter, _amountIn);
+    }
+
+    /**
+     * @dev Create a position using ETH as collateral.
+     *
+     * @param _positionId The id of the position
+     * @param _path The token path for the position.
+     * @param _indexToken The index token for the position.
+     * @param _minOut The minimum acceptable amount of output tokens.
+     * @param _sizeDelta The amount of leverage taken from the Exchange for the position.
+     * @param _isLong Whether the position is a position (true) or a short position (false).
+     * @param _acceptablePrice The acceptable price for the position.
+     * @return positionId The ID of the newly created position.
+     */
+    function createIncreasePositionETH(
+        bytes32 _positionId,
+        address[] memory _path,
+        address _indexToken,
+        uint256 _minOut,
+        uint256 _sizeDelta,
+        bool _isLong,
+        uint256 _acceptablePrice
+    ) external payable returns (bytes32 positionId) {
+        require(msg.sender == positionOwners[_positionId], "GMX FACTORY: Not a position owner");
+        require(positionDetails[_positionId][msg.sender] == PositionStatus.Opened, "GMX FACTORY: Position not open");
+        address adapter = positionAdapters[_positionId];
+        positionId = IGMXAdapter(adapter).createIncreasePositionETH{value: msg.value}(
+            _path, _indexToken, _minOut, _sizeDelta, _isLong, _acceptablePrice
+        );
+
+        emit CreateIncreasePositionETH(positionId, msg.sender, adapter, msg.value);
     }
 
     /**

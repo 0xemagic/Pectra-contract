@@ -81,6 +81,11 @@ contract GMXFactoryTest is Test {
             payable(staking)
         );
 
+        //Initializing all the Tokens
+        tokenUSDC = IERC20(0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8);
+        tokenWETH = IERC20(0x82aF49447D8a07e3bd95BD0d56f35241523fBab1);
+        tokenWBTC = IERC20(0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f);
+
         //Initializing all the contracts
         // gmxFactory = IGMXFactory(0x75f688604a58c720E7e4496139765498A2563C78);
         // nftHandler = INFTHandler(0x15aF6099951BF6E21C4B234392D59C1930531DE0);
@@ -111,15 +116,8 @@ contract GMXFactoryTest is Test {
         nftHandler.setPositionNft(address(positionNft));
         gmxFactory.setNftHandler(address(nftHandler));
 
-        positionRouter = IPositionRouter(
-            0xb87a436B93fFE9D75c5cFA7bAcFff96430b09868
-        );
+        positionRouter = IPositionRouter(0xb87a436B93fFE9D75c5cFA7bAcFff96430b09868);
         vault = IVault(0x489ee077994B6658eAfA855C308275EAd8097C4A);
-
-        //Initializing all the Tokens
-        tokenUSDC = IERC20(0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8);
-        tokenWETH = IERC20(0x82aF49447D8a07e3bd95BD0d56f35241523fBab1);
-        tokenWBTC = IERC20(0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f);
 
         //The Amount of Collatoral we are gonna take e.g. 50$ in our case 50e30
         _sizeDelta = 50000000000000000000000000000000;
@@ -244,7 +242,7 @@ contract GMXFactoryTest is Test {
         vm.stopPrank();
 
         address adapter = gmxFactory.positionAdapters(positionID);
-        (uint256 increaseExecuted, ) = IGMXAdapter(adapter).getExecutionState();
+        (uint256 increaseExecuted,) = IGMXAdapter(adapter).getExecutionState();
         assert(increaseExecuted != 0);
 
         uint256[] memory data = gmxFactory.getPosition(positionID);
@@ -287,7 +285,7 @@ contract GMXFactoryTest is Test {
         vm.stopPrank();
 
         address adapter = gmxFactory.positionAdapters(positionID);
-        (uint256 increaseExecuted, ) = IGMXAdapter(adapter).getExecutionState();
+        (uint256 increaseExecuted,) = IGMXAdapter(adapter).getExecutionState();
         assert(increaseExecuted != 0);
 
         uint256[] memory data = gmxFactory.getPosition(positionID);
@@ -328,15 +326,10 @@ contract GMXFactoryTest is Test {
         positionRouter.executeIncreasePosition(positionID, payable(user));
 
         address adapter = gmxFactory.positionAdapters(positionID);
-        (uint256 increaseExecuted, ) = IGMXAdapter(adapter).getExecutionState();
+        (uint256 increaseExecuted,) = IGMXAdapter(adapter).getExecutionState();
         assert(increaseExecuted != 0);
 
-        gmxFactory.closePosition{value: value}(
-            positionID,
-            _closingPath,
-            _acceptablePriceShortETH,
-            false
-        );
+        gmxFactory.closePosition{value: value}(positionID, _closingPath, _acceptablePriceShortETH, false);
         vm.stopPrank();
 
         vm.startPrank(user);
@@ -362,9 +355,7 @@ contract GMXFactoryTest is Test {
         vm.startPrank(user);
 
         // Open long position
-        bytes32 positionID = gmxFactory.openLongPositionEth{
-            value: value + amountIn
-        }(
+        bytes32 positionID = gmxFactory.openLongPositionEth{value: value + amountIn}(
             _pathEth,
             address(tokenWBTC),
             0 ether, // minOut
@@ -381,15 +372,10 @@ contract GMXFactoryTest is Test {
         positionRouter.executeIncreasePosition(positionID, payable(user));
 
         address adapter = gmxFactory.positionAdapters(positionID);
-        (uint256 increaseExecuted, ) = IGMXAdapter(adapter).getExecutionState();
+        (uint256 increaseExecuted,) = IGMXAdapter(adapter).getExecutionState();
         assert(increaseExecuted != 0);
 
-        gmxFactory.closePosition{value: value}(
-            positionID,
-            _pathEthClosing,
-            _acceptablePriceShortBTC,
-            true
-        );
+        gmxFactory.closePosition{value: value}(positionID, _pathEthClosing, _acceptablePriceShortBTC, true);
         vm.stopPrank();
 
         vm.startPrank(user);
@@ -415,9 +401,7 @@ contract GMXFactoryTest is Test {
         vm.startPrank(user);
 
         // Open long position
-        bytes32 positionID = gmxFactory.openShortPositionEth{
-            value: value + amountIn
-        }(
+        bytes32 positionID = gmxFactory.openShortPositionEth{value: value + amountIn}(
             _pathEthShort,
             address(tokenWBTC),
             0 ether, // minOut
@@ -435,15 +419,10 @@ contract GMXFactoryTest is Test {
 
         address adapter = gmxFactory.positionAdapters(positionID);
 
-        (uint256 increaseExecuted, ) = IGMXAdapter(adapter).getExecutionState();
+        (uint256 increaseExecuted,) = IGMXAdapter(adapter).getExecutionState();
         assert(increaseExecuted != 0);
 
-        gmxFactory.closePosition{value: value}(
-            positionID,
-            _pathEthClosingShort,
-            _acceptablePriceLongBTC,
-            true
-        );
+        gmxFactory.closePosition{value: value}(positionID, _pathEthClosingShort, _acceptablePriceLongBTC, true);
         vm.stopPrank();
 
         vm.startPrank(user);
@@ -529,15 +508,10 @@ contract GMXFactoryTest is Test {
         positionRouter.executeIncreasePosition(positionID, payable(user));
 
         address adapter = gmxFactory.positionAdapters(positionID);
-        (uint256 increaseExecuted, ) = IGMXAdapter(adapter).getExecutionState();
+        (uint256 increaseExecuted,) = IGMXAdapter(adapter).getExecutionState();
         assert(increaseExecuted != 0);
 
-        gmxFactory.closePosition{value: value}(
-            positionID,
-            _path,
-            _acceptablePriceLongETH,
-            false
-        );
+        gmxFactory.closePosition{value: value}(positionID, _path, _acceptablePriceLongETH, false);
 
         positionRouter.executeDecreasePosition(positionID, payable(user));
         vm.stopPrank();
@@ -604,9 +578,7 @@ contract GMXFactoryTest is Test {
 
         vm.startPrank(user);
         tokenUSDC.approve(address(gmxFactory), (_amountIn * 2));
-        (bytes32 positionId1, bytes32 positionId2) = gmxFactory.openPositions{
-            value: value
-        }(_nftData);
+        (bytes32 positionId1, bytes32 positionId2) = gmxFactory.openPositions{value: value}(_nftData);
         vm.stopPrank();
 
         vm.startPrank(admin);
@@ -620,10 +592,9 @@ contract GMXFactoryTest is Test {
 
         address adapter = gmxFactory.positionAdapters(positionId1);
         address adapter2 = gmxFactory.positionAdapters(positionId2);
-        (uint256 increaseExecuted, ) = IGMXAdapter(adapter).getExecutionState();
+        (uint256 increaseExecuted,) = IGMXAdapter(adapter).getExecutionState();
         assert(increaseExecuted != 0);
-        (uint256 increaseExecuted2, ) = IGMXAdapter(adapter2)
-            .getExecutionState();
+        (uint256 increaseExecuted2,) = IGMXAdapter(adapter2).getExecutionState();
         assert(increaseExecuted2 != 0);
 
         uint256[] memory data = gmxFactory.getPosition(positionId1);
@@ -653,9 +624,7 @@ contract GMXFactoryTest is Test {
 
         vm.startPrank(user);
         tokenUSDC.approve(address(gmxFactory), (_amountIn * 2));
-        (bytes32 positionId1, bytes32 positionId2) = gmxFactory.openPositions{
-            value: value
-        }(_nftData);
+        (bytes32 positionId1, bytes32 positionId2) = gmxFactory.openPositions{value: value}(_nftData);
         vm.stopPrank();
 
         vm.startPrank(admin);
@@ -669,10 +638,9 @@ contract GMXFactoryTest is Test {
 
         address adapter = gmxFactory.positionAdapters(positionId1);
         address adapter2 = gmxFactory.positionAdapters(positionId2);
-        (uint256 increaseExecuted, ) = IGMXAdapter(adapter).getExecutionState();
+        (uint256 increaseExecuted,) = IGMXAdapter(adapter).getExecutionState();
         assert(increaseExecuted != 0);
-        (uint256 increaseExecuted2, ) = IGMXAdapter(adapter2)
-            .getExecutionState();
+        (uint256 increaseExecuted2,) = IGMXAdapter(adapter2).getExecutionState();
         assert(increaseExecuted2 != 0);
 
         uint256[] memory data = gmxFactory.getPosition(positionId1);
@@ -710,11 +678,9 @@ contract GMXFactoryTest is Test {
         positionRouter.executeIncreasePosition(positionId2, payable(user));
         vm.stopPrank();
 
-        (uint256 increaseExecuted3, ) = IGMXAdapter(adapter)
-            .getExecutionState();
+        (uint256 increaseExecuted3,) = IGMXAdapter(adapter).getExecutionState();
         assert(increaseExecuted3 != 0);
-        (uint256 increaseExecuted4, ) = IGMXAdapter(adapter2)
-            .getExecutionState();
+        (uint256 increaseExecuted4,) = IGMXAdapter(adapter2).getExecutionState();
         assert(increaseExecuted4 != 0);
 
         uint256[] memory dataAfter = gmxFactory.getPosition(positionId1);
@@ -745,9 +711,7 @@ contract GMXFactoryTest is Test {
 
         vm.startPrank(user);
         tokenUSDC.approve(address(gmxFactory), (_amountIn * 2));
-        (bytes32 positionId1, bytes32 positionId2) = gmxFactory.openPositions{
-            value: value
-        }(_nftData);
+        (bytes32 positionId1, bytes32 positionId2) = gmxFactory.openPositions{value: value}(_nftData);
         vm.stopPrank();
 
         vm.startPrank(admin);
@@ -762,10 +726,9 @@ contract GMXFactoryTest is Test {
         address adapter = gmxFactory.positionAdapters(positionId1);
         address adapter2 = gmxFactory.positionAdapters(positionId2);
 
-        (uint256 increaseExecuted, ) = IGMXAdapter(adapter).getExecutionState();
+        (uint256 increaseExecuted,) = IGMXAdapter(adapter).getExecutionState();
         assert(increaseExecuted != 0);
-        (uint256 increaseExecuted2, ) = IGMXAdapter(adapter2)
-            .getExecutionState();
+        (uint256 increaseExecuted2,) = IGMXAdapter(adapter2).getExecutionState();
         assert(increaseExecuted2 != 0);
 
         uint256[] memory data1 = gmxFactory.getPosition(positionId1);
@@ -774,18 +737,10 @@ contract GMXFactoryTest is Test {
         _amountIn = 5000000;
         tokenUSDC.approve(address(gmxFactory), _amountIn * 2);
         gmxFactory.createDecreasePosition{value: fee}(
-            positionId1,
-            _closingPath,
-            _amountIn,
-            _nftData._acceptablePriceShort,
-            false
+            positionId1, _closingPath, _amountIn, _nftData._acceptablePriceShort, false
         );
         gmxFactory.createDecreasePosition{value: fee}(
-            positionId2,
-            _nftData._pathShort,
-            _amountIn,
-            _nftData._acceptablePriceLong,
-            false
+            positionId2, _nftData._pathShort, _amountIn, _nftData._acceptablePriceLong, false
         );
         vm.stopPrank();
 
@@ -800,8 +755,7 @@ contract GMXFactoryTest is Test {
 
         (, uint256 decreaseExecuted) = IGMXAdapter(adapter).getExecutionState();
         assert(decreaseExecuted != 0);
-        (, uint256 decreaseExecuted2) = IGMXAdapter(adapter2)
-            .getExecutionState();
+        (, uint256 decreaseExecuted2) = IGMXAdapter(adapter2).getExecutionState();
         assert(decreaseExecuted2 != 0);
 
         uint256[] memory data1After = gmxFactory.getPosition(positionId1);
@@ -832,9 +786,7 @@ contract GMXFactoryTest is Test {
 
         vm.startPrank(user);
         tokenUSDC.approve(address(gmxFactory), (_amountIn * 2));
-        (bytes32 positionId1, bytes32 positionId2) = gmxFactory.openPositions{
-            value: value
-        }(_nftData);
+        (bytes32 positionId1, bytes32 positionId2) = gmxFactory.openPositions{value: value}(_nftData);
         vm.stopPrank();
 
         vm.startPrank(admin);
@@ -878,9 +830,7 @@ contract GMXFactoryTest is Test {
 
         vm.startPrank(user);
         tokenUSDC.approve(address(gmxFactory), (_amountIn * 2));
-        (bytes32 positionId1, bytes32 positionId2) = gmxFactory.openPositions{
-            value: value
-        }(_nftData);
+        (bytes32 positionId1, bytes32 positionId2) = gmxFactory.openPositions{value: value}(_nftData);
         vm.stopPrank();
 
         vm.startPrank(admin);
@@ -897,19 +847,9 @@ contract GMXFactoryTest is Test {
 
         tokenId = nftHandler.mintNFT(positionIDs, user);
 
-        gmxFactory.closePosition{value: value / 2}(
-            positionId1,
-            _closingPath,
-            _acceptablePriceShortETH,
-            false
-        );
+        gmxFactory.closePosition{value: value / 2}(positionId1, _closingPath, _acceptablePriceShortETH, false);
 
-        gmxFactory.closePosition{value: value / 2}(
-            positionId2,
-            _path,
-            _acceptablePriceLongETH,
-            false
-        );
+        gmxFactory.closePosition{value: value / 2}(positionId2, _path, _acceptablePriceLongETH, false);
 
         positionRouter.executeDecreasePosition(positionId1, payable(user));
         positionRouter.executeDecreasePosition(positionId2, payable(user));
@@ -920,15 +860,9 @@ contract GMXFactoryTest is Test {
         uint256 totalSupply = positionNft.totalSupply();
         assert(totalSupply == 0);
 
-        assert(
-            gmxFactory.getPositionStatus(positionId1, user) ==
-                GMXFactory.PositionStatus.Closed
-        );
+        assert(gmxFactory.getPositionStatus(positionId1, user) == GMXFactory.PositionStatus.Closed);
 
-        assert(
-            gmxFactory.getPositionStatus(positionId2, user) ==
-                GMXFactory.PositionStatus.Closed
-        );
+        assert(gmxFactory.getPositionStatus(positionId2, user) == GMXFactory.PositionStatus.Closed);
     }
 
     function testTransferNft() public {
@@ -952,9 +886,7 @@ contract GMXFactoryTest is Test {
 
         vm.startPrank(user);
         tokenUSDC.approve(address(gmxFactory), (_amountIn * 2));
-        (bytes32 positionId1, bytes32 positionId2) = gmxFactory.openPositions{
-            value: value
-        }(_nftData);
+        (bytes32 positionId1, bytes32 positionId2) = gmxFactory.openPositions{value: value}(_nftData);
         vm.stopPrank();
 
         vm.startPrank(admin);
@@ -977,21 +909,9 @@ contract GMXFactoryTest is Test {
         assert(gmxFactory.getPositionOwner(positionIDs[0]) == user2);
         assert(gmxFactory.getPositionOwner(positionIDs[1]) == user2);
         assert(gmxFactory.getTotalPositions(user2) == 2);
-        assert(
-            gmxFactory.getPositionStatus(positionIDs[0], user) ==
-                GMXFactory.PositionStatus.Transferred
-        );
-        assert(
-            gmxFactory.getPositionStatus(positionIDs[1], user) ==
-                GMXFactory.PositionStatus.Transferred
-        );
-        assert(
-            gmxFactory.getPositionStatus(positionIDs[0], user2) ==
-                GMXFactory.PositionStatus.Opened
-        );
-        assert(
-            gmxFactory.getPositionStatus(positionIDs[1], user2) ==
-                GMXFactory.PositionStatus.Opened
-        );
+        assert(gmxFactory.getPositionStatus(positionIDs[0], user) == GMXFactory.PositionStatus.Transferred);
+        assert(gmxFactory.getPositionStatus(positionIDs[1], user) == GMXFactory.PositionStatus.Transferred);
+        assert(gmxFactory.getPositionStatus(positionIDs[0], user2) == GMXFactory.PositionStatus.Opened);
+        assert(gmxFactory.getPositionStatus(positionIDs[1], user2) == GMXFactory.PositionStatus.Opened);
     }
 }
