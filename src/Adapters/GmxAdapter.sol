@@ -186,7 +186,7 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
         );
 
         positionId = IPositionRouter(POSITION_ROUTER).createIncreasePosition{
-            value: msg.value
+            value: _executionFee
         }(
             _path,
             _indexToken,
@@ -268,11 +268,14 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
         uint256 _executionFee = IPositionRouter(POSITION_ROUTER)
             .minExecutionFee();
 
+        // _amountIn is in USD ie.1e30 decimals, amountIn is in USDC ie.1e6 decimals
+        uint256 _amount = (_amountIn * 1e6) / 1e30;
+
         // to reflect the decrease when called to increase the existin position
         setPositionData(
             _path,
             indexToken,
-            amountIn - _amountIn,
+            amountIn - _amount,
             minOut,
             sizeDelta,
             isLong,
@@ -316,7 +319,7 @@ contract GMXAdapter is Initializable, IPositionRouterCallbackReceiver {
 
         // Try to close the position using the GMX Position Router.
         positionId = IPositionRouter(POSITION_ROUTER).createDecreasePosition{
-            value: msg.value
+            value: _executionFee
         }(
             _path,
             indexToken,

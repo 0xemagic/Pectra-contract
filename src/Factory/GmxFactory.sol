@@ -91,6 +91,12 @@ contract GMXFactory {
         address indexed adapter,
         uint256 amountIn
     );
+    event CreateIncreasePositionETH(
+        bytes32 indexed positionId,
+        address indexed owner,
+        address indexed adapter,
+        uint256 amountIn
+    );
     event CreateDecreasePosition(
         bytes32 indexed positionId,
         address indexed owner,
@@ -255,7 +261,7 @@ contract GMXFactory {
         uint256 _sizeDelta,
         uint256 _acceptablePrice
     )
-        external
+        public
         payable
         onlyAllowedTokens(IERC20(_path[0]))
         returns (bytes32 positionId)
@@ -272,6 +278,8 @@ contract GMXFactory {
             NFT_HANDLER
         );
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
+        uint256 _executionFee = IPositionRouter(POSITION_ROUTER)
+            .minExecutionFee();
         address collateral = _path[0];
         /// @dev apply platform fees
         // _amount is the gross amount left after fees
@@ -287,7 +295,7 @@ contract GMXFactory {
         IGMXAdapter(adapter).approve(collateral, ROUTER, _amount);
 
         positionId = IGMXAdapter(adapter).createIncreasePosition{
-            value: msg.value
+            value: _executionFee
         }(
             _path,
             _indexToken,
@@ -338,6 +346,8 @@ contract GMXFactory {
             NFT_HANDLER
         );
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
+        uint256 _executionFee = IPositionRouter(POSITION_ROUTER)
+            .minExecutionFee();
 
         /// @dev the amount sent is also calculated in the external call to applyPlatformFeeEth function
         // calculates the platformFees and sends the _value as msg.value
@@ -404,6 +414,8 @@ contract GMXFactory {
             NFT_HANDLER
         );
         IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
+        uint256 _executionFee = IPositionRouter(POSITION_ROUTER)
+            .minExecutionFee();
         address collateral = _path[0];
         /// @dev apply platform fees
         // _amount is the gross amount left after fees
@@ -418,7 +430,7 @@ contract GMXFactory {
         IGMXAdapter(adapter).approve(collateral, ROUTER, _amount);
 
         positionId = IGMXAdapter(adapter).createIncreasePosition{
-            value: msg.value
+            value: _executionFee
         }(
             _path,
             _indexToken,
@@ -500,6 +512,34 @@ contract GMXFactory {
     }
 
     /**
+     * @dev Create an NFT representing a pair of long and short positions.
+     *
+     * @param _nftData The token data for the position.
+     */
+    function openPositions(
+        nftData memory _nftData
+    ) external payable returns (bytes32, bytes32) {
+        bytes32 longPositionId = openLongPosition(
+            _nftData._pathLong,
+            _nftData._indexTokenLong,
+            _nftData._amountIn,
+            _nftData._minOut,
+            _nftData._sizeDeltaLong,
+            _nftData._acceptablePriceLong
+        );
+        bytes32 shortPositionId = openShortPosition(
+            _nftData._pathShort,
+            _nftData._indexTokenShort,
+            _nftData._amountIn,
+            _nftData._minOut,
+            _nftData._sizeDeltaShort,
+            _nftData._acceptablePriceShort
+        );
+
+        return (longPositionId, shortPositionId);
+    }
+
+    /**
      * @dev Create a position using tokens as collateral.
      *
      * @param _positionId The id of the position
@@ -547,6 +587,48 @@ contract GMXFactory {
         );
 
         emit CreateIncreasePosition(positionId, msg.sender, adapter, _amountIn);
+    }
+
+    /**
+     * @dev Create a position using ETH as collateral.
+     *
+     * @param _positionId The id of the position
+     * @param _path The token path for the position.
+     * @param _indexToken The index token for the position.
+     * @param _minOut The minimum acceptable amount of output tokens.
+     * @param _sizeDelta The amount of leverage taken from the Exchange for the position.
+     * @param _isLong Whether the position is a position (true) or a short position (false).
+     * @param _acceptablePrice The acceptable price for the position.
+     * @return positionId The ID of the newly created position.
+     */
+    function createIncreasePositionETH(
+        bytes32 _positionId,
+        address[] memory _path,
+        address _indexToken,
+        uint256 _minOut,
+        uint256 _sizeDelta,
+        bool _isLong,
+        uint256 _acceptablePrice
+    ) external payable returns (bytes32 positionId) {
+        require(
+            msg.sender == positionOwners[_positionId],
+            "GMX FACTORY: Not a position owner"
+        );
+        require(
+            positionDetails[_positionId][msg.sender] == PositionStatus.Opened,
+            "GMX FACTORY: Position not open"
+        );
+        address adapter = positionAdapters[_positionId];
+        positionId = IGMXAdapter(adapter).createIncreasePositionETH{
+            value: msg.value
+        }(_path, _indexToken, _minOut, _sizeDelta, _isLong, _acceptablePrice);
+
+        emit CreateIncreasePositionETH(
+            positionId,
+            msg.sender,
+            adapter,
+            msg.value
+        );
     }
 
     /**
@@ -655,117 +737,6 @@ contract GMXFactory {
                 indexTokens,
                 isLongs
             );
-    }
-
-    /**
-     * @dev Create an NFT representing a pair of long and short positions.
-     *
-     * @param _nftData The token data for the position.
-     */
-    function openPositions(
-        nftData memory _nftData
-    ) external payable returns (bytes32, bytes32) {
-        bytes32 longPositionId;
-        bytes32 shortPositionId;
-
-        {
-            // Call the original `openLongPosition` function
-            bytes memory bytecode = type(GMXAdapter).creationCode;
-            address adapter;
-            assembly {
-                adapter := create(0, add(bytecode, 32), mload(bytecode))
-            }
-            IGMXAdapter(adapter).initialize(
-                ROUTER,
-                POSITION_ROUTER,
-                msg.sender,
-                NFT_HANDLER
-            );
-            IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
-            address collateral = _nftData._pathLong[0];
-            IERC20(collateral).transferFrom(
-                msg.sender,
-                adapter,
-                _nftData._amountIn
-            );
-            IGMXAdapter(adapter).approve(
-                collateral,
-                ROUTER,
-                _nftData._amountIn
-            );
-            longPositionId = IGMXAdapter(adapter).createIncreasePosition{
-                value: msg.value / 2
-            }(
-                _nftData._pathLong,
-                _nftData._indexTokenLong,
-                _nftData._amountIn,
-                _nftData._minOut,
-                _nftData._sizeDeltaLong,
-                true,
-                _nftData._acceptablePriceLong
-            );
-            positionAdapters[longPositionId] = adapter;
-            positionOwners[longPositionId] = msg.sender;
-            positions[msg.sender] += 1;
-            indexedPositions[msg.sender][
-                positions[msg.sender]
-            ] = longPositionId;
-            positionDetails[longPositionId][msg.sender] = PositionStatus.Opened;
-            totalTradePairs++;
-
-            emit LongPositionOpened(longPositionId, msg.sender, adapter);
-        }
-
-        {
-            // Call the original `openShortPosition` function
-            bytes memory bytecode = type(GMXAdapter).creationCode;
-            address adapter;
-            assembly {
-                adapter := create(0, add(bytecode, 32), mload(bytecode))
-            }
-            IGMXAdapter(adapter).initialize(
-                ROUTER,
-                POSITION_ROUTER,
-                msg.sender,
-                NFT_HANDLER
-            );
-            IGMXAdapter(adapter).approvePlugin(POSITION_ROUTER);
-            address collateral = _nftData._pathShort[0];
-            IERC20(collateral).transferFrom(
-                msg.sender,
-                adapter,
-                _nftData._amountIn
-            );
-            IGMXAdapter(adapter).approve(
-                collateral,
-                ROUTER,
-                _nftData._amountIn
-            );
-            shortPositionId = IGMXAdapter(adapter).createIncreasePosition{
-                value: msg.value / 2
-            }(
-                _nftData._pathShort,
-                _nftData._indexTokenShort,
-                _nftData._amountIn,
-                _nftData._minOut,
-                _nftData._sizeDeltaShort,
-                false,
-                _nftData._acceptablePriceShort
-            );
-            positionAdapters[shortPositionId] = adapter;
-            positionOwners[shortPositionId] = msg.sender;
-            positions[msg.sender] += 1;
-            indexedPositions[msg.sender][
-                positions[msg.sender]
-            ] = shortPositionId;
-            positionDetails[shortPositionId][msg.sender] = PositionStatus
-                .Opened;
-            totalTradePairs++;
-
-            emit ShortPositionOpened(shortPositionId, msg.sender, adapter);
-        }
-
-        return (longPositionId, shortPositionId);
     }
 
     /**

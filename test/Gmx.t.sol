@@ -81,6 +81,11 @@ contract GMXFactoryTest is Test {
             payable(staking)
         );
 
+        //Initializing all the Tokens
+        tokenUSDC = IERC20(0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8);
+        tokenWETH = IERC20(0x82aF49447D8a07e3bd95BD0d56f35241523fBab1);
+        tokenWBTC = IERC20(0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f);
+
         //Initializing all the contracts
         // gmxFactory = IGMXFactory(0x75f688604a58c720E7e4496139765498A2563C78);
         // nftHandler = INFTHandler(0x15aF6099951BF6E21C4B234392D59C1930531DE0);
@@ -115,11 +120,6 @@ contract GMXFactoryTest is Test {
             0xb87a436B93fFE9D75c5cFA7bAcFff96430b09868
         );
         vault = IVault(0x489ee077994B6658eAfA855C308275EAd8097C4A);
-
-        //Initializing all the Tokens
-        tokenUSDC = IERC20(0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8);
-        tokenWETH = IERC20(0x82aF49447D8a07e3bd95BD0d56f35241523fBab1);
-        tokenWBTC = IERC20(0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f);
 
         //The Amount of Collatoral we are gonna take e.g. 50$ in our case 50e30
         _sizeDelta = 50000000000000000000000000000000;
